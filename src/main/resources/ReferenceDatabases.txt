@@ -1,0 +1,116 @@
+BioGPS Gene
+BioModels
+COSMIC (genes)
+CTD Gene
+Complex Portal
+dbSNP
+FlyBase
+GeneCards
+GlyCosmos
+GlyGen
+GlyTouCan
+Guide to Pharmacology - Targets
+HGNC
+HMDB Metabolite
+HPA
+IntEnz
+MGI
+Monarch
+NCBI Gene
+OMIM
+OpenTargets
+Orphanet
+PDB
+PRO
+PharmacoDB
+Pharos - Ligands
+Pharos - Targets
+RGD
+RefSeq
+Rhea
+UCSC
+VGNC
+Wormbase
+ZINC - Biogenic
+ZINC - FDA approved
+ZINC - Investigational
+ZINC - Metabolites
+ZINC - Predictions - Purchasable
+ZINC - Substances
+ZINC - World Drugs
+ZINC target
+
+
+ENSEMBL
+- Human
+--Gene
+--Transcript
+
+- Rat
+--Gene
+--Protein
+
+- Chicken
+--Gene
+--Protein
+
+- Fly
+--Gene
+
+- Mouse
+--Gene
+--Transcript
+
+- Dog
+--Gene
+
+- Cow
+--Gene
+
+- Pig
+--Gene
+
+- Zebra Fish
+--Gene
+
+- Frog
+--Gene
+
+- Worm
+--Gene
+
+- Ddis
+--Gene
+
+- Spom
+--Gene
+
+- Yeast
+--Gene
+
+- Pfal
+--Gene
+
+KEGG
+-Bos Taurus
+-Caenorhabditis elegans
+-Candida albicans
+-Canis lupus familiaris
+-Cricetulus griseus
+-Danio rerio
+-Dictyostelium discoideum
+-Drosophila melanogaster
+-Gallus gallus
+-Homo sapiens
+-Leishmania major
+-Macaca mulatta
+-Meleagris gallopavo
+-Mus musculus
+-Mycobacterium tubercuolsis H37Rv - mtu
+-Oryctolagus cuniculus
+-Rattus norvegicus
+-Saccharomyces cerevisiae (strain RM11-1a)
+-Sc
+-Sus scrofa
+-Xenopus laevis
+-Xenopus tropicalis

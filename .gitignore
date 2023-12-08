@@ -1,0 +1,11 @@
+# IntelliJ Files
+*.iml
+.idea/
+
+# Compiled Files
+target/
+
+# Misc
+downloads/
+config.properties
+auth.properties
