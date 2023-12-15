@@ -1,10 +1,6 @@
 package org.reactome.resource.hmdbmetabolite;
 
 import org.reactome.resource.BasicFileRetriever;
-import org.reactome.resource.FileRetriever;
-
-import java.io.IOException;
-import java.net.URL;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
