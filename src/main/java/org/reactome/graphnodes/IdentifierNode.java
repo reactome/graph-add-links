@@ -41,7 +41,7 @@ public abstract class IdentifierNode extends GraphNode {
         return this.referenceDatabase;
     }
 
-    protected String getDisplayName() {
+    public String getDisplayName() {
         return getReferenceDatabaseDisplayName() + ":" + getIdentifier();
     }
 
@@ -53,14 +53,19 @@ public abstract class IdentifierNode extends GraphNode {
             Arrays.asList(
                 "databaseName: " + quote(getReferenceDatabaseDisplayName()),
                 "identifier: " + quote(getIdentifier()),
-                "url: " + quote(getReferenceDatabase().getAccessURL().replace("###ID###", getIdentifier()))
+                "url: " + quote(getUrl())
             )
         );
         return attributeKeyValueStrings;
     }
 
-    private String getReferenceDatabaseDisplayName() {
+    public String getReferenceDatabaseDisplayName() {
         return getReferenceDatabase() != null ?
             getReferenceDatabase().getDisplayName() : "N/A";
     }
+
+    public String getUrl() {
+        return getReferenceDatabase().getAccessURL().replace("###ID###", getIdentifier());
+    }
+
 }
