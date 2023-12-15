@@ -11,6 +11,9 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -24,41 +27,30 @@ public class BasicFileRetriever implements FileRetriever {
     }
 
     @Override
-    public void downloadFile() throws IOException {
+    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
         Files.createDirectories(ConfigParser.getDownloadDirectoryPath());
 
-        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL().openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL(downloadable).openConnection();
         httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.0");
         httpURLConnection.setConnectTimeout(twoMinutes());
         httpURLConnection.setReadTimeout(twoMinutes());
         ReadableByteChannel remoteFileByteChannel = Channels.newChannel(httpURLConnection.getInputStream());
-        FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath().toFile());
+        FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath(downloadable).toFile());
 
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
     }
 
-    public URL getBaseRemoteURL() {
-        return getDownloadInfo().getBaseRemoteURL();
+    public List<Path> getLocalFilePaths() {
+        return getDownloadInfo().getDownloadables().stream().map(this::getLocalFilePath).collect(Collectors.toList());
     }
 
-    public URL getFileRemoteURL() throws MalformedURLException {
-        return new URL(getBaseRemoteURL().toString().concat(getRemoteFileName()));
-    }
-
-    public String getLocalFileName() {
-        return getDownloadInfo().getLocalFileName();
-    }
-
-    public String getRemoteFileName() {
-        return getDownloadInfo().getRemoteFileName();
+    @Override
+    public DownloadInfo getDownloadInfo() {
+        return this.downloadInfo;
     }
 
     private int twoMinutes() {
         final int twoMinutesInMilliSeconds = 1000 * 60 * 2;
         return twoMinutesInMilliSeconds;
-    }
-
-    private DownloadInfo getDownloadInfo() {
-        return this.downloadInfo;
     }
 }

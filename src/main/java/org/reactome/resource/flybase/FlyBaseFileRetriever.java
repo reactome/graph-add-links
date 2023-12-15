@@ -1,5 +1,6 @@
 package org.reactome.resource.flybase;
 
+import org.reactome.DownloadInfo;
 import org.reactome.resource.BasicFileRetriever;
 
 import java.io.BufferedReader;
@@ -16,56 +17,31 @@ import java.util.stream.Collectors;
  *         Created 11/17/2023
  */
 public class FlyBaseFileRetriever extends BasicFileRetriever {
-    //private BasicFileRetriever basicFileRetriever;
 
     public FlyBaseFileRetriever() {
         super("FlyBase");
     }
 
     @Override
-    public URL getResourceFileRemoteURL() throws IOException {
-        String baseRemoteHTML = getBaseRemoteHTML();
+    public URL getResourceFileRemoteURL(DownloadInfo.Downloadable downloadable) throws IOException {
+        String baseRemoteHTML = getBaseRemoteHTML(downloadable);
 
-        Pattern fileURLPattern = Pattern.compile("(" + getRemoteFileName() + ")");
+        Pattern fileURLPattern = Pattern.compile("(" + downloadable.getRemoteFileName() + ")");
         Matcher fileURLMatcher = fileURLPattern.matcher(baseRemoteHTML);
         if (!fileURLMatcher.find()) {
             throw new IllegalStateException("Can not find pattern " + fileURLPattern + " in " +
-                getBaseRemoteURL() + " HTML");
+                downloadable.getBaseRemoteURL() + " HTML");
         }
 
         String remoteFileName = fileURLMatcher.group(1);
-        return new URL(getBaseRemoteURL().toString().concat(remoteFileName));
+        return new URL(downloadable.getBaseRemoteURL().toString().concat(remoteFileName));
     }
 
-//    @Override
-//    public URL getBaseRemoteURL() {
-//        return getBasicFileRetriever().getBaseRemoteURL();
-//    }
-//
-//    @Override
-//    public String getRemoteFileName() {
-//        return getBasicFileRetriever().getRemoteFileName();
-//    }
-
-    //private BasicFileRetriever getBasicFileRetriever() {
-    //    return this.basicFileRetriever;
-    //}
-
-    private String getBaseRemoteHTML() throws IOException {
-        try (InputStream baseRemoteURLInputStream = getBaseRemoteURL().openStream()) {
+    private String getBaseRemoteHTML(DownloadInfo.Downloadable downloadable) throws IOException {
+        try (InputStream baseRemoteURLInputStream = downloadable.getBaseRemoteURL().openStream()) {
             BufferedReader baseRemoteURLBufferedReader =
                 new BufferedReader(new InputStreamReader(baseRemoteURLInputStream));
             return baseRemoteURLBufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
         }
     }
-
-//    @Override
-//    public void downloadFile() throws IOException {
-//        getBasicFileRetriever().downloadFile();
-//    }
-
-//    @Override
-//    public String getLocalFileName() {
-//        return getBasicFileRetriever().getLocalFileName();
-//    }
 }

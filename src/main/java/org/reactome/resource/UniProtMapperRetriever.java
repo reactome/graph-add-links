@@ -33,24 +33,34 @@ public class UniProtMapperRetriever implements Retriever {
     }
 
     @Override
-    public void downloadFile() throws IOException {
+    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
         List<Collection<String>> uniProtIdentifiersCollections = split(getUniProtIdsFromGraphDatabase(),100);
 
-        Files.write(getLocalFilePath(), "From\tTo\n".getBytes(), StandardOpenOption.CREATE);
+        Files.write(getLocalFilePath(downloadable), "From\tTo\n".getBytes(), StandardOpenOption.CREATE);
         for (Collection<String> uniProtIdentifiers : uniProtIdentifiersCollections) {
             Map<String, List<String>> uniProtIdentifierToResourceIdentifiers =
-                getMapping(uniProtIdentifiers, getTargetDatabase());
+                getMapping(uniProtIdentifiers, getTargetDatabase(downloadable));
 
             for (String uniProtIdentifier : uniProtIdentifierToResourceIdentifiers.keySet()) {
                 for (String resourceIdentifier : uniProtIdentifierToResourceIdentifiers.get(uniProtIdentifier)) {
                     Files.write(
-                        getLocalFilePath(),
+                        getLocalFilePath(downloadable),
                         (uniProtIdentifier + "\t" + resourceIdentifier + "\n").getBytes(),
                         StandardOpenOption.APPEND
                     );
                 }
             }
         }
+    }
+
+    @Override
+    public List<Path> getLocalFilePaths() {
+        return null;
+    }
+
+    @Override
+    public DownloadInfo getDownloadInfo() {
+        return this.downloadInfo;
     }
 
     Collection<String> getUniProtIdsFromGraphDatabase() {
@@ -108,13 +118,8 @@ public class UniProtMapperRetriever implements Retriever {
         return getJobResults(jobId);
     }
 
-    @Override
-    public String getLocalFileName() {
-        return this.downloadInfo.getLocalFileName();
-    }
-
-    private String getTargetDatabase() {
-        return this.downloadInfo.getTargetDatabaseName();
+    private String getTargetDatabase(DownloadInfo.Downloadable downloadable) {
+        return downloadable.getTargetDatabaseName();
     }
 
     private static boolean jobFinished(String jobID) throws IOException {

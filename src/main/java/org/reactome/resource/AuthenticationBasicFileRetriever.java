@@ -24,10 +24,10 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
     }
 
     @Override
-    public void downloadFile() throws IOException {
+    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
         Files.createDirectories(ConfigParser.getDownloadDirectoryPath());
 
-        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL().openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL(downloadable).openConnection();
         httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.0");
 
         String authString = getUserName() + ":" + getPassword();
@@ -39,7 +39,7 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
         httpURLConnection.setReadTimeout(twoMinutes());
 
         ReadableByteChannel remoteFileByteChannel = Channels.newChannel(httpURLConnection.getInputStream());
-        FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath().toFile());
+        FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath(downloadable).toFile());
 
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
 
@@ -49,10 +49,6 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
     protected abstract String getUserName();
 
     protected abstract String getPassword();
-
-    public URL getFileRemoteURL() throws MalformedURLException {
-        return new URL(getBaseRemoteURL().toString().concat(getRemoteFileName()));
-    }
 
     private int twoMinutes() {
         final int twoMinutesInMilliSeconds = 1000 * 60 * 2;

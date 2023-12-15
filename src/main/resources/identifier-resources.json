@@ -2,12 +2,12 @@
     "resources": {
         "FlyBase" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.flybase.net/releases/current/precomputed_files/genes/",
                 "fileName": "fbgn_NAseq_Uniprot_fb_\\d{4}_\\d{2}.tsv.gz",
                 "fileNameIsRegex": true,
                 "localName": "FlyBase.tsv.gz"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "FlyBase"
@@ -19,12 +19,12 @@
         },
         "PRO" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.proteininformationresource.org/databases/ontology/pro_obo/PRO_mappings/",
                 "fileName": "uniprotmapping.txt",
                 "fileNameIsRegex": false,
                 "localName": "PRO_to_uniprotmapping.txt"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "PRO"
@@ -36,10 +36,10 @@
         },
         "NCBIGene" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "GeneID",
                 "localName": "uniprot_mappings/uniprot_2_ncbi.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "NCBI Gene"
@@ -51,12 +51,12 @@
         },
         "HMDBProtein" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://hmdb.ca/system/downloads/current/",
                 "fileName": "hmdb_proteins.zip",
                 "fileNameIsRegex": false,
                 "localName": "hmdb_proteins.zip"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "HMDB Protein",
@@ -68,12 +68,12 @@
         },
         "HMDBMetabolite" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://hmdb.ca/system/downloads/current/",
                 "fileName": "hmdb_metabolites.zip",
                 "fileNameIsRegex": false,
                 "localName": "hmdb_metabolites.zip"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "HMDB Metabolite",
@@ -85,12 +85,12 @@
         },
         "IntEnz" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.expasy.org/databases/enzyme/",
                 "fileName": "enzyme.dat",
                 "fileNameIsRegex": false,
                 "localName": "IntEnz.dat"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "IntEnz",
@@ -103,12 +103,12 @@
         },
         "HPA" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://www.proteinatlas.org/download/",
                 "fileName": "proteinatlas.tsv.zip",
                 "fileNameIsRegex": false,
                 "localName": "proteinatlas.tsv.zip"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "HPA",
@@ -121,12 +121,12 @@
         },
         "VGNC" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.ebi.ac.uk/pub/databases/genenames/vgnc/tsv/",
                 "fileName": "vgnc_gene_set_All.txt.gz",
                 "fileNameIsRegex": false,
                 "localName": "vgnc_gene_set_All.txt.gz"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "VGNC",
@@ -138,12 +138,12 @@
         },
         "MGI" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://www.informatics.jax.org/downloads/reports/",
                 "fileName": "MRK_SwissProt_TrEMBL.rpt",
                 "fileNameIsRegex": false,
                 "localName": "MGI_MRK_SwissProt_TrEMBL.rpt"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "MGI",
@@ -156,12 +156,12 @@
         },
         "RGD" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://download.rgd.mcw.edu/data_release/",
                 "fileName": "GENES.RAT.txt",
                 "fileNameIsRegex": false,
                 "localName": "GENES_RAT.txt"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "RGD",
@@ -174,12 +174,12 @@
         },
         "GTPTargets" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://www.guidetopharmacology.org/DATA/",
                 "fileName": "targets_and_families.csv",
                 "fileNameIsRegex": false,
                 "localName": "gtp-targets.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Guide to Pharmacology - Targets",
@@ -192,12 +192,12 @@
         },
         "GTPLigands" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://www.guidetopharmacology.org/DATA/",
                 "fileName": "ligand_id_mapping.csv",
                 "fileNameIsRegex": false,
                 "localName": "gtp-ligands.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Guide to Pharmacology - Ligands",
@@ -210,10 +210,10 @@
         },
         "PDB" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "PDB",
                 "localName": "uniprot_mappings/uniprot_2_pdb.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "PDB",
@@ -226,12 +226,12 @@
         },
         "ZFIN" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://zfin.org/downloads/",
                 "fileName": "uniprot.txt",
                 "fileNameIsRegex": false,
                 "localName": "uniprot-zfin.txt"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZFIN",
@@ -244,12 +244,20 @@
         },
         "PharmacoDB" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
-                "baseURL": "https://raw.githubusercontent.com/BHKLAB-Pachyderm/Annotations/master/",
-                "fileName": "drugs_with_ids.csv",
-                "fileNameIsRegex": false,
-                "localName": "pharmacodb_drugs_with_ids.csv"
-            },
+            "downloads": [
+                {
+                    "baseURL": "https://raw.githubusercontent.com/BHKLAB-Pachyderm/Annotations/master/",
+                    "fileName": "drugs_with_ids.csv",
+                    "fileNameIsRegex": false,
+                    "localName": "pharmacodb_drugs_with_ids.csv"
+                },
+                {
+                    "baseURL": "https://www.guidetopharmacology.org/DATA/",
+                    "fileName": "ligand_id_mapping.csv",
+                    "fileNameIsRegex": false,
+                    "localName": "gtp-ligands.csv"
+                }
+            ],
             "referenceDatabase": {
                 "names": [
                     "PharmacoDB"
@@ -260,12 +268,12 @@
         },
         "OpenTargets" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/21.02/output/",
                 "fileName": "21.02_target_list.csv.gz",
                 "fileNameIsRegex": false,
                 "localName": "open_target_list.csv.gz"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "OpenTargets"
@@ -276,12 +284,12 @@
         },
         "GlyGen" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://data.glygen.org/ln2data/releases/data/v-2.0.3/reviewed/",
                 "fileName": "protein_glygen_pubchem_xref_mapping.csv",
                 "fileNameIsRegex": false,
                 "localName": "protein_glygen_pubchem_xref_mapping.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "GlyGen"
@@ -292,10 +300,10 @@
         },
         "OMIM" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "MIM",
                 "localName": "uniprot_mappings/uniprot_2_mim.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "OMIM",
@@ -308,12 +316,12 @@
         },
         "ComplexPortalHuman" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
                 "fileName": "9606.tsv",
                 "fileNameIsRegex": false,
                 "localName": "complexportal_9606_homo_sapiens.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Complex Portal",
@@ -326,12 +334,12 @@
         },
         "ComplexPortalSARS" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
                 "fileName": "694009.tsv",
                 "fileNameIsRegex": false,
                 "localName": "complexportal_694009_sars.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Complex Portal",
@@ -344,12 +352,12 @@
         },
         "ComplexPortalSARSCov2" : {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
                 "fileName": "2697049.tsv",
                 "fileNameIsRegex": false,
                 "localName": "complexportal_2697049_sars_cov_2.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Complex Portal",
@@ -362,10 +370,10 @@
         },
         "BioGPSGene" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "GeneID",
                 "localName": "uniprot_mappings/uniprot_2_biogps.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "BioGPS Gene"
@@ -376,10 +384,10 @@
         },
         "CTDGene" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "GeneID",
                 "localName": "uniprot_mappings/uniprot_2_ctdgene.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "CTD Gene",
@@ -392,10 +400,10 @@
         },
         "DbSNPGene" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "GeneID",
                 "localName": "uniprot_mappings/uniprot_2_dbsnpgene.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "dbSNP Gene",
@@ -408,10 +416,10 @@
         },
         "Monarch" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "GeneID",
                 "localName": "uniprot_mappings/uniprot_2_monarch.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Monarch"
@@ -422,24 +430,24 @@
         },
         "UCSC" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "UCSC",
                 "localName": "uniprot_mappings/uniprot_2_ucsc.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "UCSC"
                 ],
                 "url": "https://genome.ucsc.edu/",
-                "accessURL": "https://genome.ucsc.edu/cgi-bin/hgLinkIn?id=###ID###&resource=uniprot",
+                "accessURL": "https://genome.ucsc.edu/cgi-bin/hgLinkIn?id=###ID###&resource=uniprot"
             }
         },
         "Wormbase" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "Wormbase",
                 "localName": "uniprot_mappings/uniprot_2_wormbase.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Wormbase"
@@ -451,10 +459,10 @@
         },
         "GeneCards" : {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "GeneCards",
                 "localName": "uniprot_mappings/uniprot_2_genecards.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "GeneCards"
@@ -466,10 +474,10 @@
         },
         "RefSeqPeptide": {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "RefSeq_Protein",
                 "localName": "uniprot_mappings/uniprot_2_refseqpeptide.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "RefSeq"
@@ -481,10 +489,10 @@
         },
         "RefSeqRNA": {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "RefSeq_Nucleotide",
                 "localName": "uniprot_mappings/uniprot_2_refseqrna.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "RefSeq"
@@ -496,10 +504,10 @@
         },
         "ENSEMBL": {
             "identifierType" : "ReferenceDNASequence",
-            "download": {
+            "downloads": [{
                 "targetDatabaseName": "Ensembl",
                 "localName": "uniprot_mappings/uniprot_2_ensembl.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ENSEMBL"
@@ -511,12 +519,12 @@
         },
         "Rhea": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.expasy.org/databases/rhea/tsv/",
                 "fileName": "rhea2reactome.tsv",
                 "fileNameIsRegex": false,
                 "localName": "rhea2reactome.tsv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Rhea"
@@ -528,12 +536,12 @@
         },
         "Orphanet": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://www.orphadata.org/data/BDD_partners/",
                 "fileName": "genes_diseases_external_references.xml",
                 "fileNameIsRegex": false,
                 "localName": "genes_diseases_external_references.xml"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Orphanet"
@@ -544,12 +552,12 @@
         },
         "Zinc": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://files.docking.org/catalogs/1/chebi/",
                 "fileName": "chebi.info.txt.gz",
                 "fileNameIsRegex": false,
                 "localName": "chebi.info.txt.gz"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC"
@@ -561,12 +569,12 @@
         },
         "ZincTarget": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.txt:uniprot?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.txt"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC target"
@@ -577,12 +585,12 @@
         },
         "ZincFDA": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.csv?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC - FDA approved"
@@ -593,12 +601,12 @@
         },
         "ZincWorldDrugs": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.csv?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC - World Drugs"
@@ -609,12 +617,12 @@
         },
         "ZincMetabolites": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.csv?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC - Metabolites"
@@ -625,12 +633,12 @@
         },
         "ZincBiogenic": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.csv?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC - Biogenic"
@@ -641,12 +649,12 @@
         },
         "ZincInvestigational": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.csv?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC - Investigational"
@@ -657,12 +665,12 @@
         },
         "ZincPurchasable": {
             "identifierType" : "DatabaseIdentifier",
-            "download": {
+            "downloads": [{
                 "baseURL": "http://zinc15.docking.org/",
                 "fileName": "orthologs.csv?count=all",
                 "fileNameIsRegex": false,
                 "localName": "zinc_uniprot_ortholog.csv"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "ZINC - Predictions - Purchasable"
@@ -673,12 +681,12 @@
         },
         "Xenbase": {
             "identifierType": "",
-            "download": {
+            "downloads": [{
                 "baseURL": "https://ftp.xenbase.org/pub/DataExchange/Uniprot/",
                 "fileName": "XenbaseGeneUniprotMapping.txt",
                 "fileNameIsRegex": false,
                 "localName": "XenbaseGeneUniprotMapping.txt"
-            },
+            }],
             "referenceDatabase": {
                 "names": [
                     "Xenbase"

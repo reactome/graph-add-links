@@ -1,5 +1,6 @@
 package org.reactome.resource;
 
+import org.reactome.DownloadInfo;
 import org.reactome.utils.ConfigParser;
 
 import java.io.IOException;
@@ -12,10 +13,7 @@ import java.nio.file.Path;
  *         Created 3/3/2023
  */
 public interface FileRetriever extends Retriever {
-    default URL getResourceFileRemoteURL() throws IOException {
-        return new URL(getBaseRemoteURL().toString().concat(getRemoteFileName()));
+    default URL getResourceFileRemoteURL(DownloadInfo.Downloadable downloadable) throws IOException {
+        return new URL(downloadable.getBaseRemoteURL().toString().concat(downloadable.getRemoteFileName()));
     }
-
-    URL getBaseRemoteURL();
-    String getRemoteFileName();
 }
