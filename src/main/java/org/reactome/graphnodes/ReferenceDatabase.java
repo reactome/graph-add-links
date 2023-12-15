@@ -44,10 +44,15 @@ public class ReferenceDatabase extends GraphNode {
     }
 
     @Override
+    public String getSchemaClass() {
+        return "ReferenceDatabase";
+    }
+
+    @Override
     public Set<String> getLabels() {
         Set<String> labels = new LinkedHashSet<>();
         labels.addAll(super.getLabels());
-        labels.add("ReferenceDatabase");
+        labels.add(getSchemaClass());
         return labels;
     }
 
