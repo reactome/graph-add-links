@@ -67,7 +67,7 @@ public abstract class GraphNode {
             return false;
         }
         setDbId();
-        ReactomeGraphDatabase.queue(
+        ReactomeGraphDatabase.getSession().run(
             "CREATE " + this.toString()
         );
 
