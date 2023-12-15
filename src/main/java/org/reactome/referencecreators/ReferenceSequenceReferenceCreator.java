@@ -1,5 +1,6 @@
 package org.reactome.referencecreators;
 
+import java.io.IOException;
 import java.util.*;
 
 import org.neo4j.driver.v1.Transaction;
@@ -70,9 +71,19 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
                 //referenceGeneProduct.connectTo(databaseIdentifier, new GraphNode.Relationship("crossReference"));
             }
         }
-        if (ReactomeGraphDatabase.getCurrentTransaction() != null) {
-            ReactomeGraphDatabase.commit();
-        }
+//        if (ReactomeGraphDatabase.getCurrentTransaction() != null) {
+//            ReactomeGraphDatabase.commit();
+//        }
+    }
+
+    @Override
+    public void writeCSV() throws IOException {
+
+    }
+
+    @Override
+    public void readCSV() {
+
     }
 
     private Map<IdentifierNode, List<ReferenceSequence>> createReferenceSequences() {

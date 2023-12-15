@@ -2,11 +2,9 @@ package org.reactome.referencecreators;
 
 import org.neo4j.driver.v1.Transaction;
 import org.reactome.graphdb.ReactomeGraphDatabase;
-import org.reactome.graphnodes.GraphNode;
-import org.reactome.graphnodes.IdentifierNode;
-import org.reactome.graphnodes.ReferenceDatabase;
-import org.reactome.graphnodes.ReferenceGeneProduct;
+import org.reactome.graphnodes.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -33,6 +31,19 @@ public abstract class ReferenceCreator {
     }
 
     public abstract void insertIdentifiers();
+
+    public abstract void writeCSV() throws IOException;
+
+    public abstract void readCSV() throws IOException;
+
+    public void createReferenceDatabaseNode() {
+        getReferenceDatabase().insertNode();
+    }
+
+    public void createInstanceEditNode() {
+        InstanceEdit.get().insertNode();
+    }
+
 
 //    protected Set<String> getUniProtIdentifiers() {
 //        return getSourceIdentifierToReferenceIdentifiers().keySet();
@@ -67,6 +78,6 @@ public abstract class ReferenceCreator {
             " MATCH (tn: " + toNode.getSchemaClass() + "{dbId: " + toNode.getDbId() + "})" +
             " CREATE (fn)-"+ relationship + "->(tn)";
         System.out.println(createQuery);
-        ReactomeGraphDatabase.queue(createQuery);
+        ReactomeGraphDatabase.getSession().run(createQuery);
     }
 }
