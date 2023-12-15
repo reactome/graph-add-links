@@ -49,7 +49,7 @@ public abstract class ReferenceSequence extends IdentifierNode {
     }
 
 
-    protected String getDisplayName() {
+    public String getDisplayName() {
         String displayName = super.getDisplayName();
 
         if (getGeneNames() != null && !getGeneNames().isEmpty()) {
