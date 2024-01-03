@@ -20,7 +20,7 @@ public class ComplexPortalFileProcessor implements FileProcessor {
     private Path filePath;
     private Map<String, Set<String>> complexToResourceIdentifiers;
 
-    public ComplexPortalFileProcessor(Path filePath) throws IOException {
+    public ComplexPortalFileProcessor(Path filePath) {
         this.filePath = filePath;
     }
 
