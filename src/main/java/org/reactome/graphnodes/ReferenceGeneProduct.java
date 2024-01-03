@@ -122,7 +122,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
     @Override
     public int hashCode() {
-        return -1;
+        return Objects.hashCode(this.getIdentifier());
     }
 
     @Override
