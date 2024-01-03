@@ -6,8 +6,6 @@ import org.reactome.utils.ConfigParser;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
@@ -30,10 +28,7 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
         HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL(downloadable).openConnection();
         httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.0");
 
-        String authString = getUserName() + ":" + getPassword();
-        String encodedAuthString = java.util.Base64.getEncoder().encodeToString(authString.getBytes());
-        String authHeaderValue = "Basic " + encodedAuthString;
-        httpURLConnection.setRequestProperty("Authorization", authHeaderValue);
+        httpURLConnection.setRequestProperty("Authorization", getAuthorizationHeaderValue());
 
         httpURLConnection.setConnectTimeout(twoMinutes());
         httpURLConnection.setReadTimeout(twoMinutes());
@@ -50,9 +45,15 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
 
     protected abstract String getPassword();
 
-    private int twoMinutes() {
+    protected String getAuthorizationHeaderValue() {
+        String authString = getUserName() + ":" + getPassword();
+        String encodedAuthString = java.util.Base64.getEncoder().encodeToString(authString.getBytes());
+
+        return "Basic " + encodedAuthString;
+    }
+
+    protected int twoMinutes() {
         final int twoMinutesInMilliSeconds = 1000 * 60 * 2;
         return twoMinutesInMilliSeconds;
     }
-
 }
