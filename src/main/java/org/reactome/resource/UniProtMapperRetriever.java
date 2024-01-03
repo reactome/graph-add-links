@@ -16,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.reactome.utils.CollectionUtils.split;
 
@@ -36,7 +37,7 @@ public class UniProtMapperRetriever implements Retriever {
     public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
         List<Collection<String>> uniProtIdentifiersCollections = split(getUniProtIdsFromGraphDatabase(),100);
 
-        Files.write(getLocalFilePath(downloadable), "From\tTo\n".getBytes(), StandardOpenOption.CREATE);
+        Files.write(getLocalFilePath(downloadable), "From\tTo\n".getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         for (Collection<String> uniProtIdentifiers : uniProtIdentifiersCollections) {
             Map<String, List<String>> uniProtIdentifierToResourceIdentifiers =
                 getMapping(uniProtIdentifiers, getTargetDatabase(downloadable));
@@ -51,11 +52,6 @@ public class UniProtMapperRetriever implements Retriever {
                 }
             }
         }
-    }
-
-    @Override
-    public List<Path> getLocalFilePaths() {
-        return null;
     }
 
     @Override
