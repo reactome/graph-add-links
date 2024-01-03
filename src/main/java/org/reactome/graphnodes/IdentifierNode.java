@@ -65,6 +65,10 @@ public abstract class IdentifierNode extends GraphNode {
     }
 
     public String getUrl() {
+        if (getReferenceDatabase() == null) {
+            return "N/A";
+        }
+
         return getReferenceDatabase().getAccessURL().replace("###ID###", getIdentifier());
     }
 
