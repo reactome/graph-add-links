@@ -81,7 +81,7 @@ public class ReferenceTherapeutic extends IdentifierNode {
         final String noFilter = "";
 
         return guideToPharmacologyIdentifiers != null && !guideToPharmacologyIdentifiers.isEmpty() ?
-            String.format("WHERE rm.identifier IN %s", formatAsCypherList(guideToPharmacologyIdentifiers)) :
+            String.format("WHERE rt.identifier IN %s", formatAsCypherList(guideToPharmacologyIdentifiers)) :
             noFilter;
     }
 
