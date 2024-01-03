@@ -63,6 +63,17 @@ public class FileUtils {
         );
     }
 
+    public static Path getPathWithoutZipExtension(Path filePath) {
+        if (filePath.toString().endsWith(".gz")) {
+            return Paths.get(filePath.toString().replace(".gz", ""));
+        }
+
+        if (filePath.toString().endsWith(".zip")) {
+            return Paths.get(filePath.toString().replace(".zip", ""));
+        }
+        return filePath;
+    }
+
     private static Reader getReaderAfterVersionHeader(BufferedReader reader) throws IOException {
         final int bufferSize = 1024; // Set a reasonable buffer size
         if (reader.markSupported()) {
@@ -76,16 +87,5 @@ public class FileUtils {
             reader.reset(); // Reset to beginning to include first line if not version header
         }
         return reader; // Return reader at proper position after version header, if exists
-    }
-
-    private static Path getPathWithoutZipExtension(Path filePath) {
-        if (filePath.toString().endsWith(".gz")) {
-            return Paths.get(filePath.toString().replace(".gz", ""));
-        }
-
-        if (filePath.toString().endsWith(".zip")) {
-            return Paths.get(filePath.toString().replace(".zip", ""));
-        }
-        return filePath;
     }
 }
