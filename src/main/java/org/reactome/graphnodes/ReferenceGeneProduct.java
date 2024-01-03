@@ -232,10 +232,13 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
         return String.format(
             "MATCH (%s:ReferenceGeneProduct)-[:species]->(%s:Species) " +
+            "MATCH (%s)-[:referenceDatabase]->(rd:ReferenceDatabase) " +
+            "WHERE rd.displayName = \"UniProt\" " +
             getFilterStatementForUniProtIdentifiers(identifierVariable, uniProtIdentifiers) +
             " RETURN %s as dbId, %s as identifier,%s as geneNames,%s as speciesName",
             referenceGeneProductVariable,
             speciesVariableName,
+            referenceGeneProductVariable,
             dbIdVariable,
             identifierVariable,
             geneNameVariable,
@@ -249,7 +252,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         final String noFilter = "";
 
         return uniProtIdentifiers != null && !uniProtIdentifiers.isEmpty() ?
-            String.format("WHERE %s IN %s", identifierVariable, formatAsCypherList(uniProtIdentifiers)) :
+            String.format("AND %s IN %s", identifierVariable, formatAsCypherList(uniProtIdentifiers)) :
             noFilter;
     }
 
