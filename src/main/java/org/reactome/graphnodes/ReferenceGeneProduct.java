@@ -17,6 +17,7 @@ import static org.reactome.utils.StringUtils.quote;
 public class ReferenceGeneProduct extends ReferenceSequence {
     private static final String REFERENCE_DATABASE_NAME = "UniProt";
 
+    private static boolean allRGPsFetched;
     private static Set<ReferenceGeneProduct> rgpCache = new LinkedHashSet<>();
     private static ReferenceDatabase referenceDatabase;
 
@@ -42,27 +43,31 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         ));
     }
 
-//    public static Map<String, ReferenceGeneProduct> fetchAllReferenceGeneProducts() {
-//
-//
-//        if (allUniProtIdentifiersToReferenceGeneProducts == null) {
-//            String referenceGeneProductVariableName = "rgp";
-//            String speciesVariableName = "species";
-//
-//            allUniProtIdentifiersToReferenceGeneProducts = ReactomeGraphDatabase.getSession()
-//                .run(getReferenceGeneProductDataQuery(referenceGeneProductVariableName, speciesVariableName))
-//                .stream()
-//                .map(record -> {
-//                    String identifier = record.get("identifier").asString();
-//                    List<String> geneNames = record.get("geneNames").asList(Value::asString);
-//                    String speciesName = record.get("speciesName").asString();
-//
-//                    return new ReferenceGeneProduct(identifier, geneNames, speciesName);
-//                })
-//                .collect(Collectors.toList()
-//        }
-//        return allUniProtIdentifiersToReferenceGeneProducts;
-//    }
+    public static Map<String, ReferenceGeneProduct> fetchAllReferenceGeneProducts() {
+        if (!allRGPsFetched) {
+            String referenceGeneProductVariableName = "rgp";
+            String speciesVariableName = "species";
+
+            ReactomeGraphDatabase.getSession()
+                .run(getReferenceGeneProductDataQuery(referenceGeneProductVariableName, speciesVariableName))
+                .stream()
+                .forEach(record -> {
+                    long dbId = record.get("dbId").asLong();
+                    String identifier = record.get("identifier").asString();
+                    List<String> geneNames = !record.get("geneNames").isNull() ?
+                        record.get("geneNames").asList(Value::asString) : new ArrayList<>();
+                    String speciesName = record.get("speciesName").asString();
+
+                    rgpCache.add(new ReferenceGeneProduct(dbId, identifier, geneNames, speciesName));
+                });
+            allRGPsFetched = true;
+        }
+
+        return rgpCache.stream().collect(Collectors.toMap(
+            rgp -> rgp.getIdentifier(),
+            rgp -> rgp
+        ));
+    }
 
 //    public static Map<String, ReferenceGeneProduct> fetchHumanReferenceGeneProducts() {
 //        return fetchReferenceGeneProductsForSpecies("Homo sapiens");
