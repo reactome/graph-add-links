@@ -55,8 +55,13 @@ public class ReferenceMolecule extends IdentifierNode {
     }
 
     private static Set<ReferenceMolecule> queryReferenceMolecules(Set<String> chebiIdentifiers) {
+        Set<String> chebiIdentifiersWithoutPrefix = chebiIdentifiers.stream()
+            .map(chebiIdentifier -> chebiIdentifier.replace("CHEBI:",""))
+            .collect(Collectors.toSet());
+
+
         return ReactomeGraphDatabase.getSession()
-            .run(getReferenceMoleculeDataQuery(chebiIdentifiers))
+            .run(getReferenceMoleculeDataQuery(chebiIdentifiersWithoutPrefix))
             .stream()
             .map(record -> {
                 long dbId = record.get("dbId").asLong();
@@ -64,7 +69,6 @@ public class ReferenceMolecule extends IdentifierNode {
 
                 return new ReferenceMolecule(dbId, identifier);
             })
-            //.peek(System.out::println)
             .collect(Collectors.toSet());
 
     }
