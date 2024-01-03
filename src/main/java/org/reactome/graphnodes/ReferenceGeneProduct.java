@@ -128,9 +128,10 @@ public class ReferenceGeneProduct extends ReferenceSequence {
     @Override
     protected void setIdentifier(String identifier) {
         if (!isValidUniProtIdentifier(identifier)) {
-            throw new IllegalArgumentException(identifier + " is not a valid UniProt Identifier.  " +
-                "It must be a 6 or 10 character alphanumeric string (e.g. P12345, A0A3Q9U766).");
+        //    throw new IllegalArgumentException(identifier + " is not a valid UniProt Identifier.  " +
+        //        "It must be a 6 or 10 character alphanumeric string (e.g. P12345, A0A3Q9U766).");
         }
+        super.setIdentifier(identifier);
     }
 
     private static Set<ReferenceGeneProduct> fetchNonCachedReferenceGeneProducts(Set<String> uniProtIdentifiers) {
