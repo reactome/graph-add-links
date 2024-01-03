@@ -25,6 +25,11 @@ public class ChEBIDatabaseIdentifierReferenceCreator extends DatabaseIdentifierR
         );
     }
 
+    @Override
+    protected Set<String> getIdentifierValues(String sourceIdentifier) {
+        return super.getIdentifierValues("CHEBI:" + sourceIdentifier);
+    }
+
     private Set<String> getChEBIIdentifiers() {
         return getSourceIdentifierToReferenceIdentifiers().keySet();
     }
