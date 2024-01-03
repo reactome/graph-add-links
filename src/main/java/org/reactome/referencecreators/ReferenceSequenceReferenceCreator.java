@@ -1,6 +1,10 @@
 package org.reactome.referencecreators;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 import org.neo4j.driver.v1.Transaction;
@@ -48,42 +52,83 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         return this.referenceSequenceType;
     }
 
+//    @Override
+//    public void insertIdentifiers() {
+//        System.out.println("Creating reference sequence map");
+//
+//        Map<IdentifierNode, List<ReferenceSequence>> identifierNodeToReferenceSequencesMap =
+//            this.createReferenceSequences();
+//
+//        getReferenceDatabase().insertNode();
+//
+//        for (IdentifierNode identifierNode : identifierNodeToReferenceSequencesMap.keySet()) {
+//            List<ReferenceSequence> referenceSequences = identifierNodeToReferenceSequencesMap.get(identifierNode);
+//
+//            System.out.println(identifierNode);
+//            System.out.println(referenceSequences);
+//            for (ReferenceSequence referenceSequence : referenceSequences) {
+//                createNodesWithRelationship(identifierNode, referenceSequence, getReferenceSequenceRelationship());
+//                createNodesWithRelationship(referenceSequence, getReferenceDatabase(), new GraphNode.Relationship("referenceDatabase"));
+//                createNodesWithRelationship(referenceSequence, InstanceEdit.get(), new GraphNode.Relationship("created"));
+//
+//            }
+//        }
+//    }
+
     @Override
-    public void insertIdentifiers() {
-        System.out.println("Creating reference sequence map");
+    public void writeCSV() throws IOException, URISyntaxException {
+        Path resourceDirectory = getReferenceCreatorCSVDirectory();
+
+        Path referenceSequenceCSVFilePath = resourceDirectory.resolve(getResourceName() + "_ReferenceSequences.csv");
+        writeReferenceCSVHeader(referenceSequenceCSVFilePath);
+
+        Path relationshipCSVFilePath = resourceDirectory.resolve(getResourceName() + "_Relationships.csv");
+        writeRelationshipCSVHeader(relationshipCSVFilePath);
+
+        System.out.println("Creating source to reference sequences map...");
 
         Map<IdentifierNode, List<ReferenceSequence>> identifierNodeToReferenceSequencesMap =
             this.createReferenceSequences();
 
-        getReferenceDatabase().insertNode();
+        System.out.println("Source to reference sequences map created");
 
-        //Transaction transaction = ReactomeGraphDatabase.getSession().beginTransaction();
+        System.out.println("Writing CSV data for identifier nodes");
         for (IdentifierNode identifierNode : identifierNodeToReferenceSequencesMap.keySet()) {
             List<ReferenceSequence> referenceSequences = identifierNodeToReferenceSequencesMap.get(identifierNode);
 
-            System.out.println(identifierNode);
-            System.out.println(referenceSequences);
             for (ReferenceSequence referenceSequence : referenceSequences) {
-                createNodesWithRelationship(identifierNode, referenceSequence, getReferenceSequenceRelationship());
-                createNodesWithRelationship(referenceSequence, getReferenceDatabase(), new GraphNode.Relationship("referenceDatabase"));
-                createNodesWithRelationship(referenceSequence, InstanceEdit.get(), new GraphNode.Relationship("created"));
-
-                //referenceGeneProduct.connectTo(databaseIdentifier, new GraphNode.Relationship("crossReference"));
+                writeReferenceSequenceLine(referenceSequenceCSVFilePath, referenceSequence);
+                writeRelationshipLine(relationshipCSVFilePath, identifierNode.getDbId(), referenceSequence.getDbId(),
+                    getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
         }
-//        if (ReactomeGraphDatabase.getCurrentTransaction() != null) {
-//            ReactomeGraphDatabase.commit();
-//        }
+        System.out.println("CSV data complete");
     }
 
     @Override
-    public void writeCSV() throws IOException {
+    public void readCSV() throws URISyntaxException {
+        final String csvDirectory = getReferenceCreatorCSVDirectory().toString().replace("\\","/");
 
-    }
+        System.out.println("Creating reference sequences...");
+        ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
+            tx.run("LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_ReferenceSequences.csv' AS row " +
+                "CREATE (:ReferenceEntity:ReferenceSequence:Reference" + getReferenceSequenceType().name() + "Sequence:DatabaseObject " +
+                "{dbId: toInteger(row.DbId), displayName: row.DisplayName, schemaClass: row.SchemaClass, " +
+                "identifier: row.Identifier, referenceDatabase: row.ReferenceDbName, url: row.URL})");
+            return null;
+        });
 
-    @Override
-    public void readCSV() {
-
+        System.out.println("Creating relationships...");
+        ReactomeGraphDatabase.getSession().run(
+            "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row " +
+            "MATCH (do:DatabaseObject {dbId: toInteger(row.SourceDbId)}) " +
+            "MATCH (rs:ReferenceSequence {dbId: toInteger(row.ReferenceSequenceDbId)}) " +
+            "MATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)}) " +
+            "MATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)}) " +
+            "CREATE (do)-" + getReferenceSequenceRelationship() + "->(rs) " +
+            "CREATE (rs)-[:referenceDatabase]->(rd) " +
+            "CREATE (rs)-[:created]->(ie)"
+        );
     }
 
     private Map<IdentifierNode, List<ReferenceSequence>> createReferenceSequences() {
@@ -133,5 +178,36 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         } else {
             throw new IllegalStateException("Unknown reference sequence type: " + getReferenceSequenceType());
         }
+    }
+
+    private void writeRelationshipCSVHeader(Path sourceToDatabaseIdentifierCSVFilePath) throws IOException {
+        final String header = String.join(",",
+            "SourceDbId","ReferenceSequenceDbId","ReferenceDatabaseDbId","InstanceEditDbId"
+        ).concat(System.lineSeparator());
+
+        Files.write(
+            sourceToDatabaseIdentifierCSVFilePath,
+            header.getBytes(),
+            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+        );
+    }
+
+    private void writeReferenceSequenceLine(Path referenceSequenceCSVFilePath, ReferenceSequence referenceSequence)
+        throws IOException {
+
+        final String line = String.join(",",
+            String.valueOf(referenceSequence.getDbId()),
+            referenceSequence.getDisplayName(),
+            referenceSequence.getSchemaClass(),
+            referenceSequence.getIdentifier(),
+            referenceSequence.getReferenceDatabaseDisplayName(),
+            referenceSequence.getUrl()
+        ).concat(System.lineSeparator());
+
+        Files.write(
+            referenceSequenceCSVFilePath,
+            line.getBytes(),
+            StandardOpenOption.APPEND
+        );
     }
 }
