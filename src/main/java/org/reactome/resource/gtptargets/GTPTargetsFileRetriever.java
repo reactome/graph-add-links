@@ -6,9 +6,9 @@ import org.reactome.resource.BasicFileRetriever;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/20/2023
  */
-public class GuideToPharmacologyTargetsFileRetriever extends BasicFileRetriever {
+public class GTPTargetsFileRetriever extends BasicFileRetriever {
 
-    public GuideToPharmacologyTargetsFileRetriever() {
+    public GTPTargetsFileRetriever() {
         super("GTPTargets");
     }
 }

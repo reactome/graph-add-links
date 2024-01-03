@@ -13,14 +13,14 @@ import static org.reactome.utils.FileUtils.getCSVParser;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/20/2023
  */
-public class GuideToPharmacologyLigandsFileProcessor implements FileProcessor {
+public class GTPLigandsFileProcessor implements FileProcessor {
     private static final int RGD_IDENTIFIER_INDEX = 1;
     private static final int UNIPROT_IDENTIFIER_INDEX = 21;
 
     private Path filePath;
     private Map<String, Set<String>> uniProtToResourceIdentifiers;
 
-    public GuideToPharmacologyLigandsFileProcessor(Path filePath) throws IOException {
+    public GTPLigandsFileProcessor(Path filePath) throws IOException {
         this.filePath = filePath;
     }
 
@@ -33,8 +33,10 @@ public class GuideToPharmacologyLigandsFileProcessor implements FileProcessor {
                 parser.forEach(line -> {
                     String chebiId = line.get("Chebi ID").replace("ChEBI:","");
                     String ligandId = line.get("Ligand id");
-                    this.uniProtToResourceIdentifiers.computeIfAbsent(chebiId, k -> new HashSet<>())
-                        .add(ligandId);
+                    if (chebiId != null && !chebiId.isEmpty()) {
+                        this.uniProtToResourceIdentifiers.computeIfAbsent(chebiId, k -> new HashSet<>())
+                            .add(ligandId);
+                    }
                 });
             }
         }

@@ -12,14 +12,14 @@ import java.util.*;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/20/2023
  */
-public class GuideToPharmacologyTargetsFileProcessor implements FileProcessor {
+public class GTPTargetsFileProcessor implements FileProcessor {
     private static final int RGD_IDENTIFIER_INDEX = 1;
     private static final int UNIPROT_IDENTIFIER_INDEX = 21;
 
     private Path filePath;
     private Map<String, Set<String>> uniProtToResourceIdentifiers;
 
-    public GuideToPharmacologyTargetsFileProcessor(Path filePath) throws IOException {
+    public GTPTargetsFileProcessor(Path filePath) throws IOException {
         this.filePath = filePath;
     }
 
