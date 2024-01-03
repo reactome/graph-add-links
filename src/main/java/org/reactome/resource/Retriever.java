@@ -6,6 +6,7 @@ import org.reactome.utils.ConfigParser;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -20,7 +21,9 @@ public interface Retriever {
 
     void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException;
 
-    List<Path> getLocalFilePaths();
+    default List<Path> getLocalFilePaths() {
+        return getDownloadInfo().getDownloadables().stream().map(this::getLocalFilePath).collect(Collectors.toList());
+    }
 
     default Path getLocalFilePath(DownloadInfo.Downloadable downloadable) {
         return ConfigParser.getDownloadDirectoryPath().resolve(downloadable.getLocalFileName());
