@@ -40,10 +40,6 @@ public class BasicFileRetriever implements FileRetriever {
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
     }
 
-    public List<Path> getLocalFilePaths() {
-        return getDownloadInfo().getDownloadables().stream().map(this::getLocalFilePath).collect(Collectors.toList());
-    }
-
     @Override
     public DownloadInfo getDownloadInfo() {
         return this.downloadInfo;
