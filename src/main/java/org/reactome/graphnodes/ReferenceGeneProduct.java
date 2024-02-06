@@ -9,6 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.reactome.utils.StringUtils.quote;
+import static org.reactome.utils.UniProtUtils.isValidUniProtId;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -127,7 +128,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
     @Override
     protected void setIdentifier(String identifier) {
-        if (!isValidUniProtIdentifier(identifier)) {
+        if (!isValidUniProtId(identifier)) {
         //    throw new IllegalArgumentException(identifier + " is not a valid UniProt Identifier.  " +
         //        "It must be a 6 or 10 character alphanumeric string (e.g. P12345, A0A3Q9U766).");
         }
@@ -262,10 +263,5 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
     private static String getReferenceDatabaseQuery() {
         return "MATCH (rd:ReferenceDatabase) WHERE rd.displayName = '" + REFERENCE_DATABASE_NAME + "'RETURN rd";
-    }
-
-    private boolean isValidUniProtIdentifier(String identifier) {
-        return identifier.matches("^\\w+$") &&
-            (identifier.length() == 6 || identifier.length() == 10);
     }
 }
