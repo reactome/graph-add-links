@@ -33,7 +33,7 @@
                 "names": [
                     "PRO"
                 ],
-                "url": "http://pir.georgetown.edu/pro",
+                "url": "https://proconsortium.org",
                 "accessURL": "https://proconsortium.org/app/entry/PR:###ID###",
                 "resourceIdentifier": "MIR:"
             }
@@ -50,7 +50,7 @@
                 "names": [
                     "NCBI Gene"
                 ],
-                "url": "http://www.ncbi.nlm.nih.gov/sites/entrez?db=gene",
+                "url": "https://www.ncbi.nlm.nih.gov/gene",
                 "accessURL": "https://www.ncbi.nlm.nih.gov/gene/###ID###",
                 "resourceIdentifier": "MIR:00100099"
             }
@@ -343,7 +343,7 @@
                     "OMIM",
                     "MIM"
                 ],
-                "url": "http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM",
+                "url": "https://www.ncbi.nlm.nih.gov/omim",
                 "accessURL": "https://omim.org/entry/###ID###",
                 "resourceIdentifier": "MIR:00100024"
             }
@@ -437,7 +437,7 @@
                     "CTD Gene",
                     "Comparative Toxicogenomics Database (Gene)"
                 ],
-                "url": "https://ctd.mdibl.org/",
+                "url": "https://ctdbase.org/",
                 "accessURL": "https://ctdbase.org/detail.go?type=gene&acc=###ID###",
                 "resourceIdentifier": "MIR:00100131"
             }
@@ -456,7 +456,7 @@
                     "NCBI dbSNP"
                 ],
                 "url": "https://www.ncbi.nlm.nih.gov/snp/",
-                "accessURL": "https://www.ncbi.nlm.nih.gov/snp//###ID###",
+                "accessURL": "https://www.ncbi.nlm.nih.gov/snp/###ID###",
                 "resourceIdentifier": "MIR:00100206"
             }
         },
@@ -496,7 +496,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
-                    "targetDatabaseName": "Wormbase",
+                    "targetDatabaseName": "WormBase",
                     "localName": "uniprot_mappings/uniprot_2_wormbase.tsv"
                 }
             ],
@@ -637,7 +637,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.txt:uniprot?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.txt"
@@ -651,11 +651,11 @@
                 "accessURL": "https://zinc15.docking.org/orthologs/?uniprot=###ID###"
             }
         },
-        "ZincFDA": {
+        "ZincFDAApproved": {
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.csv"
@@ -673,7 +673,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.csv"
@@ -691,7 +691,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.csv"
@@ -709,7 +709,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.csv"
@@ -727,7 +727,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.csv"
@@ -741,11 +741,11 @@
                 "accessURL": "https://zinc15.docking.org/orthologs/###ID###/substances/subsets/investigational-only/"
             }
         },
-        "ZincPurchasable": {
+        "ZincPredictionsPurchasable": {
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
-                    "baseURL": "http://zinc15.docking.org/",
+                    "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
                     "localName": "zinc_uniprot_ortholog.csv"
@@ -757,6 +757,24 @@
                 ],
                 "url": "https://zinc15.docking.org/",
                 "accessURL": "https://zinc15.docking.org/orthologs/###ID###/predictions/subsets/purchasable/"
+            }
+        },
+        "ZincSubstances": {
+            "identifierType": "DatabaseIdentifier",
+            "downloads": [
+                {
+                    "baseURL": "https://zinc15.docking.org/",
+                    "fileName": "orthologs.csv?count=all",
+                    "fileNameIsRegex": false,
+                    "localName": "zinc_uniprot_ortholog.csv"
+                }
+            ],
+            "referenceDatabase": {
+                "names": [
+                    "ZINC - Substances"
+                ],
+                "url": "https://zinc15.docking.org/",
+                "accessURL": "https://zinc15.docking.org/orthologs/###ID###/substances/"
             }
         },
         "Xenbase": {
@@ -835,7 +853,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
-                    "baseURL": "http://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/",
+                    "baseURL": "https://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/",
                     "fileName": "hgnc_complete_set.txt",
                     "fileNameIsRegex": false,
                     "localName": "hgnc_complete_set.txt"
@@ -870,7 +888,6 @@
                 "accessURL": "https://cancer.sanger.ac.uk/cosmic/gene/overview?ln=###ID###",
                 "resourceIdentifier": "MIR:00100802"
             }
-
         }
     }
 }
