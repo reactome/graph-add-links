@@ -109,6 +109,12 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
     public void readCSV() throws URISyntaxException {
         final String csvDirectory = getReferenceCreatorCSVDirectory().toString().replace("\\","/");
 
+//        System.out.println("Creating indexes...");
+//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :ReferenceSequence(dbId) IF NOT EXISTS");
+//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :DatabaseObject(dbId) IF NOT EXISTS");
+//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :ReferenceDatabase(dbId) IF NOT EXISTS");
+//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :InstanceEdit(dbId) IF NOT EXISTS");
+
         System.out.println("Creating reference sequences...");
         ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
             tx.run("LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_ReferenceSequences.csv' AS row " +
@@ -119,16 +125,19 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         });
 
         System.out.println("Creating relationships...");
-        ReactomeGraphDatabase.getSession().run(
-            "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row " +
-            "MATCH (do:DatabaseObject {dbId: toInteger(row.SourceDbId)}) " +
-            "MATCH (rs:ReferenceSequence {dbId: toInteger(row.ReferenceSequenceDbId)}) " +
-            "MATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)}) " +
-            "MATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)}) " +
-            "CREATE (do)-" + getReferenceSequenceRelationship() + "->(rs) " +
-            "CREATE (rs)-[:referenceDatabase]->(rd) " +
-            "CREATE (rs)-[:created]->(ie)"
-        );
+
+        String query =
+            "USING PERIODIC COMMIT 100\n" +
+            "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row\n" +
+            "\tMATCH (do:DatabaseObject {dbId: toInteger(row.SourceDbId)})\n" +
+            "\tMATCH (rs:ReferenceSequence {dbId: toInteger(row.ReferenceSequenceDbId)})\n" +
+            "\tMATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)})\n" +
+            "\tMATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)})\n" +
+            "\tCREATE (do)-" + getReferenceSequenceRelationship() + "->(rs)\n" +
+            "\tCREATE (rs)-[:referenceDatabase]->(rd)\n" +
+            "\tCREATE (rs)-[:created]->(ie)";
+        System.out.println(query);
+        ReactomeGraphDatabase.getSession().run(query);
     }
 
     private Map<IdentifierNode, List<ReferenceSequence>> createReferenceSequences() {

@@ -1,5 +1,7 @@
 package org.reactome.referencecreators;
 
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Transaction;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.*;
 
@@ -7,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
@@ -55,7 +58,9 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
         Map<IdentifierNode, List<DatabaseIdentifier>> identifierNodeToDatabaseIdentifiersMap =
             this.createDatabaseIdentifiers();
 
+        System.out.println("Map created");
 
+        System.out.println("Writing CSV");
         for (IdentifierNode identifierNode : identifierNodeToDatabaseIdentifiersMap.keySet()) {
             List<DatabaseIdentifier> databaseIdentifiers = identifierNodeToDatabaseIdentifiersMap.get(identifierNode);
             System.out.println("Identifier Node: " + identifierNode);
@@ -67,10 +72,11 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
                     getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
         }
+        System.out.println("CSV data complete");
     }
 
     @Override
-    public void readCSV() throws URISyntaxException {
+    public void readCSV() throws URISyntaxException, IOException {
         final String csvDirectory = getReferenceCreatorCSVDirectory().toString().replace("\\","/");
 
         System.out.println("Creating database identifiers...");
@@ -83,16 +89,51 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
         });
 
         System.out.println("Creating relationships...");
-        ReactomeGraphDatabase.getSession().run(
-            "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row " +
-            "MATCH (do:DatabaseObject {dbId: toInteger(row.SourceDbId)}) " +
-            "MATCH (di:DatabaseIdentifier {dbId: toInteger(row.DatabaseIdentifierDbId)}) " +
-            "MATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)}) " +
-            "MATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)}) " +
-            "CREATE (do)-[:crossReference]->(di) " +
-            "CREATE (di)-[:referenceDatabase]->(rd) " +
-            "CREATE (di)-[:created]->(ie)"
-        );
+//
+//        try (Transaction tx = ReactomeGraphDatabase.getSession().beginTransaction()) {
+//            String createRelationshipQuery =
+//                "MATCH (do:DatabaseObject {dbId: $sourceDbId}), (di:DatabaseIdentifier {dbId: $databaseIdentifierDbId}), " +
+//                    "(rd:ReferenceDatabase {dbId: $referenceDatabaseDbId}), (ie:InstanceEdit {dbId: $instanceEditDbId})" +
+//                    "CREATE (do)-[:crossReference]->(di) " +
+//                    "CREATE (di)-[:referenceDatabase]->(rd) " +
+//                    "CREATE (di)-[:created]->(ie)";
+//            List<String> relationshipLines = Files.readAllLines(Paths.get(csvDirectory, getResourceName() + "_Relationships.csv"));
+//            for (String relationshipLine : relationshipLines) {
+//                String[] relationshipColumns = relationshipLine.split(",");
+//                long sourceDbId = Long.parseLong(relationshipColumns[0]);
+//                long databaseIdentifierDbId = Long.parseLong(relationshipColumns[1]);
+//                long referenceDatabaseDbId = Long.parseLong(relationshipColumns[2]);
+//                long instanceEditDbId = Long.parseLong(relationshipColumns[3]);
+//
+//                Map<String, Object> parameters = new LinkedHashMap<>();
+//                parameters.put("sourceDbId", sourceDbId);
+//                parameters.put("databaseIdentifierDbId", databaseIdentifierDbId);
+//                parameters.put("referenceDatabaseDbId", referenceDatabaseDbId);
+//                parameters.put("instanceEditDbId", instanceEditDbId);
+//
+//                System.out.println("Running query with parameters " + parameters);
+//                tx.run(createRelationshipQuery, parameters);
+//           }
+//            tx.commitAsync().toCompletableFuture().join();
+//        }
+
+        String query =
+            "USING PERIODIC COMMIT 100\n" +
+            "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row\n" +
+            "MATCH (do:DatabaseObject {dbId: toInteger(row.SourceDbId)})\n" +
+            "MATCH (di:DatabaseIdentifier {dbId: toInteger(row.DatabaseIdentifierDbId)})\n" +
+            "MATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)})\n" +
+            "MATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)})\n" +
+            "CREATE (do)-[:crossReference]->(di)\n" +
+            "CREATE (di)-[:referenceDatabase]->(rd)\n" +
+            "CREATE (di)-[:created]->(ie) ";
+
+        System.out.println(query);
+        StatementResult statementResult = ReactomeGraphDatabase.getSession().run(query);
+        if (statementResult.hasNext()) {
+            System.out.println(statementResult.next());
+        }
+        System.out.println("Done");
     }
 
     private Map<IdentifierNode, List<DatabaseIdentifier>> createDatabaseIdentifiers() {

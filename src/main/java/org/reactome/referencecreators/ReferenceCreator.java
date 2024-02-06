@@ -52,7 +52,7 @@ public abstract class ReferenceCreator {
 
     public abstract void writeCSV() throws IOException, URISyntaxException;
 
-    public abstract void readCSV() throws URISyntaxException;
+    public abstract void readCSV() throws IOException, URISyntaxException;
 
     public void createReferenceDatabaseNode() {
         getReferenceDatabase().insertNode();
