@@ -3,8 +3,7 @@ package org.reactome.resource;
 import org.reactome.DownloadInfo;
 import org.reactome.utils.ConfigParser;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,11 +30,16 @@ public class BasicFileRetriever implements FileRetriever {
         Files.createDirectories(ConfigParser.getDownloadDirectoryPath());
 
         HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL(downloadable).openConnection();
-        httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.0");
+        httpURLConnection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
+        httpURLConnection.addRequestProperty("User-Agent", "Mozilla/5.0");
+
         httpURLConnection.setConnectTimeout(twoMinutes());
         httpURLConnection.setReadTimeout(twoMinutes());
+
         ReadableByteChannel remoteFileByteChannel = Channels.newChannel(httpURLConnection.getInputStream());
         FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath(downloadable).toFile());
+
+
 
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
     }
