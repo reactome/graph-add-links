@@ -1,4 +1,4 @@
-package org.reactome.resource.complexportal.sarscov2;
+package org.reactome.resource.complexportalsarscov2;
 
 import org.reactome.graphnodes.IdentifierNode;
 import org.reactome.referencecreators.DatabaseIdentifierReferenceCreator;

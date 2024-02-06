@@ -1,4 +1,4 @@
-package org.reactome.resource.refseq.rna;
+package org.reactome.resource.refseqrna;
 
 import org.reactome.graphnodes.ReferenceSequence;
 import org.reactome.referencecreators.DatabaseIdentifierReferenceCreator;

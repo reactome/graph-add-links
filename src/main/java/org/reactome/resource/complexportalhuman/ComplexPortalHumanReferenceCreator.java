@@ -1,4 +1,4 @@
-package org.reactome.resource.complexportal.human;
+package org.reactome.resource.complexportalhuman;
 
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.Complex;

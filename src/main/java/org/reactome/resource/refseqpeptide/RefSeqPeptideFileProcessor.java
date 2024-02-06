@@ -1,4 +1,4 @@
-package org.reactome.resource.refseq.peptide;
+package org.reactome.resource.refseqpeptide;
 
 import org.reactome.resource.UniProtFileProcessor;
 

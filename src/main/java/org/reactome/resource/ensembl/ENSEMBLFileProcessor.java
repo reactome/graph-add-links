@@ -9,9 +9,9 @@ import java.nio.file.Path;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/22/2023
  */
-public class EnsemblFileProcessor extends UniProtFileProcessor {
+public class ENSEMBLFileProcessor extends UniProtFileProcessor {
 
-    public EnsemblFileProcessor(Path filePath) throws IOException {
+    public ENSEMBLFileProcessor(Path filePath) throws IOException {
         super(filePath);
     }
 }

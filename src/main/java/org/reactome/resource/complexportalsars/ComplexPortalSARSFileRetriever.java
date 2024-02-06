@@ -1,4 +1,4 @@
-package org.reactome.resource.complexportal.sars;
+package org.reactome.resource.complexportalsars;
 
 import org.reactome.resource.BasicFileRetriever;
 
