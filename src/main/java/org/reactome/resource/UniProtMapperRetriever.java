@@ -106,7 +106,7 @@ public class UniProtMapperRetriever implements Retriever {
                 }
                 timeWaitedInMilliseconds += sleepTimeInMilliseconds;
             } else {
-                throw new RuntimeException("Waited " + maximumWaitTimeInMinutes + "minutes but job not finished for " +
+                throw new RuntimeException("Waited " + maximumWaitTimeInMinutes + " minutes but job not finished for " +
                     uniprotIds.size() + " identifiers mapping to " + targetDatabase);
             }
         }
