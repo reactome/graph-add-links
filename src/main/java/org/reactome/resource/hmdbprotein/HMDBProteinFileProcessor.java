@@ -10,11 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import static org.reactome.utils.FileUtils.unzipFile;
+import static org.reactome.utils.UniProtUtils.isValidUniProtId;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -43,7 +41,7 @@ public class HMDBProteinFileProcessor implements FileProcessor {
                     String hmdbProteinId = lineColumns[0];
                     String uniProtId = lineColumns[1];
 
-                    if (!uniProtId.isEmpty() && !hmdbProteinId.isEmpty()) {
+                    if (!uniProtId.isEmpty() && isValidUniProtId(uniProtId) && !hmdbProteinId.isEmpty()) {
                         this.uniProtToResourceIdentifiers.computeIfAbsent(
                             uniProtId, k -> new HashSet<>()).add(hmdbProteinId);
                     }
