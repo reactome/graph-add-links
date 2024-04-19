@@ -336,6 +336,12 @@
                 {
                     "targetDatabaseName": "MIM",
                     "localName": "uniprot_mappings/uniprot_2_mim.tsv"
+                },
+                {
+                    "baseURL": "https://omim.org/static/omim/data/",
+                    "fileName": "mim2gene.txt",
+                    "fileNameIsRegex": false,
+                    "localName": "mim2gene.txt"
                 }
             ],
             "referenceDatabase": {
@@ -430,6 +436,12 @@
                 {
                     "targetDatabaseName": "GeneID",
                     "localName": "uniprot_mappings/uniprot_2_ctdgene.tsv"
+                },
+                {
+                    "baseURL": "https://ctdbase.org/reports/",
+                    "fileName": "CTD_chem_gene_ixns.csv.gz",
+                    "fileNameIsRegex": false,
+                    "localName": "CTD_chem_gene_ixns.csv.gz"
                 }
             ],
             "referenceDatabase": {
