@@ -32,7 +32,7 @@ public class COSMICFileProcessor implements FileProcessor {
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
         if (this.uniProtIdentifierToCosmicGeneName == null || this.uniProtIdentifierToCosmicGeneName.isEmpty()) {
             Map<String, ReferenceGeneProduct> uniProtIdentifierToReferenceGeneProduct =
-                ReferenceGeneProduct.fetchAllReferenceGeneProducts();
+                ReferenceGeneProduct.fetchHumanReferenceGeneProducts();
             Set<String> cosmicGeneNames = getCosmicGeneNames();
 
             this.uniProtIdentifierToCosmicGeneName = uniProtIdentifierToReferenceGeneProduct.entrySet().stream()
