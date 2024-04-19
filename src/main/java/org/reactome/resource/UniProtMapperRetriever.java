@@ -1,22 +1,20 @@
 package org.reactome.resource;
 
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.Record;
+import org.neo4j.driver.Result;
 import org.reactome.DownloadInfo;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.utils.ConfigParser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.reactome.utils.CollectionUtils.split;
 
@@ -26,6 +24,7 @@ import static org.reactome.utils.CollectionUtils.split;
  */
 public class UniProtMapperRetriever implements Retriever {
     private final static String UNIPROT_REST_URL = "https://rest.uniprot.org";
+    private final static String FILE_HEADER = "From\tTo\n";
 
     private DownloadInfo downloadInfo;
 
@@ -37,7 +36,11 @@ public class UniProtMapperRetriever implements Retriever {
     public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
         List<Collection<String>> uniProtIdentifiersCollections = split(getUniProtIdsFromGraphDatabase(),100);
 
-        Files.write(getLocalFilePath(downloadable), "From\tTo\n".getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(
+            getLocalFilePath(downloadable),
+            FILE_HEADER.getBytes(),
+            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+        );
         for (Collection<String> uniProtIdentifiers : uniProtIdentifiersCollections) {
             Map<String, List<String>> uniProtIdentifierToResourceIdentifiers =
                 getMapping(uniProtIdentifiers, getTargetDatabase(downloadable));
@@ -54,13 +57,24 @@ public class UniProtMapperRetriever implements Retriever {
         }
     }
 
+    // Takes into account the header written at the beginning of the file before attempting to connect to UniProt to
+    // get the mapping
+    @Override
+    public boolean fileIsZeroSize(DownloadInfo.Downloadable downloadable) {
+        final int HEADER_SIZE_IN_BYTES = FILE_HEADER.length();
+
+        File file = new File(ConfigParser.getDownloadDirectoryPath() + "/", downloadable.getLocalFileName());
+
+        return file.length() <= HEADER_SIZE_IN_BYTES;
+    }
+
     @Override
     public DownloadInfo getDownloadInfo() {
         return this.downloadInfo;
     }
 
     Collection<String> getUniProtIdsFromGraphDatabase() {
-        StatementResult result = ReactomeGraphDatabase.getSession().run(
+        Result result = ReactomeGraphDatabase.getSession().run(
             "MATCH (rgp:ReferenceGeneProduct) RETURN DISTINCT rgp.identifier"
         );
 
