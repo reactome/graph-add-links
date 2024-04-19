@@ -19,6 +19,30 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.reactome.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -30,6 +54,24 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcommander</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.83</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20180130</version>
@@ -38,7 +80,7 @@
         <dependency>
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver</artifactId>
-            <version>1.7.5</version>
+            <version>4.3.6</version>
         </dependency>
 
         <dependency>
