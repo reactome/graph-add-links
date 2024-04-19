@@ -70,20 +70,20 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         ));
     }
 
-//    public static Map<String, ReferenceGeneProduct> fetchHumanReferenceGeneProducts() {
-//        return fetchReferenceGeneProductsForSpecies("Homo sapiens");
-//    }
+    public static Map<String, ReferenceGeneProduct> fetchHumanReferenceGeneProducts() {
+        return fetchReferenceGeneProductsForSpecies("Homo sapiens");
+    }
 
-//    public static Map<String, ReferenceGeneProduct> fetchReferenceGeneProductsForSpecies(String speciesName) {
-//        return fetchAllReferenceGeneProducts()
-//            .entrySet()
-//            .stream()
-//            .filter(entry -> entry.getValue().getSpeciesName().equals(speciesName))
-//            .collect(Collectors.toMap(
-//                Map.Entry::getKey,
-//                Map.Entry::getValue
-//            ));
-//    }
+    public static Map<String, ReferenceGeneProduct> fetchReferenceGeneProductsForSpecies(String speciesName) {
+        return fetchAllReferenceGeneProducts()
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().getSpeciesName().equals(speciesName))
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue
+            ));
+    }
 
     public String getSpeciesName() {
         return this.speciesName;
