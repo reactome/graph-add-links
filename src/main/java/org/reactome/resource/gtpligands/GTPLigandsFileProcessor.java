@@ -14,11 +14,8 @@ import static org.reactome.utils.FileUtils.getCSVParser;
  *         Created 11/20/2023
  */
 public class GTPLigandsFileProcessor implements FileProcessor {
-    private static final int RGD_IDENTIFIER_INDEX = 1;
-    private static final int UNIPROT_IDENTIFIER_INDEX = 21;
-
     private Path filePath;
-    private Map<String, Set<String>> uniProtToResourceIdentifiers;
+    private Map<String, Set<String>> chEBIToResourceIdentifiers;
 
     public GTPLigandsFileProcessor(Path filePath) throws IOException {
         this.filePath = filePath;
@@ -26,22 +23,22 @@ public class GTPLigandsFileProcessor implements FileProcessor {
 
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
-        if (uniProtToResourceIdentifiers == null || uniProtToResourceIdentifiers.isEmpty()) {
-            this.uniProtToResourceIdentifiers = new HashMap<>();
+        if (this.chEBIToResourceIdentifiers == null || this.chEBIToResourceIdentifiers.isEmpty()) {
+            this.chEBIToResourceIdentifiers = new HashMap<>();
 
             try(CSVParser parser = getCSVParser(getFilePath())) {
                 parser.forEach(line -> {
-                    String chebiId = line.get("Chebi ID").replace("ChEBI:","");
+                    String chebiId = line.get("Chebi ID").replace("CHEBI:","");
                     String ligandId = line.get("Ligand id");
                     if (chebiId != null && !chebiId.isEmpty()) {
-                        this.uniProtToResourceIdentifiers.computeIfAbsent(chebiId, k -> new HashSet<>())
+                        this.chEBIToResourceIdentifiers.computeIfAbsent(chebiId, k -> new HashSet<>())
                             .add(ligandId);
                     }
                 });
             }
         }
 
-        return this.uniProtToResourceIdentifiers;
+        return this.chEBIToResourceIdentifiers;
     }
 
     private Path getFilePath() {
