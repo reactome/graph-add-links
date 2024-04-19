@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import static org.reactome.utils.UniProtUtils.isValidUniProtId;
+
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/19/2023
@@ -31,7 +33,7 @@ public class PROFileProcessor implements FileProcessor {
                     String proId = lineColumns[0].replace("PR:", "");
                     String uniProtId = lineColumns[1].replace("UniProtKB:","");
 
-                    if (!uniProtId.isEmpty() && !proId.isEmpty()) {
+                    if (!uniProtId.isEmpty() && isValidUniProtId(uniProtId) && !proId.isEmpty() && isValidUniProtId(proId)) {
                         this.uniProtToResourceIdentifiers.computeIfAbsent(uniProtId, k -> new HashSet<>()).add(proId);
                     }
                 }
