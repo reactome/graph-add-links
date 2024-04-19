@@ -1,5 +1,7 @@
 package org.reactome.graphnodes;
 
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Value;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 
 import java.util.*;
@@ -10,7 +12,10 @@ import java.util.stream.Collectors;
  *         Created 12/6/2023
  */
 public class ReferenceMolecule extends IdentifierNode {
+    private static final String REFERENCE_DATABASE_NAME = "ChEBI";
+
     private static Set<ReferenceMolecule> referenceMoleculeCache = new LinkedHashSet<>();
+    private static ReferenceDatabase referenceDatabase;
 
     public static Map<String, ReferenceMolecule> fetchReferenceMoleculesForChEBIIdentifiers(
         Set<String> chebiIdentifiers) {
@@ -25,6 +30,7 @@ public class ReferenceMolecule extends IdentifierNode {
 
     public ReferenceMolecule(long dbId, String identifier) {
         super(dbId, identifier);
+        setReferenceDatabase(fetchReferenceDatabase());
     }
 
     @Override
@@ -38,6 +44,29 @@ public class ReferenceMolecule extends IdentifierNode {
         labels.addAll(super.getLabels());
         labels.add(getSchemaClass());
         return labels;
+    }
+
+    private static ReferenceDatabase fetchReferenceDatabase() {
+        if (referenceDatabase == null) {
+            Result referenceDBMatchResult =
+                ReactomeGraphDatabase.getSession().run(getReferenceDatabaseQuery());
+
+            if (!referenceDBMatchResult.hasNext()) {
+                throw new IllegalStateException("Can not find reference database with displayName of " + REFERENCE_DATABASE_NAME);
+            }
+
+            Value referenceDatabaseValue = referenceDBMatchResult.next().get("rd");
+            List<String> names = referenceDatabaseValue.get("name").asList(Value::asString);
+            String url = referenceDatabaseValue.get("url").asString();
+            String accessURL = referenceDatabaseValue.get("accessUrl").asString();
+            Value resourceIdentifierValue = referenceDatabaseValue.get("resourceIdentifier");
+            String resourceIdentifier = !resourceIdentifierValue.isNull() ? resourceIdentifierValue.asString() : "";
+
+            referenceDatabase = new ReferenceDatabase.ReferenceDatabaseBuilder(names, url, accessURL)
+                .withResourceIdentifier(resourceIdentifier)
+                .build();
+        }
+        return referenceDatabase;
     }
 
     private static Set<ReferenceMolecule> fetchNonCachedReferenceMolecules(Set<String> chebiIdentifiers) {
@@ -70,7 +99,6 @@ public class ReferenceMolecule extends IdentifierNode {
                 return new ReferenceMolecule(dbId, identifier);
             })
             .collect(Collectors.toSet());
-
     }
 
     private static String getReferenceMoleculeDataQuery(Set<String> chebiIdentifiers) {
@@ -89,5 +117,9 @@ public class ReferenceMolecule extends IdentifierNode {
 
     private static String formatAsCypherList(Collection<String> stringList) {
         return "[" + String.join(", ", stringList.stream().map(string -> "\"" + string + "\"").collect(Collectors.toList())) + "]";
+    }
+
+    private static String getReferenceDatabaseQuery() {
+        return "MATCH (rd:ReferenceDatabase) WHERE rd.displayName = '" + REFERENCE_DATABASE_NAME + "'RETURN rd";
     }
 }
