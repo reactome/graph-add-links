@@ -44,7 +44,6 @@ public class GTPTargetsFileProcessor implements FileProcessor {
             });
         }
 
-        System.out.println(this.uniProtToResourceIdentifiers);
         return this.uniProtToResourceIdentifiers;
     }
 
