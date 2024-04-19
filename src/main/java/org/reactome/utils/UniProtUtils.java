@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class UniProtUtils {
     public static boolean isValidUniProtId(String uniprotId) {
         // From https://www.uniprot.org/help/accession_numbers
-        Pattern validUniProtPattern = Pattern.compile("[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}");
+        Pattern validUniProtPattern = Pattern.compile("^[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}$");
         Matcher validUniProtMatcher = validUniProtPattern.matcher(uniprotId);
 
         return validUniProtMatcher.find();
