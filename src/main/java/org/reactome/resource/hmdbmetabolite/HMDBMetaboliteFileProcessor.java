@@ -1,5 +1,7 @@
 package org.reactome.resource.hmdbmetabolite;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.reactome.resource.FileProcessor;
 
 import javax.xml.transform.*;
@@ -10,16 +12,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+
+import static org.reactome.utils.FileUtils.unzipFile;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/20/2023
  */
 public class HMDBMetaboliteFileProcessor implements FileProcessor {
+    private static final Logger logger = LogManager.getLogger();
+
     private Path filePath;
-    private Map<String, Set<String>> uniProtToResourceIdentifiers;
+    private Map<String, Set<String>> chEBIToResourceIdentifiers;
 
     public HMDBMetaboliteFileProcessor(Path filePath) throws IOException {
         this.filePath = filePath;
@@ -27,47 +31,47 @@ public class HMDBMetaboliteFileProcessor implements FileProcessor {
 
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
-        unzipHMDBMetaboliteXMLFile();
+        unzipFile(getFilePath());
         transformHMDBMetaboliteXML();
 
-        if (uniProtToResourceIdentifiers == null || uniProtToResourceIdentifiers.isEmpty()) {
-            this.uniProtToResourceIdentifiers = new HashMap<>();
+        if (chEBIToResourceIdentifiers == null || chEBIToResourceIdentifiers.isEmpty()) {
+            this.chEBIToResourceIdentifiers = new HashMap<>();
 
             Files.readAllLines(getTransformedFilePath()).forEach(line -> {
                 String[] lineColumns = line.split("\t");
 
                 if (lineColumns.length >= 2) {
                     String hmdbMetaboliteId = lineColumns[0];
-                    String uniProtId = lineColumns[1];
+                    String chEBIId = lineColumns[1];
 
-                    if (!uniProtId.isEmpty() && !hmdbMetaboliteId.isEmpty()) {
-                        this.uniProtToResourceIdentifiers.computeIfAbsent(
-                            uniProtId, k -> new HashSet<>()).add(hmdbMetaboliteId);
+                    if (!chEBIId.isEmpty() && !hmdbMetaboliteId.isEmpty()) {
+                        this.chEBIToResourceIdentifiers.computeIfAbsent(
+                            chEBIId, k -> new HashSet<>()).add(hmdbMetaboliteId);
                     }
                 }
             });
         }
 
-        return this.uniProtToResourceIdentifiers;
+        return this.chEBIToResourceIdentifiers;
     }
 
-    private void unzipHMDBMetaboliteXMLFile() throws IOException {
-        byte[] buffer = new byte[1024];
-        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(getFilePath().toString()));
-        ZipEntry zipEntry = zipInputStream.getNextEntry();
-        while (zipEntry != null) {
-            File newFile = new File(getFilePath().getParent().toFile(), zipEntry.getName());
-            FileOutputStream fileOutputStream = new FileOutputStream(newFile);
-            int len;
-            while ((len = zipInputStream.read(buffer)) > 0) {
-                fileOutputStream.write(buffer, 0, len);
-            }
-            fileOutputStream.close();
-            zipEntry = zipInputStream.getNextEntry();
-        }
-        zipInputStream.closeEntry();
-        zipInputStream.close();
-    }
+//    private void unzipHMDBMetaboliteXMLFile() throws IOException {
+//        byte[] buffer = new byte[1024];
+//        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(getFilePath().toString()));
+//        ZipEntry zipEntry = zipInputStream.getNextEntry();
+//        while (zipEntry != null) {
+//            File newFile = new File(getFilePath().getParent().toFile(), zipEntry.getName());
+//            FileOutputStream fileOutputStream = new FileOutputStream(newFile);
+//            int len;
+//            while ((len = zipInputStream.read(buffer)) > 0) {
+//                fileOutputStream.write(buffer, 0, len);
+//            }
+//            fileOutputStream.close();
+//            zipEntry = zipInputStream.getNextEntry();
+//        }
+//        zipInputStream.closeEntry();
+//        zipInputStream.close();
+//    }
 
     private void transformHMDBMetaboliteXML() {
         TransformerFactory factory = TransformerFactory.newInstance();
