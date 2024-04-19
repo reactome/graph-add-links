@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static org.reactome.utils.FileUtils.unzipFile;
+import static org.reactome.utils.UniProtUtils.isValidUniProtId;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -37,7 +38,7 @@ public class HPAFileProcessor implements FileProcessor {
                 String uniProtId = lineColumns[4];
                 String hpaId = ensemblGeneId + "-" + geneName;
 
-                if (noneEmpty(geneName, ensemblGeneId, uniProtId)) {
+                if (noneEmpty(geneName, ensemblGeneId, uniProtId) && isValidUniProtId(uniProtId)) {
                     this.uniProtToResourceIdentifiers.computeIfAbsent(uniProtId, k -> new HashSet<>()).add(hpaId);
                 }
             });
