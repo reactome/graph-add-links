@@ -9,13 +9,14 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static org.reactome.utils.FileUtils.unzipFile;
+import static org.reactome.utils.UniProtUtils.isValidUniProtId;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/20/2023
  */
 public class RGDFileProcessor implements FileProcessor {
-    private static final int RGD_IDENTIFIER_INDEX = 1;
+    private static final int RGD_IDENTIFIER_INDEX = 0;
     private static final int UNIPROT_IDENTIFIER_INDEX = 21;
 
     private Path filePath;
@@ -38,10 +39,12 @@ public class RGDFileProcessor implements FileProcessor {
                         lineColumns[UNIPROT_IDENTIFIER_INDEX] : "";
 
                     if (!uniProtIdsString.isEmpty()) {
-                        String[] uniProtIds = uniProtIdsString.replaceAll("\"", "").split("\\|");
+                        String[] uniProtIds = uniProtIdsString.replaceAll("\"", "").split(";");
                         for (String uniProtId : uniProtIds) {
-                            this.uniProtToResourceIdentifiers.computeIfAbsent(uniProtId, k -> new HashSet<>())
-                                .add(rgdId);
+                            if (isValidUniProtId(uniProtId)) {
+                                this.uniProtToResourceIdentifiers.computeIfAbsent(uniProtId, k -> new HashSet<>())
+                                    .add(rgdId);
+                            }
                         }
                     }
                 }
