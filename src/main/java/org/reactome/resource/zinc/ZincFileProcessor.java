@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.reactome.utils.FileUtils.unzipFile;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -28,10 +31,12 @@ public class ZincFileProcessor implements FileProcessor {
 
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
+        unzipFile(getFilePath());
+
         if (chebiToResourceIdentifiers == null || chebiToResourceIdentifiers.isEmpty()) {
             this.chebiToResourceIdentifiers = new HashMap<>();
 
-            Files.lines(getFilePath(), StandardCharsets.ISO_8859_1).forEach(line -> {
+            Files.lines(getUnzippedFilePath(), StandardCharsets.ISO_8859_1).forEach(line -> {
                 String[] lineColumns = line.split("\t");
                 String chebiId = lineColumns[CHEBI_IDENTIFIER_INDEX].replace("CHEBI:","");
                 String zincId = lineColumns.length > ZINC_IDENTIFIER_INDEX ? lineColumns[ZINC_IDENTIFIER_INDEX] : "";
@@ -44,6 +49,11 @@ public class ZincFileProcessor implements FileProcessor {
         }
 
         return this.chebiToResourceIdentifiers;
+    }
+
+    private Path getUnzippedFilePath() {
+        String unzippedFilePathAsString = getFilePath().toString().replace(".gz","");
+        return Paths.get(unzippedFilePathAsString);
     }
 
     private Path getFilePath() {
