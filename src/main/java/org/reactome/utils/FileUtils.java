@@ -63,6 +63,13 @@ public class FileUtils {
         );
     }
 
+    public static CSVParser getCSVParser(Path csvFilePath, char commentMarker, String ...headers) throws IOException {
+        return new CSVParser(
+            getReaderAfterVersionHeader(Files.newBufferedReader(csvFilePath)),
+            CSVFormat.DEFAULT.withCommentMarker(commentMarker).withHeader(headers)
+        );
+    }
+
     public static Path getPathWithoutZipExtension(Path filePath) {
         if (filePath.toString().endsWith(".gz")) {
             return Paths.get(filePath.toString().replace(".gz", ""));
