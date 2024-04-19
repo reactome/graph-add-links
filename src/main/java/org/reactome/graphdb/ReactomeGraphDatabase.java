@@ -1,6 +1,7 @@
 package org.reactome.graphdb;
 
-import org.neo4j.driver.v1.*;
+
+import org.neo4j.driver.*;
 
 import java.io.IOException;
 import java.io.InputStream;

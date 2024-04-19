@@ -1,6 +1,6 @@
 package org.reactome.graphdb;
 
-import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.Result;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -23,8 +23,8 @@ public class DbIdGenerator {
     private static long getMaxDbIdFromDatabase() {
         final String returnValueName = "maxDbId";
 
-        StatementResult maxDbIdResult =
-            ReactomeGraphDatabase.getSession().run("MATCH (n:DatabaseObject) RETURN max(n.dbId) as " + returnValueName);
+        Result maxDbIdResult = ReactomeGraphDatabase.getSession().run(
+            "MATCH (n:DatabaseObject) RETURN max(n.dbId) as " + returnValueName);
 
         if (!maxDbIdResult.hasNext()) {
             throw new IllegalStateException("Can not find largest dbId from graph database");

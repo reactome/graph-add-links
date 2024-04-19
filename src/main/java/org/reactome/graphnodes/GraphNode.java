@@ -1,6 +1,5 @@
 package org.reactome.graphnodes;
 
-import org.neo4j.driver.v1.Transaction;
 import org.reactome.graphdb.DbIdGenerator;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 

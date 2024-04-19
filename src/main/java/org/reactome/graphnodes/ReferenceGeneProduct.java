@@ -1,7 +1,7 @@
 package org.reactome.graphnodes;
 
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Value;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Value;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.utils.CollectionUtils;
 
@@ -183,7 +183,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
     private static ReferenceDatabase fetchReferenceDatabase() {
         if (referenceDatabase == null) {
-            StatementResult referenceDBMatchResult =
+            Result referenceDBMatchResult =
                 ReactomeGraphDatabase.getSession().run(getReferenceDatabaseQuery());
 
             if (!referenceDBMatchResult.hasNext()) {
