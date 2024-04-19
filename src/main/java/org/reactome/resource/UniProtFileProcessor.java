@@ -20,7 +20,7 @@ public class UniProtFileProcessor implements FileProcessor {
 
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
-        if (uniProtToResourceIdentifiers == null || uniProtToResourceIdentifiers.isEmpty()) {
+        if (this.uniProtToResourceIdentifiers == null || this.uniProtToResourceIdentifiers.isEmpty()) {
             this.uniProtToResourceIdentifiers = new HashMap<>();
 
             Files.lines(getFilePath()).skip(1).forEach(line -> {
