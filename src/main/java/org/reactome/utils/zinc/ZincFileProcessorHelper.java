@@ -1,5 +1,7 @@
 package org.reactome.utils.zinc;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.reactome.utils.ResourceJSONParser;
 
 import java.io.BufferedReader;
@@ -11,8 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.reactome.utils.UniProtUtils.isValidUniProtId;
 
@@ -21,6 +21,8 @@ import static org.reactome.utils.UniProtUtils.isValidUniProtId;
  *         Created 1/31/2024
  */
 public class ZincFileProcessorHelper {
+    private static final Logger logger = LogManager.getLogger();
+
     private static final int ZINC_IDENTIFIER_INDEX = 0;
     private static final int UNIPROT_IDENTIFIER_INDEX = 2;
 
@@ -63,13 +65,11 @@ public class ZincFileProcessorHelper {
             .getJSONObject("referenceDatabase").getString("accessURL");
         accessURL = accessURL.replace("###ID###", zincId).replaceFirst("/$", ".csv");
         try {
-            System.out.println(accessURL);
             List<String> contents = getURLContent(accessURL);
-            System.out.println(contents);
 
             return contents.size() > 1;
         } catch (IOException e) {
-            System.err.println("Unable to get URL content from " + accessURL + ": " + e);
+            logger.error("Unable to get URL content from " + accessURL + ": " + e);
             return false;
         }
     }
