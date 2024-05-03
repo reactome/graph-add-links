@@ -1,7 +1,6 @@
 package org.reactome.referencecreators;
 
 import org.reactome.graphnodes.IdentifierNode;
-import org.reactome.graphnodes.ReferenceGeneProduct;
 import org.reactome.graphnodes.ReferenceMolecule;
 
 import java.util.ArrayList;
@@ -23,11 +22,6 @@ public class ChEBIDatabaseIdentifierReferenceCreator extends DatabaseIdentifierR
         return new ArrayList<>(
             ReferenceMolecule.fetchReferenceMoleculesForChEBIIdentifiers(getChEBIIdentifiers()).values()
         );
-    }
-
-    @Override
-    protected Set<String> getIdentifierValues(String sourceIdentifier) {
-        return super.getIdentifierValues("CHEBI:" + sourceIdentifier);
     }
 
     private Set<String> getChEBIIdentifiers() {
