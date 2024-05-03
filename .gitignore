@@ -8,5 +8,6 @@ target/
 # Misc
 src/main/resources/reference_creator_csv/
 downloads/
+logs/
 config.properties
 auth.properties
