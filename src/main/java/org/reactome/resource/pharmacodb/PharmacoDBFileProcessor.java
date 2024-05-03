@@ -23,7 +23,7 @@ public class PharmacoDBFileProcessor implements FileProcessor {
     private Path guideToPharmacologyMappingFilePath;
     private Path pharmacoDBMappingFilePath;
 
-    public PharmacoDBFileProcessor(Path[] filePaths) {
+    public PharmacoDBFileProcessor(Path ...filePaths) {
         if (filePaths.length < 2) {
             throw new IllegalStateException("Two files are required for PharmacoDB - a Guide To Pharmacology " +
                 " mapping file and a PharmacoDB mapping file ");
