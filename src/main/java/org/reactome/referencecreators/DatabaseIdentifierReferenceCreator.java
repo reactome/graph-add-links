@@ -1,7 +1,7 @@
 package org.reactome.referencecreators;
 
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Transaction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.*;
 
@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 
@@ -18,7 +17,7 @@ import java.util.*;
  *         Created 3/29/2022
  */
 public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreator {
-
+    private static final Logger logger = LogManager.getLogger();
 
     public DatabaseIdentifierReferenceCreator(
         String referenceName, Map<String, Set<String>> sourceIdentifierToReferenceIdentifiers)
@@ -44,51 +43,21 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
 //    }
 
     @Override
-    public void writeCSV() throws IOException, URISyntaxException {
-        Path resourceDirectory = getReferenceCreatorCSVDirectory();
-
-        Path databaseIdentifierCSVFilePath = resourceDirectory.resolve(getResourceName() + "_DatabaseIdentifiers.csv");
-        writeReferenceCSVHeader(databaseIdentifierCSVFilePath);
-
-        Path relationshipCSVFilePath = resourceDirectory.resolve(getResourceName() + "_Relationships.csv");
-        writeRelationshipCSVHeader(relationshipCSVFilePath);
-
-        System.out.println("Creating source database object to database identifiers map...");
-
-        Map<IdentifierNode, List<DatabaseIdentifier>> identifierNodeToDatabaseIdentifiersMap =
-            this.createDatabaseIdentifiers();
-
-        System.out.println("Map created");
-
-        System.out.println("Writing CSV");
-        for (IdentifierNode identifierNode : identifierNodeToDatabaseIdentifiersMap.keySet()) {
-            List<DatabaseIdentifier> databaseIdentifiers = identifierNodeToDatabaseIdentifiersMap.get(identifierNode);
-            System.out.println("Identifier Node: " + identifierNode);
-            System.out.println("Database Identifiers: " + databaseIdentifiers);
-
-            for (DatabaseIdentifier databaseIdentifier : databaseIdentifiers) {
-                writeDatabaseIdentifierLine(databaseIdentifierCSVFilePath, databaseIdentifier);
-                writeRelationshipLine(relationshipCSVFilePath, identifierNode.getDbId(), databaseIdentifier.getDbId(),
-                    getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
-            }
-        }
-        System.out.println("CSV data complete");
-    }
-
-    @Override
     public void readCSV() throws URISyntaxException, IOException {
         final String csvDirectory = getReferenceCreatorCSVDirectory().toString().replace("\\","/");
 
-        System.out.println("Creating database identifiers...");
-        ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
-            tx.run("LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_DatabaseIdentifiers.csv' AS row " +
+        logger.info("Creating database identifiers...");
+        String nodeCreationQuery = "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Identifiers.csv' AS row\n" +
             "CREATE (:DatabaseIdentifier:DatabaseObject " +
-                "{dbId: toInteger(row.DbId), displayName: row.DisplayName, schemaClass: row.SchemaClass, " +
-                "identifier: row.Identifier, referenceDatabase: row.ReferenceDbName, url: row.URL})");
+            "{dbId: toInteger(row.DbId), displayName: row.DisplayName, schemaClass: row.SchemaClass, " +
+            "identifier: row.Identifier, referenceDatabase: row.ReferenceDbName, url: row.URL})";
+        logger.info("Running query \n" + nodeCreationQuery);
+        ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
+            tx.run(nodeCreationQuery);
             return null;
         });
 
-        System.out.println("Creating relationships...");
+        logger.info("Creating relationships...");
 //
 //        try (Transaction tx = ReactomeGraphDatabase.getSession().beginTransaction()) {
 //            String createRelationshipQuery =
@@ -117,74 +86,54 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
 //            tx.commitAsync().toCompletableFuture().join();
 //        }
 
-        String query =
+        String relationshipCreationQuery =
             "USING PERIODIC COMMIT 100\n" +
             "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row\n" +
             "MATCH (do:DatabaseObject {dbId: toInteger(row.SourceDbId)})\n" +
-            "MATCH (di:DatabaseIdentifier {dbId: toInteger(row.DatabaseIdentifierDbId)})\n" +
+            "MATCH (di:DatabaseIdentifier {dbId: toInteger(row.ExternalIdentifierDbId)})\n" +
             "MATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)})\n" +
             "MATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)})\n" +
             "CREATE (do)-[:crossReference]->(di)\n" +
             "CREATE (di)-[:referenceDatabase]->(rd)\n" +
             "CREATE (di)-[:created]->(ie) ";
 
-        System.out.println(query);
-        StatementResult statementResult = ReactomeGraphDatabase.getSession().run(query);
-        if (statementResult.hasNext()) {
-            System.out.println(statementResult.next());
-        }
-        System.out.println("Done");
+        logger.info("Running query \n" + relationshipCreationQuery);
+        //StatementResult statementResult =
+            ReactomeGraphDatabase.getSession().run(relationshipCreationQuery);
+//        if (statementResult.hasNext()) {
+//            System.out.println(statementResult.next());
+//        }
     }
 
-    private Map<IdentifierNode, List<DatabaseIdentifier>> createDatabaseIdentifiers() {
-        Map<IdentifierNode, List<DatabaseIdentifier>> identifierNodeToDatabaseIdentifiers = new LinkedHashMap<>();
+//    protected void writeDatabaseIdentifierLine(DatabaseIdentifier databaseIdentifier)
+//        throws IOException, URISyntaxException {
+//
+//        final String line = String.join(",",
+//            String.valueOf(databaseIdentifier.getDbId()),
+//            databaseIdentifier.getDisplayName(),
+//            databaseIdentifier.getSchemaClass(),
+//            databaseIdentifier.getIdentifier(),
+//            databaseIdentifier.getReferenceDatabaseDisplayName(),
+//            databaseIdentifier.getUrl()
+//        ).concat(System.lineSeparator());
+//
+//        Files.write(
+//            getDatabaseIdentifierCSVFilePath(),
+//            line.getBytes(),
+//            StandardOpenOption.APPEND
+//        );
+//    }
 
-        for (IdentifierNode identifierNode : getIdentifierNodes()) {
-            identifierNodeToDatabaseIdentifiers.put(
-                identifierNode,
-                createDatabaseIdentifiersForIdentifierNode(identifierNode)
-            );
-        }
+//    private Path getDatabaseIdentifierCSVFilePath() throws URISyntaxException {
+//        return getReferenceCreatorCSVDirectory().resolve(getResourceName() + "_DatabaseIdentifiers.csv");
+//    }
 
-        return identifierNodeToDatabaseIdentifiers;
-    }
-
-    private List<DatabaseIdentifier> createDatabaseIdentifiersForIdentifierNode(IdentifierNode identifierNode) {
+    @Override
+    protected List<? extends IdentifierNode> createExternalIdentifiersForIdentifierNode(IdentifierNode identifierNode) {
         List<DatabaseIdentifier> databaseIdentifiers = new ArrayList<>();
         for (String databaseIdentifierValue : getIdentifierValues(identifierNode)) {
             databaseIdentifiers.add(new DatabaseIdentifier(databaseIdentifierValue, getReferenceDatabase()));
         }
         return databaseIdentifiers;
-    }
-
-    private void writeRelationshipCSVHeader(Path sourceToDatabaseIdentifierCSVFilePath) throws IOException {
-        final String header = String.join(",",
-            "SourceDbId","DatabaseIdentifierDbId","ReferenceDatabaseDbId","InstanceEditDbId"
-        ).concat(System.lineSeparator());
-
-        Files.write(
-            sourceToDatabaseIdentifierCSVFilePath,
-            header.getBytes(),
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
-        );
-    }
-
-    private void writeDatabaseIdentifierLine(Path databaseIdentifierCSVFilePath, DatabaseIdentifier databaseIdentifier)
-        throws IOException {
-
-        final String line = String.join(",",
-            String.valueOf(databaseIdentifier.getDbId()),
-            databaseIdentifier.getDisplayName(),
-            databaseIdentifier.getSchemaClass(),
-            databaseIdentifier.getIdentifier(),
-            databaseIdentifier.getReferenceDatabaseDisplayName(),
-            databaseIdentifier.getUrl()
-        ).concat(System.lineSeparator());
-
-        Files.write(
-            databaseIdentifierCSVFilePath,
-            line.getBytes(),
-            StandardOpenOption.APPEND
-        );
     }
 }
