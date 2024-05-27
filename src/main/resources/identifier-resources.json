@@ -886,7 +886,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
-                    "baseURL": "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v99/",
+                    "baseURL": "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v100/",
                     "fileName": "CosmicMutantExport.tsv.gz",
                     "fileNameIsRegex": false,
                     "localName": "CosmicMutantExport.tsv.gz"
