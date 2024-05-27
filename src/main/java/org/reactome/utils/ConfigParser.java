@@ -2,6 +2,7 @@ package org.reactome.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -11,6 +12,7 @@ import java.util.Properties;
  *         Created 4/11/2022
  */
 public class ConfigParser {
+    private static Path configFilePath;
     private static Properties configProperties;
 
     public static String getConfigProperty(String propertyName) {
@@ -29,6 +31,10 @@ public class ConfigParser {
         );
     }
 
+    public static void setConfigFilePath(String configFilePathAsString) {
+        configFilePath = Paths.get(configFilePathAsString);
+    }
+
     private static Properties getConfigProperties() {
         Properties configProperties = new Properties();
         try {
@@ -39,7 +45,10 @@ public class ConfigParser {
         return configProperties;
     }
 
-    private static InputStream getConfigFileInputStream() {
-        return ConfigParser.class.getClassLoader().getResourceAsStream("config.properties");
+    private static InputStream getConfigFileInputStream() throws IOException {
+        if (configFilePath == null) {
+            return ConfigParser.class.getClassLoader().getResourceAsStream("config.properties");
+        }
+        return Files.newInputStream(configFilePath);
     }
 }
