@@ -121,11 +121,11 @@ public class ReactomeGraphDatabase {
     }
 
     private static String getUserName() throws IOException {
-        return getProperties().getProperty("user", "neo4j");
+        return getProperties().getProperty("neo4jUserName", "neo4j");
     }
 
     private static String getPassword() throws IOException {
-        return getProperties().getProperty("password");
+        return getProperties().getProperty("neo4jPassword");
     }
 
     private static Properties getProperties() throws IOException {
