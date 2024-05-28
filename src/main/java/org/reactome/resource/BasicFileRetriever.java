@@ -49,7 +49,7 @@ public class BasicFileRetriever implements FileRetriever {
         return this.downloadInfo;
     }
 
-    private int twoMinutes() {
+    protected int twoMinutes() {
         final int twoMinutesInMilliSeconds = 1000 * 60 * 2;
         return twoMinutesInMilliSeconds;
     }
