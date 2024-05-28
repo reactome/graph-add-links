@@ -1,0 +1,96 @@
+// This Jenkinsfile is used by Jenkins to run the AddLinks-Downloads step of Reactome's release.
+// It requires that the ConfirmReleaseConfigs step has been run successfully before it can be run.
+
+import org.reactome.release.jenkins.utilities.Utilities
+
+// Shared library maintained at 'release-jenkins-utils' repository.
+def utils = new Utilities()
+pipeline{
+	agent any
+
+	stages{
+		// This stage checks that an upstream project, ConfirmReleaseConfigs, was run successfully for its last build.
+		stage('Check ConfirmReleaseConfigs build succeeded'){
+			steps{
+				script{
+					utils.checkUpstreamBuildsSucceeded("ConfirmReleaseConfigs")
+				}
+			}
+		}
+		// This stage builds the jar file using maven.
+		stage('Setup: Build jar file'){
+			steps{
+				script{
+					sh "mvn clean package -DskipTests"
+				}
+			}
+		}
+		// This stage executes the AddLinks file download step. It will download all files needed to run the AddLinks insertion step,
+		//storing them at /tmp/addlinks-downloaded-files.
+		stage('Main: Download AddLinks files'){
+			steps{
+				script{
+					withCredentials([file(credentialsId: 'Config', variable: 'ConfigFile')]){
+						updatePersonIdInProperties("${ConfigFile}")
+
+						sh "cp $ConfigFile src/main/resources/auth.properties"
+						sh """java -Xmx${env.JAVA_MEM_MAX}m -jar target/graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar -d"""
+						sh "rm -f src/main/resources/auth.properties"
+					}
+				}
+			}
+		}
+		// Sends email notification to developers list regarding completion of AddLinks file downloads.
+		stage('Post: Email regarding completion of file downloads'){
+			steps{
+				script{
+					def releaseVersion = utils.getReleaseVersion()
+					def emailSubject = "AddLinks-Download has completed"
+					def emailBody = "Hello,\n\nThis is an automated message from Jenkins regarding an update for v${releaseVersion}. The file downloads for AddLinks has completed, and needs to be verified before it will be archived. \n\nThanks!"
+					utils.sendEmail("${emailSubject}", "${emailBody}")
+				}
+			}
+		}
+		// Program is stopped and waits for confirmation that the dry run was successful.
+		stage('User Input: Confirm successful AddLinks file downloads') {
+			steps {
+				script {
+						def userInput = input(
+						id: 'userInput', message: "Please proceed once you have reviewed the AddLinks file downloads.",
+						parameters: [
+							[$class: 'BooleanParameterDefinition', defaultValue: true, name: 'response']
+						])
+				}
+			}
+		}
+		// Archive everything on S3 and then delete on the server.
+		stage('Post: Archive Outputs'){
+			steps{
+				script{
+				    def releaseVersion = utils.getReleaseVersion()
+					def downloadsArchive = "addlinks-downloads-v${releaseVersion}.tar"
+					def addlinksFolder = "addlinks-downloaded-files/"
+
+					def dataFiles = ["/tmp/$downloadsArchive"]
+					def logFiles = ["reports/*"]
+					def foldersToDelete = ["reports", "/tmp/$addlinksFolder"]
+
+					sh "cd /tmp/; tar -zcvf $downloadsArchive $addlinksFolder"
+					utils.cleanUpAndArchiveBuildFiles("add_links/downloads", dataFiles, logFiles, foldersToDelete)
+				}
+			}
+		}
+	}
+}
+
+// This is just a localized method for updating the personId method that exists in the addlinks.properties file using grep/cut.
+// TODO: Add to shared groovy library
+def updatePersonIdInProperties(configFile) {
+	def personId = sh (
+		script: "grep personId $configFile | cut -d = -f2",
+		returnStdout: true
+	).trim()
+	sh "git checkout src/main/resources/addlinks.properties"
+	// Splice in the person dbId from the config file
+	sh "sed -i -e 's/executeAsPersonID=/executeAsPersonID=${personId}/g' src/main/resources/addlinks.properties"
+}
