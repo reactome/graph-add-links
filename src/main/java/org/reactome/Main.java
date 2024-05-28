@@ -170,7 +170,7 @@ public class Main {
 
         Retriever retriever = (Retriever) Class.forName(resourceFileRetriever).getDeclaredConstructor().newInstance();
         createDirectoriesIfNotExists(retriever.getLocalFilePaths().toArray(new Path[0]));
-        retriever.downloadFile();
+        retriever.downloadFiles();
 
         logger.info("Completed " + resourceFileRetriever);
     }
