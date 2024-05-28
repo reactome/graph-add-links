@@ -28,9 +28,10 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive>
-                        <manifest>
-                            <mainClass>org.reactome.Main</mainClass>
-                        </manifest>
+                        <manifestEntries>
+                            <Main-Class>org.reactome.Main</Main-Class>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
                 </configuration>
                 <executions>
