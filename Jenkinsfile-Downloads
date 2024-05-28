@@ -31,8 +31,6 @@ pipeline{
 			steps{
 				script{
 					withCredentials([file(credentialsId: 'Config', variable: 'ConfigFile')]){
-						updatePersonIdInProperties("${ConfigFile}")
-
 						sh "cp $ConfigFile src/main/resources/auth.properties"
 						sh """java -Xmx${env.JAVA_MEM_MAX}m -jar target/graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar -d"""
 						sh "rm -f src/main/resources/auth.properties"
@@ -81,16 +79,4 @@ pipeline{
 			}
 		}
 	}
-}
-
-// This is just a localized method for updating the personId method that exists in the addlinks.properties file using grep/cut.
-// TODO: Add to shared groovy library
-def updatePersonIdInProperties(configFile) {
-	def personId = sh (
-		script: "grep personId $configFile | cut -d = -f2",
-		returnStdout: true
-	).trim()
-	sh "git checkout src/main/resources/addlinks.properties"
-	// Splice in the person dbId from the config file
-	sh "sed -i -e 's/executeAsPersonID=/executeAsPersonID=${personId}/g' src/main/resources/addlinks.properties"
 }
