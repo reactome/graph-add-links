@@ -155,7 +155,7 @@ public class Main {
         });
 
         if (!resourcesToRetry.isEmpty() && (attemptNumber <= maximumAttemptNumber)) {
-            logger.info("Retrying resources " + resourcesToRetry + " for time " + attemptNumber + " of " +
+            logger.info("Retrying resources " + resourcesToRetry + " for attempt " + attemptNumber + " of " +
                 maximumAttemptNumber);
             attemptNumber++;
 
