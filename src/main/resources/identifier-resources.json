@@ -177,7 +177,7 @@
             "downloads": [
                 {
                     "baseURL": "https://download.rgd.mcw.edu/data_release/",
-                    "fileName": "GENES.RAT.txt",
+                    "fileName": "GENES_RAT.txt",
                     "fileNameIsRegex": false,
                     "localName": "GENES_RAT.txt"
                 }
@@ -615,7 +615,8 @@
                     "baseURL": "http://www.orphadata.org/data/BDD_partners/",
                     "fileName": "genes_diseases_external_references.xml",
                     "fileNameIsRegex": false,
-                    "localName": "genes_diseases_external_references.xml"
+                    "localName": "genes_diseases_external_references.xml",
+                    "needsCredentials": true
                 }
             ],
             "referenceDatabase": {
@@ -889,7 +890,8 @@
                     "baseURL": "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v100/",
                     "fileName": "CosmicMutantExport.tsv.gz",
                     "fileNameIsRegex": false,
-                    "localName": "CosmicMutantExport.tsv.gz"
+                    "localName": "CosmicMutantExport.tsv.gz",
+                    "needsCredentials": true
                 }
             ],
             "referenceDatabase": {
