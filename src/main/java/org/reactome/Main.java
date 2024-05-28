@@ -150,6 +150,7 @@ public class Main {
                 retrieveResource(resourceName);
             } catch (Exception e) {
                 logger.error("Unable to download files for " + resourceName + ": " + e);
+                e.printStackTrace();
                 resourcesToRetry.add(resourceName);
             }
         });
