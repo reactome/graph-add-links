@@ -105,7 +105,8 @@ public class Main {
             String resourcePackage = "org.reactome.resource." + resourceName.toLowerCase();
             String resourceFileRetriever = resourcePackage + "." + resourceName + "FileRetriever";
 
-            Retriever retriever = (Retriever) Class.forName(resourceFileRetriever).getDeclaredConstructor().newInstance();
+            Retriever retriever = (Retriever) Class.forName(resourceFileRetriever)
+                .getDeclaredConstructor().newInstance();
 
             String resourceFileProcessor = resourcePackage + "." + resourceName + "FileProcessor";
             logger.info("Running " + resourceFileProcessor + "...");
@@ -116,7 +117,8 @@ public class Main {
 
             String resourceReferenceCreator = resourcePackage + "." + resourceName + "ReferenceCreator";
             logger.info("Running " + resourceReferenceCreator + "...");
-            ReferenceCreator referenceCreator = (ReferenceCreator) Class.forName(resourceReferenceCreator).getDeclaredConstructor(Map.class).newInstance(fileProcessor.getSourceToResourceIdentifiers());
+            ReferenceCreator referenceCreator = (ReferenceCreator) Class.forName(resourceReferenceCreator)
+                .getDeclaredConstructor(Map.class).newInstance(fileProcessor.getSourceToResourceIdentifiers());
 
             referenceCreator.insertIdentifiers();
             logger.info("Finished inserting identifiers for " + resourceName);
