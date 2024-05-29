@@ -2,6 +2,7 @@ package org.reactome.graphdb;
 
 
 import org.neo4j.driver.*;
+import org.reactome.utils.ConfigParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,21 +122,11 @@ public class ReactomeGraphDatabase {
     }
 
     private static String getUserName() throws IOException {
-        return getProperties().getProperty("neo4jUserName", "neo4j");
+        return ConfigParser.getConfigProperty("neo4jUserName");
     }
 
     private static String getPassword() throws IOException {
-        return getProperties().getProperty("neo4jPassword");
-    }
-
-    private static Properties getProperties() throws IOException {
-        Properties properties = new Properties();
-        properties.load(getAuthFileInputStream());
-        return properties;
-    }
-
-    private static InputStream getAuthFileInputStream() {
-        return ReactomeGraphDatabase.class.getClassLoader().getResourceAsStream("auth.properties");
+        return ConfigParser.getConfigProperty("neo4jPassword");
     }
 }
 

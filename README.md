@@ -106,26 +106,25 @@ to do operations repeated in various parts of the codebase.  Finally,
 
 ### XML_transformers
 
-	For three resources (HMDB Metabolites, HMDB Protein, and Orphanet), the data retrieved is in XML format and the
-	directory "xml_transformers" contain XSL (Extensible Stylesheet Language) files for transforming those XML files
-	into simple TSV/CSV files for easier parsing by their file processors.
-
-### auth.properties
-
-	This file contains the user and password for connecting to the running graph database.  Currently, a BOLT port of
-	7687 and host of "localhost" is assumed.
+For three resources (HMDB Metabolites, HMDB Protein, and Orphanet), the data retrieved is in XML format and the
+directory "xml_transformers" contain XSL (Extensible Stylesheet Language) files for transforming those XML files
+into simple TSV/CSV files for easier parsing by their file processors.
 
 ### config.properties
 
-	This file contains the location of where resource files will be downloaded.  It also contains any properties
-	needed to access resource files such as usernames and passwords.  Currently, two resources (COSMIC and Orphanet)
-	require credentials to be able to access their data.  The config.properties file expects the following:
+This file contains the location of where resource files will be downloaded.  It also contains any properties
+needed to access resource files such as usernames and passwords.  Currently, two resources (COSMIC and Orphanet)
+require credentials to be able to access their data.  The username and password credentials to connect to a
+running graph database are also required (Currently, a BOLT port of 7687 and host of "localhost" is assumed).
+The config.properties file expects the following:
 
-		downloadDirectory=<location_for_retrieved_mapping_data>
-		orphanetUser=<username>
-		orphanetPassword=<password>
-		cosmicUser=<username>
-		cosmicPassword=<password>
+	downloadDirectory=<location_for_retrieved_mapping_data>
+	orphanetUser=<username>
+	orphanetPassword=<password>
+	cosmicUser=<username>
+	cosmicPassword=<password>
+	neo4jUserName=<username>
+	neo4jPassword=<password>
 
 ### identifier-resources.json
 
@@ -146,8 +145,8 @@ Usage: java -jar graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar
 	[-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]
 
 Options:
-	- [-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)
-	- [-i|--insertions]: Used to process downloaded files and insert resources (specified with -r or all if -r omitted) into the graph database
-	- [-r|--resources <name-of-resource1,name-of-resource2,...>]: Comma-delimited list of names (NOTE: no spaces between name of resources)
-	- [-l|--list_resources]: Lists names of supported resources to use with -r|--resources
-	- [-h|--help]: Displays this help message
+- [-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)
+- [-i|--insertions]: Used to process downloaded files and insert resources (specified with -r or all if -r omitted) into the graph database
+- [-r|--resources <name-of-resource1,name-of-resource2,...>]: Comma-delimited list of names (NOTE: no spaces between name of resources)
+- [-l|--list_resources]: Lists names of supported resources to use with -r|--resources
+- [-h|--help]: Displays this help message
