@@ -96,11 +96,13 @@ each of these, there are typically three classes:
 	database, and the target identifier and the instance edit.
 
 
-Additionally, the "org.reactome.graphdb" package is for connection and direct interaction with the graph database.  The
-"org.reactome.graphnodes" package is for modeling of nodes in the graph database for the different types of objects
-represented.  The "org.reactome.referencecreators" package is for the different, common types of reference creators
-extended by the ReferenceCreator class mentioned above.  The "org.reactome.utils" packages is for any utilities needed
-to do operations repeated in various parts of the codebase.  Finally,
+Additionally, the "org.reactome.graphdb" package is for connection and direct interaction with the graph database.
+The "org.reactome.graphnodes" package is for modeling of nodes in the graph database for the different types of objects
+represented.
+The "org.reactome.referencecreators" package is for the different, common types of reference creators
+extended by the ReferenceCreator class mentioned above.
+The "org.reactome.utils" packages is for any utilities needed
+to do operations repeated in various parts of the codebase.
 
 ## The "src/main/resources" directory contains the following required files:
 
@@ -128,12 +130,12 @@ The config.properties file expects the following:
 
 ### identifier-resources.json
 
-	This file describes the resources to be cross-referenced to the Reactome graph database.  The JSON file has an
-	entry for each resource keyed by its name along with the type of identifier node to insert (DatabaseIdentifier or
-	ReferenceDNASequence), the information for data download(s) (including the URL, the remote file name, whether the
-	remote file name has a pattern (see FlyBase for an example), and the local file name), as well as the reference
-	database representing the resource with the name(s), URL, accessURL (the pattern for looking up a particular
-	resource id) and the identifiers.org MIR identifier.
+This file describes the resources to be cross-referenced to the Reactome graph database.  The JSON file has an
+entry for each resource keyed by its name along with the type of identifier node to insert (DatabaseIdentifier or
+ReferenceDNASequence), the information for data download(s) (including the URL, the remote file name, whether the
+remote file name has a pattern (see FlyBase for an example), and the local file name), as well as the reference
+database representing the resource with the name(s), URL, accessURL (the pattern for looking up a particular
+resource id) and the identifiers.org MIR identifier.
 
 # Compiling and running
 
@@ -141,8 +143,8 @@ The Graph-Add-Links project is a typical maven structure project which can be bu
 "mvn clean package" at the root directory.  The "jar-with-dependencies" file output in the target directory can then
 be run with various options.
 
-Usage: java -jar graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar
-	[-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]
+**Usage: java -jar graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar
+	[-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]**
 
 Options:
 - [-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)
