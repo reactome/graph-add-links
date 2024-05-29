@@ -13,54 +13,54 @@ GuideToPharmacology entries of drugs) are also cross-referenced.
 
 The following are the resources linked to by Reactome (as of February 2024):
 
-BioGPSGene
-COSMIC
-CTDGene
-ComplexPortalHuman
-ComplexPortalSARS
-ComplexPortalSARSCov2
-DbSNPGene
-ENSEMBL
-FlyBase
-GTPLigands
-GTPTargets
-GeneCards
-GlyGen
-HGNC
-HMDBMetabolite
-HMDBProtein
-HPA
-IntEnz
-KEGG
-MGI
-Monarch
-NCBIGene
-OMIM
-OpenTargets
-Orphanet
-PDB
-PRO
-PharmacoDB
-PharosLigands
-PharosTargets
-RGD
-RefSeqPeptide
-RefSeqRNA
-Rhea
-UCSC
-VGNC
-Wormbase
-Xenbase
-ZFIN
-Zinc
-ZincBiogenic
-ZincFDAApproved
-ZincInvestigational
-ZincMetabolites
-ZincPredictionsPurchasable
-ZincSubstances
-ZincTarget
-ZincWorldDrugs
+- BioGPSGene
+- COSMIC
+- CTDGene
+- ComplexPortalHuman
+- ComplexPortalSARS
+- ComplexPortalSARSCov2
+- DbSNPGene
+- ENSEMBL
+- FlyBase
+- GTPLigands
+- GTPTargets
+- GeneCards
+- GlyGen
+- HGNC
+- HMDBMetabolite
+- HMDBProtein
+- HPA
+- IntEnz
+- KEGG
+- MGI
+- Monarch
+- NCBIGene
+- OMIM
+- OpenTargets
+- Orphanet
+- PDB
+- PRO
+- PharmacoDB
+- PharosLigands
+- PharosTargets
+- RGD
+- RefSeqPeptide
+- RefSeqRNA
+- Rhea
+- UCSC
+- VGNC
+- Wormbase
+- Xenbase
+- ZFIN
+- Zinc
+- ZincBiogenic
+- ZincFDAApproved
+- ZincInvestigational
+- ZincMetabolites
+- ZincPredictionsPurchasable
+- ZincSubstances
+- ZincTarget
+- ZincWorldDrugs
 
 # Code-organization
 
@@ -146,8 +146,8 @@ Usage: java -jar graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar
 	[-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]
 
 Options:
-	[-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)
-	[-i|--insertions]: Used to process downloaded files and insert resources (specified with -r or all if -r omitted) into the graph database
-	[-r|--resources <name-of-resource1,name-of-resource2,...>]: Comma-delimited list of names (NOTE: no spaces between name of resources)
-	[-l|--list_resources]: Lists names of supported resources to use with -r|--resources
-	[-h|--help]: Displays this help message
+	- [-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)
+	- [-i|--insertions]: Used to process downloaded files and insert resources (specified with -r or all if -r omitted) into the graph database
+	- [-r|--resources <name-of-resource1,name-of-resource2,...>]: Comma-delimited list of names (NOTE: no spaces between name of resources)
+	- [-l|--list_resources]: Lists names of supported resources to use with -r|--resources
+	- [-h|--help]: Displays this help message
