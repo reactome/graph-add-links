@@ -147,6 +147,7 @@ be run with various options.
 	[-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]**
 
 Options:
+- [-c|--config]: Used to provide the path of a configuration file (default of src/main/resources/config.properties)
 - [-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)
 - [-i|--insertions]: Used to process downloaded files and insert resources (specified with -r or all if -r omitted) into the graph database
 - [-r|--resources <name-of-resource1,name-of-resource2,...>]: Comma-delimited list of names (NOTE: no spaces between name of resources)
