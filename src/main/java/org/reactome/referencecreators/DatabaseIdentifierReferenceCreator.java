@@ -50,7 +50,7 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
         String nodeCreationQuery = "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Identifiers.csv' AS row\n" +
             "CREATE (:DatabaseIdentifier:DatabaseObject " +
             "{dbId: toInteger(row.DbId), displayName: row.DisplayName, schemaClass: row.SchemaClass, " +
-            "identifier: row.Identifier, referenceDatabase: row.ReferenceDbName, url: row.URL})";
+            "identifier: row.Identifier, databaseName: row.ReferenceDbName, url: row.URL})";
         logger.info("Running query \n" + nodeCreationQuery);
         ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
             tx.run(nodeCreationQuery);
