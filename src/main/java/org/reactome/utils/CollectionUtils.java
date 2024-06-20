@@ -13,7 +13,7 @@ public class CollectionUtils {
 
     public static <E> List<Collection<E>> split(Collection<E> collection, int numOfCollections) {
         List<Collection<E>> collections = new ArrayList<>();
-        double collectionSize = Math.ceil(collection.size() / numOfCollections);
+        double collectionSize = Math.ceil(collection.size() / (double) numOfCollections);
 
         Iterator<E> iterator = collection.iterator();
         for (int i = 0; i < numOfCollections; i++) {
@@ -22,7 +22,10 @@ public class CollectionUtils {
             while (splitCollection.size() < collectionSize && iterator.hasNext()) {
                 splitCollection.add(iterator.next());
             }
-            collections.add(splitCollection);
+
+            if (!splitCollection.isEmpty()) {
+                collections.add(splitCollection);
+            }
         }
         return collections;
     }
