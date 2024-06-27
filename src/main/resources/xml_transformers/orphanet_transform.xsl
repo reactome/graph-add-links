@@ -5,8 +5,8 @@
 	<xsl:template match="/JDBOR/GeneList/Gene">
 		<!-- Only interested in Genes that have a Reactome reference. -->
 		<xsl:if test="./ExternalReferenceList/ExternalReference[Source='Reactome']">
-			<!-- Get the ID of the Gene node -->
-			<xsl:value-of select="@id"/>
+			<!-- Get the value of the child Symbol node -->
+			<xsl:value-of select="./Symbol/text()"/>
 			<xsl:text>,</xsl:text>
 			<!-- Get the ID of the ExternalReference node -->
 			<xsl:value-of select="./ExternalReferenceList/ExternalReference[Source='Reactome']/@id"/>

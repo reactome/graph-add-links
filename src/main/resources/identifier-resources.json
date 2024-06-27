@@ -624,7 +624,7 @@
                     "Orphanet"
                 ],
                 "url": "https://www.orpha.net",
-                "accessURL": "https://www.orpha.net/consor/cgi-bin/Disease_Genes.php?data_id=###ID###"
+                "accessURL": "https://www.orpha.net/en/disease/gene/###ID###"
             }
         },
         "Zinc": {
