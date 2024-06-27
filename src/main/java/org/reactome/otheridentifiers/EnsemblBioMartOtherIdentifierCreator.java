@@ -36,7 +36,12 @@ public class EnsemblBioMartOtherIdentifierCreator {
         this.uniprotToResourceIdentifiers = uniProtToResourceIdentifiers;
     }
 
-    public void writeCSV() throws IOException, URISyntaxException {
+    public void insertIdentifiers() throws IOException, URISyntaxException {
+        writeCSV();
+        readCSV();
+    }
+
+    void writeCSV() throws IOException, URISyntaxException {
         Path resourceDirectory = getReferenceCreatorCSVDirectory();
 
         Files.createDirectories(resourceDirectory);
@@ -53,14 +58,14 @@ public class EnsemblBioMartOtherIdentifierCreator {
         logger.info("Writing CSV");
         for (IdentifierNode sourceIdentifierNode : sourceToOtherIdentifiersMap.keySet()) {
             Set<String> otherIdentifiers = sourceToOtherIdentifiersMap.get(sourceIdentifierNode);
-            logger.info("Identifier Node: " + sourceIdentifierNode);
-            logger.info("Other Identifiers: " + otherIdentifiers);
+            logger.debug("Identifier Node: " + sourceIdentifierNode);
+            logger.debug("Other Identifiers: " + otherIdentifiers);
 
             String otherIdentifiersNotInDatabase =
                 otherIdentifiers.stream()
                 //.filter(otherIdentifier -> !existsInDatabase(sourceIdentifierNode, otherIdentifier))
                 .sorted()
-                .collect(Collectors.joining(":"));
+                .collect(Collectors.joining(";"));
 
             writeCSVForIdentifier(sourceIdentifierNode, otherIdentifiersNotInDatabase);
 
@@ -68,14 +73,15 @@ public class EnsemblBioMartOtherIdentifierCreator {
         logger.info("CSV data complete");
     }
 
-    public void readCSV() throws URISyntaxException {
+    void readCSV() throws URISyntaxException {
         final String csvDirectory = getReferenceCreatorCSVDirectory().toString().replace("\\","/");
 
         logger.info("Inserting other identifiers...");
         String otherIdentifiersInsertionQuery =
+            "USING PERIODIC COMMIT 100\n" +
             "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/OtherIdentifiers.csv' AS row\n" +
             "MATCH (rgp:ReferenceGeneProduct {dbId: toInteger(row.SourceDbId)})\n" +
-            "SET rgp.otherIdentifier = split(row.OtherIdentifiers, ':')";
+            "SET rgp.otherIdentifier = split(row.OtherIdentifiers, ';')";
         ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
             tx.run(otherIdentifiersInsertionQuery);
             return null;
@@ -92,7 +98,9 @@ public class EnsemblBioMartOtherIdentifierCreator {
         List<IdentifierNode> uniProtNodes = getIdentifierNodes();
         for (IdentifierNode uniProtNode : uniProtNodes) {
             Set<String> otherIdentifiers = this.uniprotToResourceIdentifiers.get(uniProtNode.getIdentifier());
-            referenceGeneProductToOtherIdentifiers.put(uniProtNode, otherIdentifiers);
+            if (otherIdentifiers != null) {
+                referenceGeneProductToOtherIdentifiers.put(uniProtNode, otherIdentifiers);
+            }
         }
         return referenceGeneProductToOtherIdentifiers;
     }

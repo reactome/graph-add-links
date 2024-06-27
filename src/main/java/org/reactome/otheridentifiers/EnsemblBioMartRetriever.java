@@ -1,5 +1,7 @@
 package org.reactome.otheridentifiers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.reactome.utils.ConfigParser;
 
 import java.io.BufferedReader;
@@ -21,19 +23,47 @@ import java.util.List;
  *         Created 5/31/2024
  */
 public class EnsemblBioMartRetriever {
-
-//    public static void main(String[] args) throws IOException {
-//        EnsemblBioMartRetriever ensemblBioMartRetriever = new EnsemblBioMartRetriever();
-//        ensemblBioMartRetriever.downloadFiles();
-//    }
+    private static Logger logger = LogManager.getLogger();
 
     public void downloadFiles() throws IOException {
         Files.createDirectories(getOutputDirectory());
 
-        for (String bioMartSpeciesName : getBioMartSpeciesNames()) {
-            queryAndSaveFilesForOtherIdentifiers(bioMartSpeciesName);
-            queryAndSaveFilesForUniProt(bioMartSpeciesName);
-        }
+        getBioMartSpeciesNames().parallelStream().forEach(bioMartSpeciesName -> {
+            logger.info("Downloading BioMart files for " + bioMartSpeciesName);
+            try {
+                queryAndSaveFilesForOtherIdentifiers(bioMartSpeciesName);
+                queryAndSaveFilesForUniProt(bioMartSpeciesName);
+
+                logger.info("Finished downloading BioMart files for " + bioMartSpeciesName);
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to query/save files", e);
+            }
+        });
+    }
+
+    public List<String> getBioMartSpeciesNames() {
+        return Arrays.asList(
+            "btaurus",
+            "celegans",
+            "clfamiliaris",
+            "dmelanogaster",
+            "drerio",
+            "ggallus",
+            "hsapiens",
+            "mmusculus",
+            "rnorvegicus",
+            "scerevisiae",
+            "sscrofa",
+            "xtropicalis"
+        );
+    }
+
+    public Path getOtherIdentifierFilePath(String bioMartSpeciesName) {
+        return getOutputDirectory().resolve(bioMartSpeciesName + "_microarray_go_ncbi_ids");
+    }
+
+    public Path getUniProtFilePath(String bioMartSpeciesName) {
+        return getOutputDirectory().resolve(bioMartSpeciesName + "_uniprot");
     }
 
     private void queryAndSaveFilesForOtherIdentifiers(String bioMartSpeciesName) throws IOException {
@@ -73,16 +103,8 @@ public class EnsemblBioMartRetriever {
         return lineColumns.size() > identifierColumnIndex && !lineColumns.get(identifierColumnIndex).isEmpty();
     }
 
-    private Path getOtherIdentifierFilePath(String bioMartSpeciesName) {
-        return getOutputDirectory().resolve(bioMartSpeciesName + "_microarray_go_ncbi_ids");
-    }
-
-    private Path getUniProtFilePath(String bioMartSpeciesName) {
-        return getOutputDirectory().resolve(bioMartSpeciesName + "_uniprot");
-    }
-
     private Path getOutputDirectory() {
-        return ConfigParser.getDownloadDirectoryPath().resolve("biomodels");
+        return ConfigParser.getDownloadDirectoryPath().resolve("biomart");
     }
 
     private List<String> getMicroarrayTypesBySpecies(String bioMartSpeciesName) throws IOException {
@@ -156,20 +178,4 @@ public class EnsemblBioMartRetriever {
         return Arrays.asList("uniprotswissprot","uniprotsptrembl");
     }
 
-    private List<String> getBioMartSpeciesNames() {
-        return Arrays.asList(
-            "btaurus",
-            "celegans",
-            "clfamiliaris",
-            "dmelanogaster",
-            "drerio",
-            "ggallus",
-            "hsapiens",
-            "mmusculus",
-            "rnorvegicus",
-            "scerevisiae",
-            "sscrofa",
-            "xtropicalis"
-        );
-    }
 }
