@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -35,14 +36,16 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
         Map<String, Set<String>> uniProtIdentifiersToOtherIdentifiers = new HashMap<>();
 
         Map<String, Set<String>> uniProtIdentifiersToEnsEMBLGeneIdentifiers =
-            getUniProtIdentifiersToEnsemblGeneIdentifiers();
-        Map<String, Set<String>> ensemblGeneIdentifiersToOtherIdentifiers =
-            getEnsemblGeneIdentifiersToOtherIdentifiers();
+            getUniProtIdentifiersToEnsEMBLGeneIdentifiers();
+
+        Set<String> ensEMBLGeneIdentifiers = getEnsEMBLGeneIdentifiers(uniProtIdentifiersToEnsEMBLGeneIdentifiers);
+        Map<String, Set<String>> ensEMBLGeneIdentifiersToOtherIdentifiers =
+            getEnsEMBLGeneIdentifiersToOtherIdentifiers(ensEMBLGeneIdentifiers);
 
 
         for (String uniProtIdentifier : uniProtIdentifiersToEnsEMBLGeneIdentifiers.keySet()) {
-            for (String ensemblGeneIdentifier : uniProtIdentifiersToEnsEMBLGeneIdentifiers.get(uniProtIdentifier)) {
-                for (String otherIdentifier : ensemblGeneIdentifiersToOtherIdentifiers.computeIfAbsent(ensemblGeneIdentifier, k -> new HashSet<>())) {
+            for (String ensEMBLGeneIdentifier : uniProtIdentifiersToEnsEMBLGeneIdentifiers.get(uniProtIdentifier)) {
+                for (String otherIdentifier : ensEMBLGeneIdentifiersToOtherIdentifiers.computeIfAbsent(ensEMBLGeneIdentifier, k -> new HashSet<>())) {
                     uniProtIdentifiersToOtherIdentifiers.computeIfAbsent(uniProtIdentifier, k -> new HashSet<>()).add(otherIdentifier);
                 }
             }
@@ -59,18 +62,22 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
         return uniProtIdentifiersToOtherIdentifiers;
     }
 
-    private Map<String, Set<String>> getEnsemblGeneIdentifiersToOtherIdentifiers() throws IOException {
-        Map<String, Set<String>> ensemblGeneIdentifiersToOtherIdentifiers = new HashMap<>();
+    private Map<String, Set<String>> getEnsEMBLGeneIdentifiersToOtherIdentifiers(Set<String> ensEMBLGeneIdentifiers)
+        throws IOException {
+
+        Map<String, Set<String>> ensEMBLGeneIdentifiersToOtherIdentifiers = new HashMap<>();
 
         Files.lines(getOtherIdentifiersFilePath()).forEach(otherIdentifierFileLine -> {
-            String ensemblGeneIdentifier = getEnsemblGeneIdentifier(otherIdentifierFileLine);
-            String otherIdentifier = getOtherIdentifier(otherIdentifierFileLine);
+            String ensEMBLGeneIdentifier = parseEnsEMBLGeneIdentifierFromFileLine(otherIdentifierFileLine);
+            String otherIdentifier = parseOtherIdentifierFromFileLine(otherIdentifierFileLine);
 
-            ensemblGeneIdentifiersToOtherIdentifiers.
-                computeIfAbsent(ensemblGeneIdentifier, k -> new HashSet<>()).add(otherIdentifier);
+            if (ensEMBLGeneIdentifiers.contains(ensEMBLGeneIdentifier)) {
+                ensEMBLGeneIdentifiersToOtherIdentifiers.
+                    computeIfAbsent(ensEMBLGeneIdentifier, k -> new HashSet<>()).add(otherIdentifier);
+            }
         });
 
-        return ensemblGeneIdentifiersToOtherIdentifiers;
+        return ensEMBLGeneIdentifiersToOtherIdentifiers;
     }
 
 //    private Map<String, List<String>> getEnsemblProteinIdentifiersToEnsemblTranscriptIdentifiers() throws IOException {
@@ -88,23 +95,31 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
 //        return ensemblProteinIdentifiersToEnsemblTranscriptIdentifiers;
 //    }
 
-    private Map<String, Set<String>> getUniProtIdentifiersToEnsemblGeneIdentifiers() throws IOException {
-        Map<String, Set<String>> uniProtIdentifiersToEnsemblGeneIdentifiers = new HashMap<>();
+    private Map<String, Set<String>> getUniProtIdentifiersToEnsEMBLGeneIdentifiers() throws IOException {
+        Map<String, Set<String>> uniProtIdentifiersToEnsEMBLGeneIdentifiers = new HashMap<>();
 
         Files.lines(getUniProtFilePath()).forEach(uniProtFileLine -> {
-            String uniProtIdentifier = getUniProtIdentifier(uniProtFileLine);
-            String ensemblGeneIdentifier = getEnsemblGeneIdentifier(uniProtFileLine);
+            String uniProtIdentifier = parseUniProtIdentifierFromFileLine(uniProtFileLine);
+            String ensEMBLGeneIdentifier = parseEnsEMBLGeneIdentifierFromFileLine(uniProtFileLine);
 
-            uniProtIdentifiersToEnsemblGeneIdentifiers.
-                computeIfAbsent(uniProtIdentifier, k -> new HashSet<>()).add(ensemblGeneIdentifier);
+            uniProtIdentifiersToEnsEMBLGeneIdentifiers.
+                computeIfAbsent(uniProtIdentifier, k -> new HashSet<>()).add(ensEMBLGeneIdentifier);
         });
 
-        return uniProtIdentifiersToEnsemblGeneIdentifiers;
+        return uniProtIdentifiersToEnsEMBLGeneIdentifiers;
     }
 
-    private String getEnsemblGeneIdentifier(String line) {
-        final int ensemblGeneIndex = 0;
-        return line.split("\t")[ensemblGeneIndex];
+    private Set<String> getEnsEMBLGeneIdentifiers(Map<String, Set<String>> uniProtIdentifiersToEnsEMBLGeneIdentifiers) {
+        return uniProtIdentifiersToEnsEMBLGeneIdentifiers
+            .values()
+            .stream()
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
+    }
+
+    private String parseEnsEMBLGeneIdentifierFromFileLine(String fileLine) {
+        final int ensEMBLGeneIndex = 0;
+        return fileLine.split("\t")[ensEMBLGeneIndex];
     }
 
 //    private String getEnsemblTranscriptIdentifier(String line) {
@@ -112,14 +127,14 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
 //        return line.split("\t")[ensemblTranscriptIndex];
 //    }
 
-    private String getUniProtIdentifier(String line) {
+    private String parseUniProtIdentifierFromFileLine(String fileLine) {
         final int uniProtIndex = 3;
-        return line.split("\t")[uniProtIndex];
+        return fileLine.split("\t")[uniProtIndex];
     }
 
-    private String getOtherIdentifier(String line) {
+    private String parseOtherIdentifierFromFileLine(String fileLine) {
         final int otherIdentifierIndex = 3;
-        return line.split("\t")[otherIdentifierIndex];
+        return fileLine.split("\t")[otherIdentifierIndex];
     }
 
     private Path getUniProtFilePath() {
