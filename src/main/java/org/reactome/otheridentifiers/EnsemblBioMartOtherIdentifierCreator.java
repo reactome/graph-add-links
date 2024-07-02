@@ -82,11 +82,7 @@ public class EnsemblBioMartOtherIdentifierCreator {
             "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/OtherIdentifiers.csv' AS row\n" +
             "MATCH (rgp:ReferenceGeneProduct {dbId: toInteger(row.SourceDbId)})\n" +
             "SET rgp.otherIdentifier = split(row.OtherIdentifiers, ';')";
-        ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
-            tx.run(otherIdentifiersInsertionQuery);
-            return null;
-        });
-
+        ReactomeGraphDatabase.getSession().run(otherIdentifiersInsertionQuery);
     }
 
     Path getReferenceCreatorCSVDirectory() throws URISyntaxException {
@@ -95,6 +91,7 @@ public class EnsemblBioMartOtherIdentifierCreator {
 
     private Map<IdentifierNode, Set<String>> getReferenceGeneProductToOtherIdentifiers() {
         Map<IdentifierNode, Set<String>> referenceGeneProductToOtherIdentifiers = new HashMap<>();
+
         List<IdentifierNode> uniProtNodes = getIdentifierNodes();
         for (IdentifierNode uniProtNode : uniProtNodes) {
             Set<String> otherIdentifiers = this.uniprotToResourceIdentifiers.get(uniProtNode.getIdentifier());
