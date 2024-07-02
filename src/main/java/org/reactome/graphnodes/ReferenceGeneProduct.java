@@ -136,6 +136,10 @@ public class ReferenceGeneProduct extends ReferenceSequence {
     }
 
     private static Set<ReferenceGeneProduct> fetchNonCachedReferenceGeneProducts(Set<String> uniProtIdentifiers) {
+        if (allRGPsFetched) {
+            return new HashSet<>();
+        }
+
         final List<String> cachedRGPIdentifiers =
             rgpCache.stream().map(rgp -> rgp.getIdentifier()).collect(Collectors.toList());
 
