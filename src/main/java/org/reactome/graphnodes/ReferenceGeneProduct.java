@@ -154,6 +154,10 @@ public class ReferenceGeneProduct extends ReferenceSequence {
     }
 
     private static Set<ReferenceGeneProduct> queryReferenceGeneProducts(Set<String> uniProtIdentifiers) {
+        if (uniProtIdentifiers.isEmpty()) {
+            return new HashSet<>();
+        }
+
         final String referenceGeneProductVariableName = "rgp";
         final String speciesVariableName = "species";
 
