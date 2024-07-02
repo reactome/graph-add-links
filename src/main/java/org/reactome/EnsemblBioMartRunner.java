@@ -2,6 +2,7 @@ package org.reactome;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.reactome.graphnodes.ReferenceGeneProduct;
 import org.reactome.otheridentifiers.EnsemblBioMartFileProcessor;
 import org.reactome.otheridentifiers.EnsemblBioMartOtherIdentifierCreator;
 import org.reactome.otheridentifiers.EnsemblBioMartRetriever;
@@ -25,6 +26,7 @@ public class EnsemblBioMartRunner {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         downloadEnsemblBioMartMappingFiles();
+        cacheRGPNodesFromDatabase();
         insertOtherIdentifiersIntoDatabase();
     }
 
@@ -35,6 +37,12 @@ public class EnsemblBioMartRunner {
         ensemblBioMartRetriever.downloadFiles();
 
         logger.info("Download complete");
+    }
+
+    private static void cacheRGPNodesFromDatabase() {
+        logger.info("Caching RGP nodes from database");
+        ReferenceGeneProduct.fetchAllReferenceGeneProducts();
+        logger.info("Finished caching RGP nodes from database");
     }
 
     private static void insertOtherIdentifiersIntoDatabase() throws IOException, URISyntaxException {
