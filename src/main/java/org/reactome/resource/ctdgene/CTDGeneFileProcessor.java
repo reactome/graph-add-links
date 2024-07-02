@@ -26,8 +26,6 @@ public class CTDGeneFileProcessor extends UniProtFileProcessor {
     public CTDGeneFileProcessor(Path ...filePaths) throws IOException {
         super(filePaths[0]);
         this.ctdIdentifiers = getCTDIdentifiers(filePaths[1]);
-
-        System.out.println(this.ctdIdentifiers);
     }
 
     @Override
