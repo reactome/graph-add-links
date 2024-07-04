@@ -241,22 +241,21 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
         String dbIdVariable = referenceGeneProductVariable + ".dbId";
         String identifierVariable = referenceGeneProductVariable + ".identifier";
-        String variantIdentifierVariable = referenceGeneProductVariable + ".variantIdentifier";
         String geneNameVariable = referenceGeneProductVariable + ".geneName";
         String speciesNameVariable = speciesVariableName + ".displayName";
 
         return String.format(
             "MATCH (%s:ReferenceGeneProduct)-[:species]->(%s:Species) " +
             "MATCH (%s)-[:referenceDatabase]->(rd:ReferenceDatabase) " +
-            "WHERE rd.displayName = \"UniProt\" " +
+            "WHERE rd.displayName = \"UniProt\" AND NOT (%s:ReferenceIsoform) " +
             getFilterStatementForUniProtIdentifiers(identifierVariable, uniProtIdentifiers) +
-            " RETURN %s as dbId, %s as identifier, %s as variantIdentifier, %s as geneNames, %s as speciesName",
+            " RETURN %s as dbId, %s as identifier, %s as geneNames, %s as speciesName",
             referenceGeneProductVariable,
             speciesVariableName,
             referenceGeneProductVariable,
+            referenceGeneProductVariable,
             dbIdVariable,
             identifierVariable,
-            variantIdentifierVariable,
             geneNameVariable,
             speciesNameVariable
         );
