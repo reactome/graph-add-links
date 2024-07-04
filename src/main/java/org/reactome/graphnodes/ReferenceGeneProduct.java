@@ -55,11 +55,13 @@ public class ReferenceGeneProduct extends ReferenceSequence {
                 .forEach(record -> {
                     long dbId = record.get("dbId").asLong();
                     String identifier = record.get("identifier").asString();
+                    String variantIdentifier = record.containsKey("variantIdentifier") ?
+                        record.get("variantIdentifier").asString() : "";
                     List<String> geneNames = !record.get("geneNames").isNull() ?
                         record.get("geneNames").asList(Value::asString) : new ArrayList<>();
                     String speciesName = record.get("speciesName").asString();
 
-                    rgpCache.add(new ReferenceGeneProduct(dbId, identifier, geneNames, speciesName));
+                    rgpCache.add(new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName));
                 });
             allRGPsFetched = true;
         }
