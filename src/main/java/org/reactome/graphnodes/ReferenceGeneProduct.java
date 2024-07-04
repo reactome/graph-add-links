@@ -174,12 +174,15 @@ public class ReferenceGeneProduct extends ReferenceSequence {
                     .map(record -> {
                         long dbId = record.get("dbId").asLong();
                         String identifier = record.get("identifier").asString();
+                        String variantIdentifier = record.containsKey("variantIdentifier") ?
+                            record.get("variantIdentifier").asString() : "";
                         List<String> geneNames = !record.get("geneNames").isNull() ?
                             record.get("geneNames").asList(Value::asString) :
                             new ArrayList<>();
                         String speciesName = record.get("speciesName").asString();
 
-                        return new ReferenceGeneProduct(dbId, identifier, geneNames, speciesName);
+                        return new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName);
+                        //rgpCache.add(new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName));
                     })
                     //.peek(System.out::println)
                     .collect(Collectors.toSet());
@@ -238,6 +241,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
         String dbIdVariable = referenceGeneProductVariable + ".dbId";
         String identifierVariable = referenceGeneProductVariable + ".identifier";
+        String variantIdentifierVariable = referenceGeneProductVariable + ".variantIdentifier";
         String geneNameVariable = referenceGeneProductVariable + ".geneName";
         String speciesNameVariable = speciesVariableName + ".displayName";
 
@@ -246,12 +250,13 @@ public class ReferenceGeneProduct extends ReferenceSequence {
             "MATCH (%s)-[:referenceDatabase]->(rd:ReferenceDatabase) " +
             "WHERE rd.displayName = \"UniProt\" " +
             getFilterStatementForUniProtIdentifiers(identifierVariable, uniProtIdentifiers) +
-            " RETURN %s as dbId, %s as identifier,%s as geneNames,%s as speciesName",
+            " RETURN %s as dbId, %s as identifier, %s as variantIdentifier, %s as geneNames, %s as speciesName",
             referenceGeneProductVariable,
             speciesVariableName,
             referenceGeneProductVariable,
             dbIdVariable,
             identifierVariable,
+            variantIdentifierVariable,
             geneNameVariable,
             speciesNameVariable
         );
