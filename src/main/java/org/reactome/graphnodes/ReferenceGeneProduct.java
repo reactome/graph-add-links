@@ -254,7 +254,6 @@ public class ReferenceGeneProduct extends ReferenceSequence {
             referenceGeneProductVariable,
             speciesVariableName,
             referenceGeneProductVariable,
-            referenceGeneProductVariable,
             dbIdVariable,
             identifierVariable,
             geneNameVariable,
