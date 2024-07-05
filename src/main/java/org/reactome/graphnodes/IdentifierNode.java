@@ -44,6 +44,20 @@ public abstract class IdentifierNode extends GraphNode {
     public String getDisplayName() {
         return getReferenceDatabaseDisplayName() + ":" + getIdentifier();
     }
+    
+    @Override
+    public boolean equals(Object otherIdentifierNode) {
+        if (!(otherIdentifierNode instanceof IdentifierNode)) {
+            return false;
+        }
+
+        return this.getDbId() == ((IdentifierNode) otherIdentifierNode).getDbId();
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.getDbId());
+    }
 
     @Override
     protected Set<String> getAttributeKeyValueStrings() {
