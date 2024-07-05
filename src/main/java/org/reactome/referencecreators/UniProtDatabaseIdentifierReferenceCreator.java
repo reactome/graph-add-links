@@ -3,10 +3,8 @@ package org.reactome.referencecreators;
 import org.reactome.graphnodes.IdentifierNode;
 import org.reactome.graphnodes.ReferenceGeneProduct;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -19,9 +17,8 @@ public class UniProtDatabaseIdentifierReferenceCreator extends DatabaseIdentifie
 
     @Override
     protected List<IdentifierNode> getIdentifierNodes() {
-        return new ArrayList<>(
-            ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers()).values()
-        );
+        return ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers())
+            .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     private Set<String> getUniProtIdentifiers() {

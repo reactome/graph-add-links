@@ -103,9 +103,8 @@ public class EnsemblBioMartOtherIdentifierCreator {
     }
 
     private List<IdentifierNode> getIdentifierNodes() {
-        return new ArrayList<>(
-            ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers()).values()
-        );
+        return ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers())
+            .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     private Set<String> getUniProtIdentifiers() {

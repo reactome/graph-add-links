@@ -7,10 +7,8 @@ import org.reactome.graphnodes.*;
 import org.reactome.graphnodes.ReferenceSequence.ReferenceSequenceType;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -146,9 +144,8 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
     @Override
     protected List<IdentifierNode> getIdentifierNodes() {
-        return new ArrayList<>(
-            ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers()).values()
-        );
+        return ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers())
+            .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override
