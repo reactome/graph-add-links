@@ -152,9 +152,9 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         super.setIdentifier(identifier);
     }
 
-    private static Set<ReferenceGeneProduct> fetchNonCachedReferenceGeneProducts(Set<String> uniProtIdentifiers) {
+    private static List<ReferenceGeneProduct> fetchNonCachedReferenceGeneProducts(Set<String> uniProtIdentifiers) {
         if (allRGPsFetched) {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
 
         final List<String> cachedRGPIdentifiers =
@@ -170,24 +170,27 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         return queryReferenceGeneProducts(unfetchedReferenceGeneProductIdentifiers);
     }
 
-    private static Set<ReferenceGeneProduct> queryReferenceGeneProducts(Set<String> uniProtIdentifiers) {
+    private static List<ReferenceGeneProduct> queryReferenceGeneProducts(Set<String> uniProtIdentifiers) {
         if (uniProtIdentifiers.isEmpty()) {
-            return new HashSet<>();
+            return new ArrayList<>();
         }
 
         final String referenceGeneProductVariableName = "rgp";
         final String speciesVariableName = "species";
 
-        Set<ReferenceGeneProduct> referenceGeneProducts = new LinkedHashSet<>();
+        List<ReferenceGeneProduct> referenceGeneProducts = new ArrayList<>();
 
         //int count = 0;
         for (Collection<String> subSetUniProtIdentifiers : CollectionUtils.split(uniProtIdentifiers, 100)) {
-            Set<ReferenceGeneProduct> subSetReferenceGeneProducts =
+            List<ReferenceGeneProduct> subSetReferenceGeneProducts =
                 ReactomeGraphDatabase.getSession()
                     .run(getReferenceGeneProductDataQuery(referenceGeneProductVariableName, speciesVariableName, subSetUniProtIdentifiers))
                     .stream()
                     .map(record -> {
+
                         long dbId = record.get("dbId").asLong();
+
+                        System.out.println("Record dbId: " + dbId);
                         String identifier = record.get("identifier").asString();
                         List<String> geneNames = !record.get("geneNames").isNull() ?
                             record.get("geneNames").asList(Value::asString) :
@@ -196,7 +199,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
                         return new ReferenceGeneProduct(dbId, identifier, geneNames, speciesName);
                     })
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             referenceGeneProducts.addAll(subSetReferenceGeneProducts);
         }
