@@ -19,7 +19,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
     private static final String REFERENCE_DATABASE_NAME = "UniProt";
 
     private static boolean allRGPsFetched;
-    private static Set<ReferenceGeneProduct> rgpCache = new LinkedHashSet<>();
+    private static List<ReferenceGeneProduct> rgpCache = new ArrayList<>();
     private static ReferenceDatabase referenceDatabase;
 
     private String speciesName;
@@ -33,15 +33,24 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         this.speciesName = speciesName;
     }
 
-    public static Map<String, ReferenceGeneProduct> fetchReferenceGeneProductsForUniProtIdentifiers(
+    public static Map<String, List<ReferenceGeneProduct>> fetchReferenceGeneProductsForUniProtIdentifiers(
         Set<String> uniprotIdentifiers) {
 
         rgpCache.addAll(fetchNonCachedReferenceGeneProducts(uniprotIdentifiers));
 
         return rgpCache.stream().collect(Collectors.toMap(
             rgp -> rgp.getIdentifier(),
-            rgp -> rgp
+            rgp -> {
+                List<ReferenceGeneProduct> list = new ArrayList<>();
+                list.add(rgp);
+                return list;
+            },
+            (existingList, newList) -> {
+                existingList.addAll(newList);
+                return existingList;
+            }
         ));
+
     }
 
     public static Map<String, ReferenceGeneProduct> fetchAllReferenceGeneProducts() {
@@ -55,13 +64,11 @@ public class ReferenceGeneProduct extends ReferenceSequence {
                 .forEach(record -> {
                     long dbId = record.get("dbId").asLong();
                     String identifier = record.get("identifier").asString();
-                    String variantIdentifier = record.containsKey("variantIdentifier") ?
-                        record.get("variantIdentifier").asString() : "";
                     List<String> geneNames = !record.get("geneNames").isNull() ?
                         record.get("geneNames").asList(Value::asString) : new ArrayList<>();
                     String speciesName = record.get("speciesName").asString();
 
-                    rgpCache.add(new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName));
+                    rgpCache.add(new ReferenceGeneProduct(dbId, identifier, geneNames, speciesName));
                 });
             allRGPsFetched = true;
         }
@@ -174,14 +181,12 @@ public class ReferenceGeneProduct extends ReferenceSequence {
                     .map(record -> {
                         long dbId = record.get("dbId").asLong();
                         String identifier = record.get("identifier").asString();
-                        String variantIdentifier = record.containsKey("variantIdentifier") ?
-                            record.get("variantIdentifier").asString() : "";
                         List<String> geneNames = !record.get("geneNames").isNull() ?
                             record.get("geneNames").asList(Value::asString) :
                             new ArrayList<>();
                         String speciesName = record.get("speciesName").asString();
 
-                        return new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName);
+                        return new ReferenceGeneProduct(dbId, identifier, geneNames, speciesName);
                     })
                     .collect(Collectors.toSet());
 
@@ -243,7 +248,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
         return String.format(
             "MATCH (%s:ReferenceGeneProduct)-[:species]->(%s:Species) " +
             "MATCH (%s)-[:referenceDatabase]->(rd:ReferenceDatabase) " +
-            "WHERE rd.displayName = \"UniProt\" AND NOT (%s:ReferenceIsoform) " +
+            "WHERE rd.displayName = \"UniProt\" " +
             getFilterStatementForUniProtIdentifiers(identifierVariable, uniProtIdentifiers) +
             " RETURN %s as dbId, %s as identifier, %s as geneNames, %s as speciesName",
             referenceGeneProductVariable,
