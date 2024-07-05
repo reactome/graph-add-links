@@ -78,9 +78,9 @@ public abstract class ReferenceCreator {
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
-                if (!existsInDatabase(externalIdentifier)) {
+                //if (!existsInDatabase(externalIdentifier)) {
                     writeCSVForIdentifier(externalIdentifier, sourceIdentifierNode);
-                }
+                //}
             }
         }
         logger.info("CSV data complete");
@@ -139,6 +139,7 @@ public abstract class ReferenceCreator {
         Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
         for (IdentifierNode identifierNode : getIdentifierNodes()) {
+            System.out.println("Identifier Node DbId: " + identifierNode.getDbId());
             sourceToExternalIdentifiers.put(
                 identifierNode,
                 createExternalIdentifiersForIdentifierNode(identifierNode)
