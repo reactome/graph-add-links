@@ -53,7 +53,7 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
     }
 
-    public static Map<String, ReferenceGeneProduct> fetchAllReferenceGeneProducts() {
+    public static Map<String, List<ReferenceGeneProduct>> fetchAllReferenceGeneProducts() {
         if (!allRGPsFetched) {
             String referenceGeneProductVariableName = "rgp";
             String speciesVariableName = "species";
@@ -75,19 +75,27 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
         return rgpCache.stream().collect(Collectors.toMap(
             rgp -> rgp.getIdentifier(),
-            rgp -> rgp
+            rgp -> {
+                List<ReferenceGeneProduct> list = new ArrayList<>();
+                list.add(rgp);
+                return list;
+            },
+            (existingList, newList) -> {
+                existingList.addAll(newList);
+                return existingList;
+            }
         ));
     }
 
-    public static Map<String, ReferenceGeneProduct> fetchHumanReferenceGeneProducts() {
+    public static Map<String, List<ReferenceGeneProduct>> fetchHumanReferenceGeneProducts() {
         return fetchReferenceGeneProductsForSpecies("Homo sapiens");
     }
 
-    public static Map<String, ReferenceGeneProduct> fetchReferenceGeneProductsForSpecies(String speciesName) {
+    public static Map<String, List<ReferenceGeneProduct>> fetchReferenceGeneProductsForSpecies(String speciesName) {
         return fetchAllReferenceGeneProducts()
             .entrySet()
             .stream()
-            .filter(entry -> entry.getValue().getSpeciesName().equals(speciesName))
+            .filter(entry -> entry.getValue().stream().allMatch(rgp -> rgp.getSpeciesName().equals(speciesName)))
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
                 Map.Entry::getValue

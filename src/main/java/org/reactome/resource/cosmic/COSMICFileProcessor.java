@@ -31,15 +31,18 @@ public class COSMICFileProcessor implements FileProcessor {
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
         if (this.uniProtIdentifierToCosmicGeneName == null || this.uniProtIdentifierToCosmicGeneName.isEmpty()) {
-            Map<String, ReferenceGeneProduct> uniProtIdentifierToReferenceGeneProduct =
+            Map<String, List<ReferenceGeneProduct>> uniProtIdentifierToReferenceGeneProducts =
                 ReferenceGeneProduct.fetchHumanReferenceGeneProducts();
             Set<String> cosmicGeneNames = getCosmicGeneNames();
 
-            this.uniProtIdentifierToCosmicGeneName = uniProtIdentifierToReferenceGeneProduct.entrySet().stream()
-                .filter(entry -> entry.getValue().getGeneNames().stream().anyMatch(cosmicGeneNames::contains))
+            this.uniProtIdentifierToCosmicGeneName = uniProtIdentifierToReferenceGeneProducts.entrySet().stream()
+                .filter(entry -> entry.getValue().stream().flatMap(rgp -> rgp.getGeneNames().stream()).anyMatch(cosmicGeneNames::contains))
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
-                    entry -> getMatchingGeneNames(cosmicGeneNames, entry.getValue().getGeneNames())
+                    entry -> getMatchingGeneNames(
+                        cosmicGeneNames,
+                        entry.getValue().stream().flatMap(rgp -> rgp.getGeneNames().stream()).collect(Collectors.toList())
+                    )
                 ));
         }
 
