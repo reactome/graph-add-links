@@ -18,7 +18,7 @@ public class UniProtDatabaseIdentifierReferenceCreator extends DatabaseIdentifie
     @Override
     protected List<IdentifierNode> getIdentifierNodes() {
         return ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers())
-            .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
+            .values().stream().flatMap(Collection::stream).peek(rgp -> System.out.println("RGP: " + rgp.getDbId())).collect(Collectors.toList());
     }
 
     private Set<String> getUniProtIdentifiers() {
