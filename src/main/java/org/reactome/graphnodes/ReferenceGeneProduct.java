@@ -182,14 +182,10 @@ public class ReferenceGeneProduct extends ReferenceSequence {
                         String speciesName = record.get("speciesName").asString();
 
                         return new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName);
-                        //rgpCache.add(new ReferenceGeneProduct(dbId, !variantIdentifier.isEmpty() ? variantIdentifier : identifier, geneNames, speciesName));
                     })
-                    //.peek(System.out::println)
                     .collect(Collectors.toSet());
 
             referenceGeneProducts.addAll(subSetReferenceGeneProducts);
-            //count++;
-            //System.out.println(count);
         }
         return referenceGeneProducts;
     }
