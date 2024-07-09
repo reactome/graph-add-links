@@ -190,7 +190,6 @@ public class ReferenceGeneProduct extends ReferenceSequence {
 
                         long dbId = record.get("dbId").asLong();
 
-                        System.out.println("Record dbId: " + dbId);
                         String identifier = record.get("identifier").asString();
                         List<String> geneNames = !record.get("geneNames").isNull() ?
                             record.get("geneNames").asList(Value::asString) :
