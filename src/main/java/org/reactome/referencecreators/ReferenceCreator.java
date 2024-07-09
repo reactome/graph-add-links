@@ -124,7 +124,7 @@ public abstract class ReferenceCreator {
                 "MATCH (i)-[:referenceDatabase]->(rd:ReferenceDatabase)" +
                     " WHERE rd.displayName = \"" + getReferenceDatabase().getDisplayName() + "\"" +
                     " RETURN i.identifier";
-            //System.out.println(identifiersQuery);
+
             Result identifiersQueryResult = ReactomeGraphDatabase.getSession().run(identifiersQuery);
             this.existingIdentifiers = identifiersQueryResult
                 .stream()
@@ -138,29 +138,11 @@ public abstract class ReferenceCreator {
     private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {
         Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
-        List<IdentifierNode> equivalentNodes = new ArrayList<>();
         for (IdentifierNode identifierNode : getIdentifierNodes()) {
-            System.out.println("Identifier Node DbId: " + identifierNode.getDbId());
-
-            if (identifierNode.getDbId() == 218528L || identifierNode.getDbId() == 11049840L) {
-                equivalentNodes.add(identifierNode);
-            }
-
             sourceToExternalIdentifiers.put(
                 identifierNode,
                 createExternalIdentifiersForIdentifierNode(identifierNode)
             );
-        }
-
-        if (equivalentNodes.size() == 2 || equivalentNodes.get(0).equals(equivalentNodes.get(1))) {
-            System.out.println("11049840 and 218528 are equivalent");
-            System.out.println(equivalentNodes);
-        }
-
-        if (sourceToExternalIdentifiers.keySet().stream().anyMatch(identifierNode -> identifierNode.getDbId() == 218528L)) {
-            System.out.println("218528 in mapping");
-        } else {
-            System.out.println("218528 not in mapping");
         }
 
         return sourceToExternalIdentifiers;
