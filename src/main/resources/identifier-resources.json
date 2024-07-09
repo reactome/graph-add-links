@@ -603,12 +603,52 @@
                 "resourceIdentifier": "MIR:00100067"
             }
         },
-        "ENSEMBL": {
+        "ENSEMBLGene": {
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
-                    "targetDatabaseName": "Ensembl",
-                    "localName": "uniprot_mappings/uniprot_2_ensembl.tsv"
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "localName": "biomart/\\w+_uniprot.tsv",
+                    "localNameIsRegex": true
+                }
+            ],
+            "referenceDatabase": {
+                "names": [
+                    "ENSEMBL"
+                ],
+                "url": "https://ensembl.org/",
+                "accessURL": "https://ensembl.org/id/###ID###",
+                "resourceIdentifier": "MIR:00100011"
+            }
+        },
+        "ENSEMBLTranscript": {
+            "identifierType": "ReferenceDNASequence",
+            "downloads": [
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "localName": "biomart/\\w+_uniprot.tsv",
+                    "localNameIsRegex": true
+                }
+            ],
+            "referenceDatabase": {
+                "names": [
+                    "ENSEMBL"
+                ],
+                "url": "https://ensembl.org/",
+                "accessURL": "https://ensembl.org/id/###ID###",
+                "resourceIdentifier": "MIR:00100011"
+            }
+        },
+        "ENSEMBLPeptide": {
+            "identifierType": "DatabaseIdentifier",
+            "downloads": [
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "localName": "biomart/\\w+_uniprot.tsv",
+                    "localNameIsRegex": true
                 }
             ],
             "referenceDatabase": {
