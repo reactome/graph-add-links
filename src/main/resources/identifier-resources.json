@@ -4,6 +4,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.flybase.net/releases/current/precomputed_files/genes/",
                     "fileName": "fbgn_NAseq_Uniprot_fb_\\d{4}_\\d{2}.tsv.gz",
                     "fileNameIsRegex": true,
@@ -23,6 +24,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.proteininformationresource.org/databases/ontology/pro_obo/PRO_mappings/",
                     "fileName": "uniprotmapping.txt",
                     "fileNameIsRegex": false,
@@ -42,6 +44,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "GeneID",
                     "localName": "uniprot_mappings/uniprot_2_ncbi.tsv"
                 }
@@ -59,6 +62,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://hmdb.ca/system/downloads/current/",
                     "fileName": "hmdb_proteins.zip",
                     "fileNameIsRegex": false,
@@ -78,6 +82,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://hmdb.ca/system/downloads/current/",
                     "fileName": "hmdb_metabolites.zip",
                     "fileNameIsRegex": false,
@@ -97,6 +102,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.expasy.org/databases/enzyme/",
                     "fileName": "enzyme.dat",
                     "fileNameIsRegex": false,
@@ -117,6 +123,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://www.proteinatlas.org/download/",
                     "fileName": "proteinatlas.tsv.zip",
                     "fileNameIsRegex": false,
@@ -137,6 +144,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.ebi.ac.uk/pub/databases/genenames/vgnc/tsv/",
                     "fileName": "vgnc_gene_set_All.txt.gz",
                     "fileNameIsRegex": false,
@@ -156,6 +164,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://www.informatics.jax.org/downloads/reports/",
                     "fileName": "MRK_SwissProt_TrEMBL.rpt",
                     "fileNameIsRegex": false,
@@ -176,6 +185,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://download.rgd.mcw.edu/data_release/",
                     "fileName": "GENES_RAT.txt",
                     "fileNameIsRegex": false,
@@ -196,6 +206,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://www.guidetopharmacology.org/DATA/",
                     "fileName": "targets_and_families.csv",
                     "fileNameIsRegex": false,
@@ -216,6 +227,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://www.guidetopharmacology.org/DATA/",
                     "fileName": "ligand_id_mapping.csv",
                     "fileNameIsRegex": false,
@@ -236,6 +248,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "PDB",
                     "localName": "uniprot_mappings/uniprot_2_pdb.tsv"
                 }
@@ -254,6 +267,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zfin.org/downloads/",
                     "fileName": "uniprot.txt",
                     "fileNameIsRegex": false,
@@ -274,12 +288,14 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://www.guidetopharmacology.org/DATA/",
                     "fileName": "ligand_id_mapping.csv",
                     "fileNameIsRegex": false,
                     "localName": "gtp-ligands.csv"
                 },
                 {
+                    "type": "file",
                     "baseURL": "https://raw.githubusercontent.com/BHKLAB-Pachyderm/Annotations/master/",
                     "fileName": "drugs_with_ids.csv",
                     "fileNameIsRegex": false,
@@ -298,6 +314,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/21.02/output/",
                     "fileName": "21.02_target_list.csv.gz",
                     "fileNameIsRegex": false,
@@ -316,6 +333,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://data.glygen.org/ln2data/releases/data/v-2.0.3/reviewed/",
                     "fileName": "protein_glygen_pubchem_xref_mapping.csv",
                     "fileNameIsRegex": false,
@@ -334,6 +352,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "MIM",
                     "localName": "uniprot_mappings/uniprot_2_mim.tsv"
                 },
@@ -358,6 +377,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
                     "fileName": "9606.tsv",
                     "fileNameIsRegex": false,
@@ -378,6 +398,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
                     "fileName": "694009.tsv",
                     "fileNameIsRegex": false,
@@ -398,6 +419,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
                     "fileName": "2697049.tsv",
                     "fileNameIsRegex": false,
@@ -418,6 +440,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "GeneID",
                     "localName": "uniprot_mappings/uniprot_2_biogps.tsv"
                 }
@@ -434,6 +457,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "GeneID",
                     "localName": "uniprot_mappings/uniprot_2_ctdgene.tsv"
                 },
@@ -458,6 +482,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "GeneID",
                     "localName": "uniprot_mappings/uniprot_2_dbsnpgene.tsv"
                 }
@@ -476,6 +501,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "GeneID",
                     "localName": "uniprot_mappings/uniprot_2_monarch.tsv"
                 }
@@ -492,6 +518,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "UCSC",
                     "localName": "uniprot_mappings/uniprot_2_ucsc.tsv"
                 }
@@ -508,6 +535,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "WormBase",
                     "localName": "uniprot_mappings/uniprot_2_wormbase.tsv"
                 }
@@ -525,6 +553,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "GeneCards",
                     "localName": "uniprot_mappings/uniprot_2_genecards.tsv"
                 }
@@ -542,6 +571,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "RefSeq_Protein",
                     "localName": "uniprot_mappings/uniprot_2_refseqpeptide.tsv"
                 }
@@ -559,6 +589,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "RefSeq_Nucleotide",
                     "localName": "uniprot_mappings/uniprot_2_refseqrna.tsv"
                 }
@@ -593,6 +624,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.expasy.org/databases/rhea/tsv/",
                     "fileName": "rhea2reactome.tsv",
                     "fileNameIsRegex": false,
@@ -612,6 +644,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "http://www.orphadata.org/data/BDD_partners/",
                     "fileName": "genes_diseases_external_references.xml",
                     "fileNameIsRegex": false,
@@ -631,6 +664,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://files.docking.org/catalogs/1/chebi/",
                     "fileName": "chebi.info.txt.gz",
                     "fileNameIsRegex": false,
@@ -650,6 +684,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.txt:uniprot?count=all",
                     "fileNameIsRegex": false,
@@ -668,6 +703,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -686,6 +722,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -704,6 +741,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -722,6 +760,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -740,6 +779,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -758,6 +798,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -776,6 +817,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://zinc15.docking.org/",
                     "fileName": "orthologs.csv?count=all",
                     "fileNameIsRegex": false,
@@ -794,6 +836,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.xenbase.org/pub/DataExchange/Uniprot/",
                     "fileName": "XenbaseGeneUniprotMapping.txt",
                     "fileNameIsRegex": false,
@@ -813,6 +856,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ncatsidg-dev.appspot.com/graphql",
                     "fileName": "",
                     "fileNameIsRegex": false,
@@ -831,6 +875,7 @@
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ncatsidg-dev.appspot.com/graphql",
                     "fileName": "",
                     "fileNameIsRegex": false,
@@ -849,6 +894,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "uniprot",
                     "targetDatabaseName": "KEGG",
                     "localName": "uniprot_mappings/uniprot_2_KEGG.tsv"
                 }
@@ -866,6 +912,7 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
+                    "type": "file",
                     "baseURL": "https://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/",
                     "fileName": "hgnc_complete_set.txt",
                     "fileNameIsRegex": false,
