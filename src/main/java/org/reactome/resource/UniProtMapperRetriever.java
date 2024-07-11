@@ -22,33 +22,34 @@ import static org.reactome.utils.CollectionUtils.split;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/18/2023
  */
-public class UniProtMapperRetriever implements Retriever {
+public class UniProtMapperRetriever extends SingleRetriever {
     private final static String UNIPROT_REST_URL = "https://rest.uniprot.org";
     private final static String FILE_HEADER = "From\tTo\n";
 
-    private DownloadInfo downloadInfo;
+//    private DownloadInfo downloadInfo;
 
-    public UniProtMapperRetriever(String resourceName) {
-        this.downloadInfo = new DownloadInfo(resourceName);
+
+    public UniProtMapperRetriever(DownloadInfo.Downloadable downloadable) {
+        super(downloadable);
     }
 
     @Override
-    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
+    public void downloadFile() throws IOException {
         List<Collection<String>> uniProtIdentifiersCollections = split(getUniProtIdsFromGraphDatabase(),100);
 
         Files.write(
-            getLocalFilePath(downloadable),
+            getDownloadable().getLocalFilePath(),
             FILE_HEADER.getBytes(),
             StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
         );
         for (Collection<String> uniProtIdentifiers : uniProtIdentifiersCollections) {
             Map<String, List<String>> uniProtIdentifierToResourceIdentifiers =
-                getMapping(uniProtIdentifiers, getTargetDatabase(downloadable));
+                getMapping(uniProtIdentifiers, getTargetDatabase(getDownloadable()));
 
             for (String uniProtIdentifier : uniProtIdentifierToResourceIdentifiers.keySet()) {
                 for (String resourceIdentifier : uniProtIdentifierToResourceIdentifiers.get(uniProtIdentifier)) {
                     Files.write(
-                        getLocalFilePath(downloadable),
+                        getDownloadable().getLocalFilePath(),
                         (uniProtIdentifier + "\t" + resourceIdentifier + "\n").getBytes(),
                         StandardOpenOption.APPEND
                     );
@@ -60,18 +61,18 @@ public class UniProtMapperRetriever implements Retriever {
     // Takes into account the header written at the beginning of the file before attempting to connect to UniProt to
     // get the mapping
     @Override
-    public boolean fileIsZeroSize(DownloadInfo.Downloadable downloadable) {
+    public boolean isFileZeroSize() {
         final int HEADER_SIZE_IN_BYTES = FILE_HEADER.length();
 
-        File file = new File(ConfigParser.getDownloadDirectoryPath() + "/", downloadable.getLocalFileName());
+        File file = new File(ConfigParser.getDownloadDirectoryPath() + "/", getDownloadable().getLocalFileName());
 
         return file.length() <= HEADER_SIZE_IN_BYTES;
     }
-
-    @Override
-    public DownloadInfo getDownloadInfo() {
-        return this.downloadInfo;
-    }
+//
+//    @Override
+//    public DownloadInfo getDownloadInfo() {
+//        return this.downloadInfo;
+//    }
 
     Collection<String> getUniProtIdsFromGraphDatabase() {
         Result result = ReactomeGraphDatabase.getSession().run(
@@ -127,6 +128,15 @@ public class UniProtMapperRetriever implements Retriever {
 
         return getJobResults(jobId);
     }
+
+//    private DownloadInfo.Downloadable getDownloadable() {
+//        List<DownloadInfo.Downloadable> downloadables = getDownloadInfo().getDownloadables();
+//        if (downloadables == null || downloadables.size() != 1) {
+//            throw new IllegalStateException("BasicFileRetriever only handles a single downloadable file");
+//        }
+//
+//        return getDownloadInfo().getDownloadables().get(0);
+//    }
 
     private String getTargetDatabase(DownloadInfo.Downloadable downloadable) {
         return downloadable.getTargetDatabaseName();
@@ -229,16 +239,16 @@ public class UniProtMapperRetriever implements Retriever {
     }
 
     private long getMinutesToMilliseconds(long minutes) {
-        final long minutesToSecondsConversionFactor = 60;
+        final long secondsPerMinute = 60;
 
-        long seconds = minutes * minutesToSecondsConversionFactor;
+        long seconds = minutes * secondsPerMinute;
 
         return getSecondsToMilliseconds(seconds);
     }
 
     private long getSecondsToMilliseconds(long seconds) {
-        final long secondsToMillisecondsConversionFactor = 1000;
+        final long milliSecondsPerSecond = 1000;
 
-        return seconds * secondsToMillisecondsConversionFactor;
+        return seconds * milliSecondsPerSecond;
     }
 }

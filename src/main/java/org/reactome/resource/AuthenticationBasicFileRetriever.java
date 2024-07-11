@@ -15,17 +15,16 @@ import java.nio.file.Files;
  *         Created 4/5/2022
  */
 public abstract class AuthenticationBasicFileRetriever extends BasicFileRetriever {
-    private DownloadInfo downloadInfo;
 
-    public AuthenticationBasicFileRetriever(String resourceName) {
-        super(resourceName);
+    public AuthenticationBasicFileRetriever(DownloadInfo.Downloadable downloadable) {
+        super(downloadable);
     }
 
     @Override
-    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
+    public void downloadFile() throws IOException {
         Files.createDirectories(ConfigParser.getDownloadDirectoryPath());
 
-        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL(downloadable).openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL().openConnection();
         httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.0");
 
         httpURLConnection.setRequestProperty("Authorization", getAuthorizationHeaderValue());
@@ -34,7 +33,7 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
         httpURLConnection.setReadTimeout(twoMinutes());
 
         ReadableByteChannel remoteFileByteChannel = Channels.newChannel(httpURLConnection.getInputStream());
-        FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath(downloadable).toFile());
+        FileOutputStream localFileOutputStream = new FileOutputStream(getDownloadable().getLocalFilePath().toFile());
 
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
 
@@ -50,10 +49,5 @@ public abstract class AuthenticationBasicFileRetriever extends BasicFileRetrieve
         String encodedAuthString = java.util.Base64.getEncoder().encodeToString(authString.getBytes());
 
         return "Basic " + encodedAuthString;
-    }
-
-    protected int twoMinutes() {
-        final int twoMinutesInMilliSeconds = 1000 * 60 * 2;
-        return twoMinutesInMilliSeconds;
     }
 }

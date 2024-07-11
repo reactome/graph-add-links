@@ -12,8 +12,13 @@ import java.nio.file.Path;
  * @author Joel Weiser
  *         Created 3/3/2023
  */
-public interface FileRetriever extends Retriever {
-    default URL getResourceFileRemoteURL(DownloadInfo.Downloadable downloadable) throws IOException {
-        return new URL(downloadable.getBaseRemoteURL().toString().concat(downloadable.getRemoteFileName()));
+public abstract class FileRetriever extends SingleRetriever {
+
+    public FileRetriever(DownloadInfo.Downloadable downloadable) {
+        super(downloadable);
+    }
+
+    protected URL getResourceFileRemoteURL() throws IOException {
+        return new URL(getDownloadable().getBaseRemoteURL().toString().concat(getDownloadable().getRemoteFileName()));
     }
 }

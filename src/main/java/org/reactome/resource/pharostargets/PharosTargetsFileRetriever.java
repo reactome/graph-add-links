@@ -3,11 +3,13 @@ package org.reactome.resource.pharostargets;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.reactome.DownloadInfo;
+import org.reactome.resource.BasicFileRetriever;
 import org.reactome.resource.Retriever;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,42 +23,18 @@ public class PharosTargetsFileRetriever implements Retriever {
 
     private DownloadInfo downloadInfo;
 
+    private BasicFileRetriever pharosTargetsBasicFileRetriever;
+
     public PharosTargetsFileRetriever() {
         this.downloadInfo = new DownloadInfo("PharosTargets");
+        this.pharosTargetsBasicFileRetriever = new PharosTargetsBasicFileRetriever(
+            getDownloadInfo().getDownloadables().get(0)
+        );
     }
 
     @Override
-    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
-        OutputStreamWriter localFileOutputStreamWriter =
-            new OutputStreamWriter(new FileOutputStream(getLocalFilePath(downloadable).toFile()));
-
-        int requestNumber = 0;
-        while (true) {
-            URL url = downloadable.getBaseRemoteURL();
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setRequestProperty("Content-Type", "application/json");
-            httpURLConnection.setDoOutput(true);
-
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            outputStream.write(getGraphQLQuery(requestNumber).getBytes());
-            outputStream.flush();
-
-            if (httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                throw new RuntimeException("GraphQL query failed: " + httpURLConnection.getResponseCode());
-            }
-
-            List<String> targetsData = getTargetsData(httpURLConnection.getInputStream());
-            if (targetsData.isEmpty()) {
-                break;
-            }
-
-            for (String targetDatum : targetsData) {
-                localFileOutputStreamWriter.write(targetDatum);
-            }
-
-            requestNumber += 1;
-        }
+    public void downloadFiles() throws IOException {
+        this.pharosTargetsBasicFileRetriever.downloadFile();
     }
 
     @Override
@@ -64,42 +42,83 @@ public class PharosTargetsFileRetriever implements Retriever {
         return this.downloadInfo;
     }
 
-    private String getGraphQLQuery(int requestNumber) {
-        final int queryBatchSize = 1000;
-        final int skipAmount = queryBatchSize * requestNumber;
+    public static class PharosTargetsBasicFileRetriever extends BasicFileRetriever {
 
-        return "{ \"query\": \"query {"
-            + "    targets {"
-            + "        count"
-            + "        targets(top:" + queryBatchSize + " skip:" + skipAmount + ") {"
-            + "            uniprot"
-            + "        }"
-            + "    }"
-            + "}\" }";
-    }
+        public PharosTargetsBasicFileRetriever(DownloadInfo.Downloadable downloadable) {
+            super(downloadable);
+        }
 
-    private List<String> getTargetsData(InputStream httpURLConnectionInputStream) throws IOException {
-        JSONObject jsonObject = new JSONObject(getJSONResponse(httpURLConnectionInputStream));
-        JSONArray targets = ((JSONObject) ((JSONObject) jsonObject.get("data")).get("targets")).getJSONArray("targets");
+        @Override
+        public void downloadFile() throws IOException {
+            OutputStreamWriter localFileOutputStreamWriter =
+                new OutputStreamWriter(Files.newOutputStream(getDownloadable().getLocalFilePath().toFile().toPath()));
 
-        List<String> targetsData = new ArrayList<>();
-        for (int i = 0; i < targets.length(); i++) {
-            JSONObject target = ((JSONObject) targets.get(i));
-            if (target.has("uniprot")) {
-                targetsData.add(target.get("uniprot") + "\n");
+            int requestNumber = 0;
+            while (true) {
+                URL url = getDownloadable().getBaseRemoteURL();
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setRequestProperty("Content-Type", "application/json");
+                httpURLConnection.setDoOutput(true);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+                outputStream.write(getGraphQLQuery(requestNumber).getBytes());
+                outputStream.flush();
+
+                if (httpURLConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                    throw new RuntimeException("GraphQL query failed: " + httpURLConnection.getResponseCode());
+                }
+
+                List<String> targetsData = getTargetsData(httpURLConnection.getInputStream());
+                if (targetsData.isEmpty()) {
+                    break;
+                }
+
+                for (String targetDatum : targetsData) {
+                    localFileOutputStreamWriter.write(targetDatum);
+                }
+
+                requestNumber += 1;
             }
         }
-        return targetsData;
-    }
 
-    private String getJSONResponse(InputStream httpURLConnectionInputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnectionInputStream));
-        StringBuilder response = new StringBuilder();
+        private String getGraphQLQuery(int requestNumber) {
+            final int queryBatchSize = 1000;
+            final int skipAmount = queryBatchSize * requestNumber;
 
-        String line;
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
+            return "{ \"query\": \"query {"
+                + "    targets {"
+                + "        count"
+                + "        targets(top:" + queryBatchSize + " skip:" + skipAmount + ") {"
+                + "            uniprot"
+                + "        }"
+                + "    }"
+                + "}\" }";
         }
-        return response.toString();
+
+        private List<String> getTargetsData(InputStream httpURLConnectionInputStream) throws IOException {
+            JSONObject jsonObject = new JSONObject(getJSONResponse(httpURLConnectionInputStream));
+            JSONArray targets = ((JSONObject) ((JSONObject) jsonObject.get("data")).get("targets")).getJSONArray("targets");
+
+            List<String> targetsData = new ArrayList<>();
+            for (int i = 0; i < targets.length(); i++) {
+                JSONObject target = ((JSONObject) targets.get(i));
+                if (target.has("uniprot")) {
+                    targetsData.add(target.get("uniprot") + "\n");
+                }
+            }
+            return targetsData;
+        }
+
+        private String getJSONResponse(InputStream httpURLConnectionInputStream) throws IOException {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnectionInputStream));
+            StringBuilder response = new StringBuilder();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            return response.toString();
+        }
     }
 }

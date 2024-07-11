@@ -1,12 +1,12 @@
 package org.reactome.resource.gtpligands;
 
-import org.reactome.resource.BasicFileRetriever;
+import org.reactome.resource.SingleFileBasicFileRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 11/20/2023
  */
-public class GTPLigandsFileRetriever extends BasicFileRetriever {
+public class GTPLigandsFileRetriever extends SingleFileBasicFileRetriever {
 
     public GTPLigandsFileRetriever() {
         super("GTPLigands");
