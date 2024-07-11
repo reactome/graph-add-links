@@ -462,6 +462,7 @@
                     "localName": "uniprot_mappings/uniprot_2_ctdgene.tsv"
                 },
                 {
+                    "type": "file",
                     "baseURL": "https://ctdbase.org/reports/",
                     "fileName": "CTD_chem_gene_ixns.csv.gz",
                     "fileNameIsRegex": false,
