@@ -21,9 +21,10 @@ public class MultipleFileEnsEMBLBioMartUniProtRetriever implements Retriever {
     public MultipleFileEnsEMBLBioMartUniProtRetriever(String resourceName) {
         this.downloadInfo = new DownloadInfo(resourceName);
         this.ensEMBLBioMartUniProtRetrievers = new ArrayList<>();
-        for (String bioMartSpeciesName : getBioMartSpeciesNames()) {
-            this.ensEMBLBioMartUniProtRetrievers.add(
-                new EnsEMBLBioMartUniProtRetriever(bioMartSpeciesName, getDownloadInfo().getDownloadables().get(0)));
+        for (DownloadInfo.Downloadable downloadable : getDownloadInfo().getDownloadables()) {
+            if (downloadable.getLocalFileName().contains("uniprot")) {
+                this.ensEMBLBioMartUniProtRetrievers.add(new EnsEMBLBioMartUniProtRetriever(downloadable));
+            }
         }
     }
 
