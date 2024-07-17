@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 public class EnsemblBioMartFileProcessor implements FileProcessor {
     private static Logger logger = LogManager.getLogger();
 
-    private Path uniProtFilePath;
-    private Path otherIdentifiersFilePath;
+    private List<Path> uniProtFilePaths;
+    private List<Path> otherIdentifiersFilePaths;
     private Map<String, Set<String>> uniProtToResourceIdentifiers;
 
-    public EnsemblBioMartFileProcessor(Path uniProtFilePath, Path otherIdentifiersFilePath) {
-        this.uniProtFilePath = uniProtFilePath;
-        this.otherIdentifiersFilePath = otherIdentifiersFilePath;
+    public EnsemblBioMartFileProcessor(List<Path> uniProtFilePaths, List<Path> otherIdentifiersFilePaths) {
+        this.uniProtFilePaths = uniProtFilePaths;
+        this.otherIdentifiersFilePaths = otherIdentifiersFilePaths;
     }
 
     @Override
@@ -67,15 +67,17 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
 
         Map<String, Set<String>> ensEMBLGeneIdentifiersToOtherIdentifiers = new HashMap<>();
 
-        Files.lines(getOtherIdentifiersFilePath()).forEach(otherIdentifierFileLine -> {
-            String ensEMBLGeneIdentifier = parseEnsEMBLGeneIdentifierFromFileLine(otherIdentifierFileLine);
-            String otherIdentifier = parseOtherIdentifierFromFileLine(otherIdentifierFileLine);
+        for (Path otherIdentifiersFilePath : getOtherIdentifiersFilePaths()) {
+            Files.lines(otherIdentifiersFilePath).forEach(otherIdentifierFileLine -> {
+                String ensEMBLGeneIdentifier = parseEnsEMBLGeneIdentifierFromFileLine(otherIdentifierFileLine);
+                String otherIdentifier = parseOtherIdentifierFromFileLine(otherIdentifierFileLine);
 
-            if (ensEMBLGeneIdentifiers.contains(ensEMBLGeneIdentifier)) {
-                ensEMBLGeneIdentifiersToOtherIdentifiers.
-                    computeIfAbsent(ensEMBLGeneIdentifier, k -> new HashSet<>()).add(otherIdentifier);
-            }
-        });
+                if (ensEMBLGeneIdentifiers.contains(ensEMBLGeneIdentifier)) {
+                    ensEMBLGeneIdentifiersToOtherIdentifiers.
+                        computeIfAbsent(ensEMBLGeneIdentifier, k -> new HashSet<>()).add(otherIdentifier);
+                }
+            });
+        }
 
         return ensEMBLGeneIdentifiersToOtherIdentifiers;
     }
@@ -98,13 +100,15 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
     private Map<String, Set<String>> getUniProtIdentifiersToEnsEMBLGeneIdentifiers() throws IOException {
         Map<String, Set<String>> uniProtIdentifiersToEnsEMBLGeneIdentifiers = new HashMap<>();
 
-        Files.lines(getUniProtFilePath()).forEach(uniProtFileLine -> {
-            String uniProtIdentifier = parseUniProtIdentifierFromFileLine(uniProtFileLine);
-            String ensEMBLGeneIdentifier = parseEnsEMBLGeneIdentifierFromFileLine(uniProtFileLine);
+        for (Path uniProtFilePath : getUniProtFilePaths()) {
+            Files.lines(uniProtFilePath).forEach(uniProtFileLine -> {
+                String uniProtIdentifier = parseUniProtIdentifierFromFileLine(uniProtFileLine);
+                String ensEMBLGeneIdentifier = parseEnsEMBLGeneIdentifierFromFileLine(uniProtFileLine);
 
-            uniProtIdentifiersToEnsEMBLGeneIdentifiers.
-                computeIfAbsent(uniProtIdentifier, k -> new HashSet<>()).add(ensEMBLGeneIdentifier);
-        });
+                uniProtIdentifiersToEnsEMBLGeneIdentifiers.
+                    computeIfAbsent(uniProtIdentifier, k -> new HashSet<>()).add(ensEMBLGeneIdentifier);
+            });
+        }
 
         return uniProtIdentifiersToEnsEMBLGeneIdentifiers;
     }
@@ -137,11 +141,11 @@ public class EnsemblBioMartFileProcessor implements FileProcessor {
         return fileLine.split("\t")[otherIdentifierIndex];
     }
 
-    private Path getUniProtFilePath() {
-        return this.uniProtFilePath;
+    private List<Path> getUniProtFilePaths() {
+        return this.uniProtFilePaths;
     }
 
-    private Path getOtherIdentifiersFilePath() {
-        return this.otherIdentifiersFilePath;
+    private List<Path> getOtherIdentifiersFilePaths() {
+        return this.otherIdentifiersFilePaths;
     }
 }
