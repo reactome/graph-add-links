@@ -2,12 +2,16 @@ package org.reactome;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import org.reactome.utils.ConfigParser;
 import org.reactome.utils.ResourceJSONParser;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -24,6 +28,10 @@ public class DownloadInfo {
 
     public List<Downloadable> getDownloadables() {
         return this.downloadables;
+    }
+
+    public List<Path> getLocalFilePaths() {
+        return getDownloadables().stream().map(Downloadable::getLocalFilePath).collect(Collectors.toList());
     }
 
     private String getResourceName() {
@@ -63,7 +71,6 @@ public class DownloadInfo {
             this.isRegexFileName = retrieveIsRegexFileName();
             this.localFileName = retrieveLocalFileName();
             this.targetDatabaseName = retrieveTargetDatabaseName();
-
         }
 
         public URL getBaseRemoteURL() {
@@ -86,6 +93,9 @@ public class DownloadInfo {
             return this.targetDatabaseName;
         }
 
+        public Path getLocalFilePath() {
+            return ConfigParser.getDownloadDirectoryPath().resolve(getLocalFileName());
+        }
 
         private URL retrieveBaseRemoteURL() {
             if (!getDownloadInfoAsJSON().has("baseURL")) {
@@ -117,6 +127,10 @@ public class DownloadInfo {
         }
 
         private String retrieveLocalFileName() {
+            if (!getDownloadInfoAsJSON().has("localName")) {
+                return "";
+            }
+
             return getDownloadInfoAsJSON().getString("localName");
         }
 
