@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -62,6 +63,8 @@ public class DownloadInfo {
         private Boolean isRegexFileName;
         private String localFileName;
         private String targetDatabaseName;
+        private List<String> searchTerms;
+        private String species;
 
         public Downloadable(JSONObject downloadInfoAsJSON) {
             this.downloadInfoAsJSON = downloadInfoAsJSON;
@@ -71,6 +74,8 @@ public class DownloadInfo {
             this.isRegexFileName = retrieveIsRegexFileName();
             this.localFileName = retrieveLocalFileName();
             this.targetDatabaseName = retrieveTargetDatabaseName();
+            this.searchTerms = retrieveSearchTerms();
+            this.species = retrieveSpecies();
         }
 
         public URL getBaseRemoteURL() {
@@ -91,6 +96,14 @@ public class DownloadInfo {
 
         public String getTargetDatabaseName() {
             return this.targetDatabaseName;
+        }
+
+        public List<String> getSearchTerms() {
+            return this.searchTerms;
+        }
+
+        public String getSpecies() {
+            return this.species;
         }
 
         public Path getLocalFilePath() {
@@ -140,6 +153,28 @@ public class DownloadInfo {
             }
 
             return getDownloadInfoAsJSON().getString("targetDatabaseName");
+        }
+
+        private List<String> retrieveSearchTerms() {
+            if (!getDownloadInfoAsJSON().has("searchTerms")) {
+                return new ArrayList<>();
+            }
+
+            return convertToStringList(getDownloadInfoAsJSON().getJSONArray("searchTerms"));
+        }
+
+        private String retrieveSpecies() {
+            if (!getDownloadInfoAsJSON().has("species")) {
+                return "";
+            }
+
+            return getDownloadInfoAsJSON().getString("species");
+        }
+
+        private List<String> convertToStringList(JSONArray searchTermsJSONArray) {
+            return IntStream.range(0, searchTermsJSONArray.length())
+                .mapToObj(searchTermsJSONArray::getString)
+                .collect(Collectors.toList());
         }
 
         private JSONObject getDownloadInfoAsJSON() {
