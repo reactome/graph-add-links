@@ -3,6 +3,7 @@ package org.reactome.referencecreators;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.neo4j.driver.Result;
+import org.reactome.IdentifierCreator;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.*;
 
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 4/5/2022
  */
-public abstract class ReferenceCreator {
+public abstract class ReferenceCreator implements IdentifierCreator {
     private static final Logger logger = LogManager.getLogger();
 
     private String resourceName;
