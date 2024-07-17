@@ -9,7 +9,12 @@ import org.reactome.referencecreators.ReferenceCreator;
 import org.reactome.resource.FileProcessor;
 import org.reactome.resource.Retriever;
 import org.reactome.resource.ctdgene.CTDGeneFileProcessor;
+import org.reactome.resource.ensemblgene.EnsEMBLGeneFileProcessor;
+import org.reactome.resource.ensemblpeptide.EnsEMBLPeptideFileProcessor;
+import org.reactome.resource.ensembltranscript.EnsEMBLTranscriptFileProcessor;
 import org.reactome.resource.omim.OMIMFileProcessor;
+import org.reactome.resource.otheridentifiers.OtherIdentifierCreator;
+import org.reactome.resource.otheridentifiers.OtherIdentifiersFileProcessor;
 import org.reactome.resource.pharmacodb.PharmacoDBFileProcessor;
 import org.reactome.utils.ConfigParser;
 import org.reactome.utils.ResourceJSONParser;
@@ -20,6 +25,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -110,17 +116,15 @@ public class Main {
 
             String resourceFileProcessor = resourcePackage + "." + resourceName + "FileProcessor";
             logger.info("Running " + resourceFileProcessor + "...");
-            logger.info("Parsing local file(s): " + retriever.getLocalFilePaths());
+            logger.info("Parsing local file(s): " + retriever.getDownloadInfo().getLocalFilePaths());
             FileProcessor fileProcessor = getFileProcessor(resourceFileProcessor, retriever);
             logger.info("Map size: " + fileProcessor.getSourceToResourceIdentifiers().size());
             logger.debug("Mapping: " + fileProcessor.getSourceToResourceIdentifiers());
 
-            String resourceReferenceCreator = resourcePackage + "." + resourceName + "ReferenceCreator";
-            logger.info("Running " + resourceReferenceCreator + "...");
-            ReferenceCreator referenceCreator = (ReferenceCreator) Class.forName(resourceReferenceCreator)
-                .getDeclaredConstructor(Map.class).newInstance(fileProcessor.getSourceToResourceIdentifiers());
-
-            referenceCreator.insertIdentifiers();
+            String resourceIdentifierCreator = getResourceIdentifierCreatorName(resourcePackage, resourceName);
+            logger.info("Running " + resourceIdentifierCreator + "...");
+            IdentifierCreator identifierCreator = getIdentifierCreator(resourceIdentifierCreator, fileProcessor);
+            identifierCreator.insertIdentifiers();
             logger.info("Finished inserting identifiers for " + resourceName);
         }
     }
@@ -170,13 +174,17 @@ public class Main {
         logger.info("Running " + resourceFileRetriever + "...");
 
         Retriever retriever = (Retriever) Class.forName(resourceFileRetriever).getDeclaredConstructor().newInstance();
-        createDirectoriesIfNotExists(retriever.getLocalFilePaths().toArray(new Path[0]));
+        createDirectoriesIfNotExists(retriever.getDownloadInfo().getLocalFilePaths().toArray(new Path[0]));
         retriever.downloadFiles();
 
         logger.info("Completed " + resourceFileRetriever);
     }
 
     private void createDirectoriesIfNotExists(Path... filePaths) throws IOException {
+        if (allFilePathsEmpty(filePaths)) {
+            return;
+        }
+
         for (Path filePath : filePaths) {
             if (filePath.toFile().isDirectory()) {
                 Files.createDirectories(filePath);
@@ -186,31 +194,75 @@ public class Main {
         }
     }
 
+    private boolean allFilePathsEmpty(Path... filePaths) {
+        return Arrays.stream(filePaths).allMatch(filePath -> filePath.toString().isEmpty());
+    }
+
     private static FileProcessor getFileProcessor(String resourceFileProcessor, Retriever retriever)
         throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException, IOException {
 
-        // PharmacoDB is initialized without reflection because it has two files to take into the constructor
-        // (other file processors use one file)
         if (resourceFileProcessor.contains("PharmacoDB")) {
-            Path[] filePaths = retriever.getLocalFilePaths().toArray(new Path[0]);
+            Path[] filePaths = retriever.getDownloadInfo().getLocalFilePaths().toArray(new Path[0]);
 
             return new PharmacoDBFileProcessor(filePaths);
         }
 
         if (resourceFileProcessor.contains("OMIM")) {
-            Path[] filePaths = retriever.getLocalFilePaths().toArray(new Path[0]);
+            Path[] filePaths = retriever.getDownloadInfo().getLocalFilePaths().toArray(new Path[0]);
 
             return new OMIMFileProcessor(filePaths);
         }
 
         if (resourceFileProcessor.contains("CTDGene")) {
-            Path[] filePaths = retriever.getLocalFilePaths().toArray(new Path[0]);
+            Path[] filePaths = retriever.getDownloadInfo().getLocalFilePaths().toArray(new Path[0]);
 
             return new CTDGeneFileProcessor(filePaths);
         }
 
+        if (resourceFileProcessor.contains("EnsEMBL")) {
+            Path[] filePaths = retriever.getDownloadInfo().getLocalFilePaths().toArray(new Path[0]);
+
+            if (resourceFileProcessor.contains("Gene")) {
+                return new EnsEMBLGeneFileProcessor(filePaths);
+            } else if (resourceFileProcessor.contains("Transcript")) {
+                return new EnsEMBLTranscriptFileProcessor(filePaths);
+            } else if (resourceFileProcessor.contains("Peptide")) {
+                return new EnsEMBLPeptideFileProcessor(filePaths);
+            }
+        }
+
+        if (resourceFileProcessor.contains("OtherIdentifiers")) {
+            Path[] filePaths = retriever.getDownloadInfo().getLocalFilePaths().toArray(new Path[0]);
+            List<Path> uniProtFilePaths = Arrays.stream(filePaths)
+                .filter(filePath -> filePath.toString().contains("uniprot")).collect(Collectors.toList());
+            List<Path> otherIdentifiersFilePaths = Arrays.stream(filePaths)
+                .filter(filePath -> filePath.toString().contains("uniprot")).collect(Collectors.toList());
+
+            return new OtherIdentifiersFileProcessor(uniProtFilePaths, otherIdentifiersFilePaths);
+        }
+
         return (FileProcessor) Class.forName(resourceFileProcessor).getDeclaredConstructor(Path.class)
-            .newInstance(retriever.getLocalFilePaths().get(0));
+            .newInstance(retriever.getDownloadInfo().getLocalFilePaths().get(0));
+    }
+
+    private String getResourceIdentifierCreatorName(String resourcePackage, String resourceName) {
+        if (resourceName.equals("OtherIdentifiers")) {
+            return resourcePackage + "." + resourceName + "Creator";
+        }
+
+        return resourcePackage + "." + resourceName + "ReferenceCreator";
+    }
+
+    private IdentifierCreator getIdentifierCreator(String resourceIdentifierCreator, FileProcessor fileProcessor)
+        throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
+        InstantiationException, IllegalAccessException {
+
+        if (resourceIdentifierCreator.contains("OtherIdentifierCreator")) {
+            return new OtherIdentifierCreator(fileProcessor.getSourceToResourceIdentifiers());
+        }
+
+        return (IdentifierCreator) Class.forName(resourceIdentifierCreator)
+            .getDeclaredConstructor(Map.class).newInstance(fileProcessor.getSourceToResourceIdentifiers());
     }
 }
