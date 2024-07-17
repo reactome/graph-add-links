@@ -30,7 +30,7 @@ public class MultipleFileEnsEMBLBioMartUniProtRetriever implements Retriever {
     @Override
     public void downloadFiles() throws IOException {
         for (EnsEMBLBioMartUniProtRetriever ensEMBLBioMartUniProtRetriever : this.ensEMBLBioMartUniProtRetrievers) {
-            ensEMBLBioMartUniProtRetriever.downloadFile();
+            ensEMBLBioMartUniProtRetriever.downloadFileIfNeeded();
         }
     }
 

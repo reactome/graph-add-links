@@ -20,7 +20,7 @@ public class SingleFileUniProtMapperRetriever implements Retriever {
 
     @Override
     public void downloadFiles() throws IOException {
-        this.uniProtMapperRetriever.downloadFile();
+        this.uniProtMapperRetriever.downloadFileIfNeeded();
     }
 
     @Override

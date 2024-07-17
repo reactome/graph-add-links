@@ -28,7 +28,7 @@ public class FlyBaseFileRetriever implements Retriever {
 
     @Override
     public void downloadFiles() throws IOException {
-        this.basicFileRetriever.downloadFile();
+        this.basicFileRetriever.downloadFileIfNeeded();
     }
 
     @Override

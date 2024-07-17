@@ -25,8 +25,8 @@ public class OMIMFileRetriever implements Retriever {
 
     @Override
     public void downloadFiles() throws IOException {
-        this.uniProtMapperRetriever.downloadFile();
-        this.basicFileRetriever.downloadFile();
+        this.uniProtMapperRetriever.downloadFileIfNeeded();
+        this.basicFileRetriever.downloadFileIfNeeded();
     }
 
     @Override

@@ -34,7 +34,7 @@ public class PharosLigandsFileRetriever implements Retriever {
 
     @Override
     public void downloadFiles() throws IOException {
-        this.pharosLigandsBasicFileRetriever.downloadFile();
+        this.pharosLigandsBasicFileRetriever.downloadFileIfNeeded();
     }
 
     @Override

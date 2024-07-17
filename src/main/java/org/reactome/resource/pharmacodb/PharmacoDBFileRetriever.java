@@ -30,7 +30,7 @@ public class PharmacoDBFileRetriever implements Retriever {
     @Override
     public void downloadFiles() throws IOException {
         for (BasicFileRetriever basicFileRetriever : this.basicFileRetrievers) {
-            basicFileRetriever.downloadFile();
+            basicFileRetriever.downloadFileIfNeeded();
         }
     }
 

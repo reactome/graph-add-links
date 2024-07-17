@@ -33,7 +33,7 @@ public class COSMICFileRetriever implements Retriever {
 
     @Override
     public void downloadFiles() throws IOException {
-        this.cosmicAuthenticationFileRetriever.downloadFile();
+        this.cosmicAuthenticationFileRetriever.downloadFileIfNeeded();
     }
 
     @Override

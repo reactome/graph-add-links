@@ -6,7 +6,6 @@ import org.reactome.utils.ConfigParser;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -19,6 +18,12 @@ public abstract class SingleRetriever {
 
     public SingleRetriever(DownloadInfo.Downloadable downloadable) {
         this.downloadable = downloadable;
+    }
+
+    public void downloadFileIfNeeded() throws IOException {
+        if (shouldDownloadFile()) {
+            downloadFile();
+        }
     }
 
     public abstract void downloadFile() throws IOException;

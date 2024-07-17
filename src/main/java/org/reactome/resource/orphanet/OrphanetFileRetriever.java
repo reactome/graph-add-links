@@ -25,7 +25,7 @@ public class OrphanetFileRetriever implements Retriever {
 
     @Override
     public void downloadFiles() throws IOException {
-        this.orphanetAuthenticationFileRetriever.downloadFile();
+        this.orphanetAuthenticationFileRetriever.downloadFileIfNeeded();
     }
 
     @Override
