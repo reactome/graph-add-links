@@ -1,12 +1,12 @@
 package org.reactome.resource.zincfdaapproved;
 
-import org.reactome.resource.BasicFileRetriever;
+import org.reactome.resource.SingleFileBasicFileRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 1/30/2024
  */
-public class ZincFDAApprovedFileRetriever extends BasicFileRetriever {
+public class ZincFDAApprovedFileRetriever extends SingleFileBasicFileRetriever {
 
     public ZincFDAApprovedFileRetriever() {
         super("ZincFDAApproved");

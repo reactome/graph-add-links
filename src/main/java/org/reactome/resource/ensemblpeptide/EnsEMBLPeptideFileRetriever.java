@@ -1,12 +1,12 @@
 package org.reactome.resource.ensemblpeptide;
 
-import org.reactome.otheridentifiers.retrievers.EnsEMBLBioMartUniProtRetriever;
+import org.reactome.resource.MultipleFileEnsEMBLBioMartUniProtRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  * Created 7/8/2024
  */
-public class EnsEMBLPeptideFileRetriever extends EnsEMBLBioMartUniProtRetriever {
+public class EnsEMBLPeptideFileRetriever extends MultipleFileEnsEMBLBioMartUniProtRetriever {
 
     public EnsEMBLPeptideFileRetriever() {
         super("EnsEMBLPeptide");

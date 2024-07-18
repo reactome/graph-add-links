@@ -18,18 +18,19 @@ import java.util.stream.Collectors;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 4/5/2022
  */
-public class BasicFileRetriever implements FileRetriever {
-    private DownloadInfo downloadInfo;
+public class BasicFileRetriever extends FileRetriever {
+//    private DownloadInfo downloadInfo;
+    private DownloadInfo.Downloadable downloadable;
 
-    public BasicFileRetriever(String resourceName) {
-        this.downloadInfo = new DownloadInfo(resourceName);
+    public BasicFileRetriever(DownloadInfo.Downloadable downloadable) {
+        super(downloadable);
     }
 
     @Override
-    public void downloadFile(DownloadInfo.Downloadable downloadable) throws IOException {
+    public void downloadFile() throws IOException {
         Files.createDirectories(ConfigParser.getDownloadDirectoryPath());
 
-        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL(downloadable).openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL().openConnection();
         httpURLConnection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
         httpURLConnection.addRequestProperty("User-Agent", "Mozilla/5.0");
 
@@ -37,17 +38,17 @@ public class BasicFileRetriever implements FileRetriever {
         httpURLConnection.setReadTimeout(twoMinutes());
 
         ReadableByteChannel remoteFileByteChannel = Channels.newChannel(httpURLConnection.getInputStream());
-        FileOutputStream localFileOutputStream = new FileOutputStream(getLocalFilePath(downloadable).toFile());
+        FileOutputStream localFileOutputStream = new FileOutputStream(getDownloadable().getLocalFilePath().toFile());
 
 
 
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
     }
-
-    @Override
-    public DownloadInfo getDownloadInfo() {
-        return this.downloadInfo;
-    }
+//
+//    @Override
+//    public DownloadInfo getDownloadInfo() {
+//        return this.downloadInfo;
+//    }
 
     protected int twoMinutes() {
         final int twoMinutesInMilliSeconds = 1000 * 60 * 2;

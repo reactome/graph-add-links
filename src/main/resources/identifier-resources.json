@@ -604,14 +604,80 @@
                 "resourceIdentifier": "MIR:00100067"
             }
         },
-        "ENSEMBLGene": {
+        "EnsEMBLGene": {
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
                     "type": "biomart",
                     "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
-                    "localName": "biomart/\\w+_uniprot.tsv",
-                    "localNameIsRegex": true
+                    "species": "btaurus",
+                    "localName": "biomart/btaurus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "celegans",
+                    "localName": "biomart/celegans_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "clfamiliaris",
+                    "localName": "biomart/clfamiliaris_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "dmelanogaster",
+                    "localName": "biomart/dmelanogaster_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "drerio",
+                    "localName": "biomart/drerio_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "ggallus",
+                    "localName": "biomart/ggallus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "hsapiens",
+                    "localName": "biomart/hsapiens_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "mmusculus",
+                    "localName": "biomart/mmusculus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "rnorvegicus",
+                    "localName": "biomart/rnorvegicus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "scerevisiae",
+                    "localName": "biomart/scerevisiae_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "sscrofa",
+                    "localName": "biomart/sscrofa_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "xtropicalis",
+                    "localName": "biomart/xtropicalis_uniprot"
                 }
             ],
             "referenceDatabase": {
@@ -623,14 +689,80 @@
                 "resourceIdentifier": "MIR:00100011"
             }
         },
-        "ENSEMBLTranscript": {
+        "EnsEMBLTranscript": {
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
                     "type": "biomart",
                     "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
-                    "localName": "biomart/\\w+_uniprot.tsv",
-                    "localNameIsRegex": true
+                    "species": "btaurus",
+                    "localName": "biomart/btaurus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "celegans",
+                    "localName": "biomart/celegans_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "clfamiliaris",
+                    "localName": "biomart/clfamiliaris_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "dmelanogaster",
+                    "localName": "biomart/dmelanogaster_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "drerio",
+                    "localName": "biomart/drerio_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "ggallus",
+                    "localName": "biomart/ggallus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "hsapiens",
+                    "localName": "biomart/hsapiens_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "mmusculus",
+                    "localName": "biomart/mmusculus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "rnorvegicus",
+                    "localName": "biomart/rnorvegicus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "scerevisiae",
+                    "localName": "biomart/scerevisiae_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "sscrofa",
+                    "localName": "biomart/sscrofa_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "xtropicalis",
+                    "localName": "biomart/xtropicalis_uniprot"
                 }
             ],
             "referenceDatabase": {
@@ -642,14 +774,80 @@
                 "resourceIdentifier": "MIR:00100011"
             }
         },
-        "ENSEMBLPeptide": {
+        "EnsEMBLPeptide": {
             "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
                     "type": "biomart",
                     "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
-                    "localName": "biomart/\\w+_uniprot.tsv",
-                    "localNameIsRegex": true
+                    "species": "btaurus",
+                    "localName": "biomart/btaurus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "celegans",
+                    "localName": "biomart/celegans_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "clfamiliaris",
+                    "localName": "biomart/clfamiliaris_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "dmelanogaster",
+                    "localName": "biomart/dmelanogaster_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "drerio",
+                    "localName": "biomart/drerio_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "ggallus",
+                    "localName": "biomart/ggallus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "hsapiens",
+                    "localName": "biomart/hsapiens_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "mmusculus",
+                    "localName": "biomart/mmusculus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "rnorvegicus",
+                    "localName": "biomart/rnorvegicus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "scerevisiae",
+                    "localName": "biomart/scerevisiae_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "sscrofa",
+                    "localName": "biomart/sscrofa_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "xtropicalis",
+                    "localName": "biomart/xtropicalis_uniprot"
                 }
             ],
             "referenceDatabase": {
@@ -660,6 +858,155 @@
                 "accessURL": "https://ensembl.org/id/###ID###",
                 "resourceIdentifier": "MIR:00100011"
             }
+        },
+        "OtherIdentifiers": {
+            "identifierType": "OtherIdentifier",
+            "downloads": [
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "btaurus",
+                    "localName": "biomart/btaurus_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "celegans",
+                    "localName": "biomart/celegans_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "clfamiliaris",
+                    "localName": "biomart/clfamiliaris_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "dmelanogaster",
+                    "localName": "biomart/dmelanogaster_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "drerio",
+                    "localName": "biomart/drerio_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "ggallus",
+                    "localName": "biomart/ggallus_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "hsapiens",
+                    "localName": "biomart/hsapiens_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "mmusculus",
+                    "localName": "biomart/mmusculus_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "rnorvegicus",
+                    "localName": "biomart/rnorvegicus_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "scerevisiae",
+                    "localName": "biomart/scerevisiae_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "sscrofa",
+                    "localName": "biomart/sscrofa_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["go_id", "goslim_goa_accession", "entrezgene_id"],
+                    "species": "xtropicalis",
+                    "localName": "biomart/xtropicalis_microarray_go_ncbi_ids"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "btaurus",
+                    "localName": "biomart/btaurus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "celegans",
+                    "localName": "biomart/celegans_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "clfamiliaris",
+                    "localName": "biomart/clfamiliaris_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "dmelanogaster",
+                    "localName": "biomart/dmelanogaster_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "drerio",
+                    "localName": "biomart/drerio_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "ggallus",
+                    "localName": "biomart/ggallus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "hsapiens",
+                    "localName": "biomart/hsapiens_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "mmusculus",
+                    "localName": "biomart/mmusculus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "rnorvegicus",
+                    "localName": "biomart/rnorvegicus_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "scerevisiae",
+                    "localName": "biomart/scerevisiae_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "sscrofa",
+                    "localName": "biomart/sscrofa_uniprot"
+                },
+                {
+                    "type": "biomart",
+                    "searchTerms": ["uniprotswissprot","uniprotsptrembl"],
+                    "species": "xtropicalis",
+                    "localName": "biomart/xtropicalis_uniprot"
+                }
+            ]
         },
         "Rhea": {
             "identifierType": "DatabaseIdentifier",
