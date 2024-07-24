@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 6/17/2024
  */
-public class OtherIdentifierCreator implements IdentifierCreator {
+public class OtherIdentifiersCreator implements IdentifierCreator {
 
     private static final Logger logger = LogManager.getLogger();
 
     private final Map<String, Set<String>> uniprotToResourceIdentifiers;
     private Map<Long, List<String>> referenceGeneProductDbIdToOtherIdentifiers;
 
-    public OtherIdentifierCreator(Map<String, Set<String>> uniProtToResourceIdentifiers) {
+    public OtherIdentifiersCreator(Map<String, Set<String>> uniProtToResourceIdentifiers) {
         this.uniprotToResourceIdentifiers = uniProtToResourceIdentifiers;
     }
 
