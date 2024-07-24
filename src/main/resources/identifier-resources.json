@@ -605,7 +605,7 @@
             }
         },
         "EnsEMBLGene": {
-            "identifierType": "ReferenceDNASequence",
+            "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
                     "type": "biomart",
@@ -690,7 +690,7 @@
             }
         },
         "EnsEMBLTranscript": {
-            "identifierType": "ReferenceDNASequence",
+            "identifierType": "DatabaseIdentifier",
             "downloads": [
                 {
                     "type": "biomart",
