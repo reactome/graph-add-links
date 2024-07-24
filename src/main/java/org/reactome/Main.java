@@ -13,7 +13,7 @@ import org.reactome.resource.ensemblgene.EnsEMBLGeneFileProcessor;
 import org.reactome.resource.ensemblpeptide.EnsEMBLPeptideFileProcessor;
 import org.reactome.resource.ensembltranscript.EnsEMBLTranscriptFileProcessor;
 import org.reactome.resource.omim.OMIMFileProcessor;
-import org.reactome.resource.otheridentifiers.OtherIdentifierCreator;
+import org.reactome.resource.otheridentifiers.OtherIdentifiersCreator;
 import org.reactome.resource.otheridentifiers.OtherIdentifiersFileProcessor;
 import org.reactome.resource.pharmacodb.PharmacoDBFileProcessor;
 import org.reactome.utils.ConfigParser;
@@ -259,7 +259,7 @@ public class Main {
         InstantiationException, IllegalAccessException {
 
         if (resourceIdentifierCreator.contains("OtherIdentifierCreator")) {
-            return new OtherIdentifierCreator(fileProcessor.getSourceToResourceIdentifiers());
+            return new OtherIdentifiersCreator(fileProcessor.getSourceToResourceIdentifiers());
         }
 
         return (IdentifierCreator) Class.forName(resourceIdentifierCreator)
