@@ -29,7 +29,10 @@ public class OtherIdentifiersFileProcessor implements FileProcessor {
 
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
-        return getUniProtIdentifiersToOtherIdentifiers();
+        if (this.uniProtToResourceIdentifiers == null || this.uniProtToResourceIdentifiers.isEmpty()) {
+            this.uniProtToResourceIdentifiers = getUniProtIdentifiersToOtherIdentifiers();
+        }
+        return this.uniProtToResourceIdentifiers;
     }
 
     private Map<String, Set<String>> getUniProtIdentifiersToOtherIdentifiers() throws IOException {
