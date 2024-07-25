@@ -519,9 +519,8 @@
             "identifierType": "ReferenceDNASequence",
             "downloads": [
                 {
-                    "type": "uniprot",
-                    "targetDatabaseName": "UCSC",
-                    "localName": "uniprot_mappings/uniprot_2_ucsc.tsv"
+                    "type": "file",
+                    "localName": "ucsc_uniprot_ids.tsv"
                 }
             ],
             "referenceDatabase": {
