@@ -15,8 +15,8 @@ public class UCSCFileRetriever implements Retriever {
 
     private SelfReferringUniProtRetriever selfReferringUniProtRetriever;
 
-    public UCSCFileRetriever(String resourceName) {
-        this.downloadInfo = new DownloadInfo(resourceName);
+    public UCSCFileRetriever() {
+        this.downloadInfo = new DownloadInfo("UCSC");
         this.selfReferringUniProtRetriever = new SelfReferringUniProtRetriever(getDownloadInfo().getDownloadables().get(0));
     }
 
