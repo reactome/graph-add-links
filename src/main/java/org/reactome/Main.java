@@ -237,7 +237,7 @@ public class Main {
             List<Path> uniProtFilePaths = Arrays.stream(filePaths)
                 .filter(filePath -> filePath.toString().contains("uniprot")).collect(Collectors.toList());
             List<Path> otherIdentifiersFilePaths = Arrays.stream(filePaths)
-                .filter(filePath -> filePath.toString().contains("uniprot")).collect(Collectors.toList());
+                .filter(filePath -> filePath.toString().contains("microarray_go_ncbi_ids")).collect(Collectors.toList());
 
             return new OtherIdentifiersFileProcessor(uniProtFilePaths, otherIdentifiersFilePaths);
         }
