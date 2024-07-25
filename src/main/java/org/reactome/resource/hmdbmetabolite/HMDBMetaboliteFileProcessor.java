@@ -31,10 +31,10 @@ public class HMDBMetaboliteFileProcessor implements FileProcessor {
 
     @Override
     public Map<String, Set<String>> getSourceToResourceIdentifiers() throws IOException {
-        unzipFile(getFilePath());
-        transformHMDBMetaboliteXML();
-
         if (chEBIToResourceIdentifiers == null || chEBIToResourceIdentifiers.isEmpty()) {
+            unzipFile(getFilePath());
+            transformHMDBMetaboliteXML();
+
             this.chEBIToResourceIdentifiers = new HashMap<>();
 
             Files.readAllLines(getTransformedFilePath()).forEach(line -> {
