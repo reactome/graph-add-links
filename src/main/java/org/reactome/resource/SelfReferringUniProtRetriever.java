@@ -27,7 +27,7 @@ public class SelfReferringUniProtRetriever extends SingleRetriever {
              Files.write(
                 getDownloadable().getLocalFilePath(),
                 (uniProtIdentifier + "\t" + uniProtIdentifier + "\n").getBytes(),
-                StandardOpenOption.APPEND
+                StandardOpenOption.CREATE, StandardOpenOption.APPEND
             );
         }
     }
