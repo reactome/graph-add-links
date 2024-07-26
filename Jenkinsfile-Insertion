@@ -10,6 +10,7 @@ pipeline{
 	agent any
 
 	stages{
+
 		// This stage checks that upstream projects AddLinks-Download and Orthoinference were run successfully for their last build.
 		stage('Check AddLinks-Download and Orthoinference builds succeeded'){
 			steps{
@@ -17,9 +18,10 @@ pipeline{
 					// This queries the Jenkins API to confirm that the most recent builds of AddLinks-Download and Orthoinference were successful.
 					utils.checkUpstreamBuildsSucceeded("AddLinks-Download")
 					utils.checkUpstreamBuildsSucceeded("Relational-Database-Updates/job/Orthoinference")
-	    			}
-    			}
-  		}
+					}
+				}
+		}
+
 		// Download from S3 the addlinks files that should have been created by the AddLinks-Downloads step.
 		stage('Setup: Download AddLinks files from S3 bucket'){
 			steps{
@@ -29,11 +31,12 @@ pipeline{
 					sh "aws s3 --no-progress cp ${env.S3_RELEASE_DIRECTORY_URL}/${releaseVersion}/add_links/downloads/data/${downloadsArchive}.gz ."
 					sh "gunzip ${downloadsArchive}.gz"
 					sh "tar -xvf ${downloadsArchive}"
-				 	sh "mv addlinks-downloaded-files/ /tmp/"
+					sh "mv addlinks-downloaded-files/ /tmp/"
 					sh "rm $downloadsArchive"
 				}
 			}
 		}
+
 		// This stage backs up the graph database before it is modified.
 		stage('Setup: Backup graph database before AddLinks insertion'){
 			steps{
@@ -46,30 +49,32 @@ pipeline{
 				}
 			}
 		}
+
 		// This stage builds the jar file using maven.
 		stage('Setup: Build jar file'){
 			steps{
 				script{
-				    sh "mvn clean package -DskipTests"
+					sh "mvn clean package -DskipTests"
 				}
 			 }
-   		}
+		}
 
-   		stage('Setup: Add Neo4j indexes for efficiency') {
-   			steps {
-   				script {
-   					withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
-   						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :DatabaseObject(dbId);
-                                                                 CREATE INDEX ON :ReferenceSequence(dbId);
-                                                                 CREATE INDEX ON :DatabaseIdentifier(dbId);
-                                                                 CREATE INDEX ON :ReferenceDatabase(dbId);
-                                                                 CREATE INDEX ON :InstanceEdit(dbId);
-                                                                 CREATE INDEX ON :ReferenceGeneProduct(dbId)\""
-   					}
-   				}
-   			}
+		// This stage adds indexes for Neo4j to speed-up the add-links insertion of nodes and relationships
+		stage('Setup: Add Neo4j indexes for efficiency') {
+			steps {
+				script {
+					withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :DatabaseObject(dbId);
+																 CREATE INDEX ON :ReferenceSequence(dbId);
+																 CREATE INDEX ON :DatabaseIdentifier(dbId);
+																 CREATE INDEX ON :ReferenceDatabase(dbId);
+																 CREATE INDEX ON :InstanceEdit(dbId);
+																 CREATE INDEX ON :ReferenceGeneProduct(dbId)\""
+					}
+				}
+			}
+		}
 
-   		}
 		// This stage runs the insertion component of AddLinks. It will build links to various external resources and connect them to the relevant instances.
 		// It also connects these linkouts to ReferenceDatabase objects that pertain to their original resource.
 		stage('Main: AddLinks Insertions'){
@@ -86,22 +91,23 @@ pipeline{
 				}
 			}
 		}
+
 		// This stage checks the number of links relative to the previous release
 		// TODO: Make a graph database capable version of this
 		//stage("Post: Check add links results") {
-		//    steps{
-		//    	script{
-		//            utils.cloneOrUpdateLocalRepo("add-links-checker")
-		//            dir("add-links-checker") {
-		//                withCredentials([file(credentialsId: 'Config', variable: 'ConfigFile')]){
-		//                    sh "cp $ConfigFile src/main/resources/config.properties"
-		//                }
-		//                utils.buildJarFileWithPackage()
-		//                sh "java -jar target/add-links-checker-*-jar-with-dependencies.jar -n release_current -o release_previous"
-		//            }
-		//            input(message: "Should we continue?")
-		//        }
-		//    }
+		//	steps{
+		//		script{
+		//			utils.cloneOrUpdateLocalRepo("add-links-checker")
+		//			dir("add-links-checker") {
+		//				withCredentials([file(credentialsId: 'Config', variable: 'ConfigFile')]){
+		//					sh "cp $ConfigFile src/main/resources/config.properties"
+		//				}
+		//				utils.buildJarFileWithPackage()
+		//				sh "java -jar target/add-links-checker-*-jar-with-dependencies.jar -n release_current -o release_previous"
+		//			}
+		//			input(message: "Should we continue?")
+		//		}
+		//	}
 		//}
 
 		// This stage archives all logs and database backups produced by AddLink-Insertion.
@@ -123,10 +129,10 @@ pipeline{
 // Localized method for swapping the personId from the addlinks.properties file.
 // TODO: Add method to shared groovy library.
 def updatePersonIdInProperties(configFile) {
-    	def personId = sh (
+		def personId = sh (
 		script: "grep personId $configFile | cut -d = -f2",
 		returnStdout: true
 	).trim()
 	sh "git checkout src/main/resources/addlinks.properties"
-    sh "sed -i -e 's/executeAsPersonID=/executeAsPersonID=${personId}/g' src/main/resources/addlinks.properties"
+	sh "sed -i -e 's/executeAsPersonID=/executeAsPersonID=${personId}/g' src/main/resources/addlinks.properties"
 }
