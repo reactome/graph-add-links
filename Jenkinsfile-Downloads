@@ -26,14 +26,12 @@ pipeline{
 			}
 		}
 		// This stage executes the AddLinks file download step. It will download all files needed to run the AddLinks insertion step,
-		//storing them at /tmp/addlinks-downloaded-files.
+		// storing them in the directory specified by the "downloadDirectory" property of the configuration file.
 		stage('Main: Download AddLinks files'){
 			steps{
 				script{
 					withCredentials([file(credentialsId: 'Config', variable: 'ConfigFile')]){
-						sh "cp $ConfigFile src/main/resources/auth.properties"
-						sh """java -Xmx${env.JAVA_MEM_MAX}m -jar target/graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar -d"""
-						sh "rm -f src/main/resources/auth.properties"
+						sh """java -Xmx${env.JAVA_MEM_MAX}m -jar target/graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar --downloads --config $ConfigFile"""
 					}
 				}
 			}
@@ -67,13 +65,13 @@ pipeline{
 				script{
 				    def releaseVersion = utils.getReleaseVersion()
 					def downloadsArchive = "addlinks-downloads-v${releaseVersion}.tar"
-					def addlinksFolder = "addlinks-downloaded-files/"
+					def addlinksFolder = "/tmp/adds-links-downloads"
 
-					def dataFiles = ["/tmp/$downloadsArchive"]
-					def logFiles = ["reports/*"]
-					def foldersToDelete = ["reports", "/tmp/$addlinksFolder"]
+					def dataFiles = ["$downloadsArchive"]
+					def logFiles = ["logs/*"]
+					def foldersToDelete = ["logs", "$addlinksFolder"]
 
-					sh "cd /tmp/; tar -zcvf $downloadsArchive $addlinksFolder"
+					sh "tar -zcvf $downloadsArchive $addlinksFolder"
 					utils.cleanUpAndArchiveBuildFiles("add_links/downloads", dataFiles, logFiles, foldersToDelete)
 				}
 			}
