@@ -1,5 +1,10 @@
 package org.reactome.graphnodes;
 
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Value;
+import org.reactome.graphdb.ReactomeGraphDatabase;
+import org.reactome.utils.ConfigParser;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -21,7 +26,7 @@ public class InstanceEdit extends GraphNode {
 
     public static InstanceEdit get() {
         if (instanceEdit == null) {
-            instanceEdit = new InstanceEdit("Created by GraphAddLinks", "Weiser, Joel");
+            instanceEdit = new InstanceEdit("Created by GraphAddLinks", fetchAuthorName());
         }
         return instanceEdit;
     }
@@ -83,5 +88,35 @@ public class InstanceEdit extends GraphNode {
 
     public String getAuthor() {
         return this.author;
+    }
+
+    private static String fetchAuthorName() {
+        long personId = Long.parseLong(ConfigParser.getConfigProperty("personId"));
+        Value personNode = fetchPersonNode(personId);
+        return authorNameFromPersonNode(personNode);
+    }
+
+    private static Value fetchPersonNode(long personId) {
+        Result result = ReactomeGraphDatabase.getSession().run(
+            "MATCH (p:Person) WHERE p.dbId = " + personId + " RETURN p");
+        if (result.hasNext()) {
+            return result.next().get("p");
+        }
+        return null;
+    }
+
+    private static String authorNameFromPersonNode(Value personNode) {
+        final String defaultAuthorName = "Unknown Author";
+
+        if (personNode == null || personNode.isNull()) {
+            return defaultAuthorName;
+        }
+
+        Value authorNameValue = personNode.get("displayName");
+        if (authorNameValue.isNull()) {
+            return defaultAuthorName;
+        }
+
+        return authorNameValue.asString();
     }
 }
