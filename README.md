@@ -20,7 +20,9 @@ The following are the resources linked to by Reactome (as of February 2024):
 - ComplexPortalSARS
 - ComplexPortalSARSCov2
 - DbSNPGene
-- ENSEMBL
+- EnsEMBLGene
+- EnsEMBLProtein
+- EnsEMBLTranscript
 - FlyBase
 - GTPLigands
 - GTPTargets
@@ -38,6 +40,7 @@ The following are the resources linked to by Reactome (as of February 2024):
 - OMIM
 - OpenTargets
 - Orphanet
+- OtherIdentifiers
 - PDB
 - PRO
 - PharmacoDB
@@ -127,6 +130,7 @@ The config.properties file expects the following:
 	cosmicPassword=<password>
 	neo4jUserName=<username>
 	neo4jPassword=<password>
+	personId=<personDbId>
 
 ### identifier-resources.json
 
@@ -137,7 +141,25 @@ remote file name has a pattern (see FlyBase for an example), and the local file 
 database representing the resource with the name(s), URL, accessURL (the pattern for looking up a particular
 resource id) and the identifiers.org MIR identifier.
 
-# Compiling and running
+## Prerequisites for running
+
+### Graph database indices
+
+To allow efficient creation of new nodes and relationships by the Graph-Add-Links program, the following indices should
+be created BEFORE running the program:
+
+- CREATE INDEX ON :DatabaseObject(dbId)
+- CREATE INDEX ON :ReferenceSequence(dbId)
+- CREATE INDEX ON :DatabaseIdentifier(dbId)
+- CREATE INDEX ON :ReferenceDatabase(dbId)
+- CREATE INDEX ON :InstanceEdit(dbId)
+- CREATE INDEX ON :ReferenceGeneProduct(dbId)
+
+The first five "create index" statements are responsible for indexing the nodes for associating relationships between
+cross-references and source (i.e. UniProt, ChEBI, etc.) nodes.  The last "create index" statement is responsible for
+indexing ReferenceGeneProduct nodes for fast lookup to add "other identifiers" obtained from EnsEMBL BioMart.
+
+## Compilation and running
 
 The Graph-Add-Links project is a typical maven structure project which can be built simply by the command
 "mvn clean package" at the root directory.  The "jar-with-dependencies" file output in the target directory can then
