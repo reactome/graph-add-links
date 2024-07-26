@@ -1,8 +1,8 @@
 package org.reactome.resource.orphanet;
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.AuthenticationBasicFileRetriever;
-import org.reactome.resource.Retriever;
+import org.reactome.retrievers.AuthenticationBasicFileRetriever;
+import org.reactome.retrievers.Retriever;
 import org.reactome.utils.ConfigParser;
 
 import java.io.IOException;

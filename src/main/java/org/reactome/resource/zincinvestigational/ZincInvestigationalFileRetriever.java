@@ -1,6 +1,6 @@
 package org.reactome.resource.zincinvestigational;
 
-import org.reactome.resource.SingleFileBasicFileRetriever;
+import org.reactome.retrievers.SingleFileBasicFileRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

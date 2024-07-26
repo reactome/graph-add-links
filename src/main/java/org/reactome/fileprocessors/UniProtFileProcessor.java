@@ -1,4 +1,4 @@
-package org.reactome.resource;
+package org.reactome.fileprocessors;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,7 +1,7 @@
 package org.reactome.resource.otheridentifiers.helpers;
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.Retriever;
+import org.reactome.retrievers.Retriever;
 
 import java.io.IOException;
 import java.util.ArrayList;

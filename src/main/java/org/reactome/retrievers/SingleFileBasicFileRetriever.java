@@ -1,4 +1,4 @@
-package org.reactome.resource;
+package org.reactome.retrievers;
 
 import org.reactome.DownloadInfo;
 
@@ -8,19 +8,19 @@ import java.io.IOException;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  * Created 7/9/2024
  */
-public class SingleFileUniProtMapperRetriever implements Retriever {
+public class SingleFileBasicFileRetriever implements Retriever {
     private DownloadInfo downloadInfo;
 
-    private UniProtMapperRetriever uniProtMapperRetriever;
+    private BasicFileRetriever basicFileRetriever;
 
-    public SingleFileUniProtMapperRetriever(String resourceName) {
+    public SingleFileBasicFileRetriever(String resourceName) {
         this.downloadInfo = new DownloadInfo(resourceName);
-        this.uniProtMapperRetriever = new UniProtMapperRetriever(getDownloadInfo().getDownloadables().get(0));
+        this.basicFileRetriever = new BasicFileRetriever(getDownloadInfo().getDownloadables().get(0));
     }
 
     @Override
     public void downloadFiles() throws IOException {
-        this.uniProtMapperRetriever.downloadFileIfNeeded();
+        this.basicFileRetriever.downloadFileIfNeeded();
     }
 
     @Override

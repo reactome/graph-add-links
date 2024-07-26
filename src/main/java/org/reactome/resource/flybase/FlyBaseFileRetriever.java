@@ -1,8 +1,8 @@
 package org.reactome.resource.flybase;
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.BasicFileRetriever;
-import org.reactome.resource.Retriever;
+import org.reactome.retrievers.BasicFileRetriever;
+import org.reactome.retrievers.Retriever;
 
 import java.io.BufferedReader;
 import java.io.IOException;

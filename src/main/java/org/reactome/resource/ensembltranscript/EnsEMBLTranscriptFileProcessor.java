@@ -1,6 +1,6 @@
 package org.reactome.resource.ensembltranscript;
 
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Files;

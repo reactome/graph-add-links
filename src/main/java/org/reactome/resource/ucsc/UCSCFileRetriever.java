@@ -1,8 +1,8 @@
 package org.reactome.resource.ucsc;
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.Retriever;
-import org.reactome.resource.SelfReferringUniProtRetriever;
+import org.reactome.retrievers.Retriever;
+import org.reactome.retrievers.SelfReferringUniProtRetriever;
 
 import java.io.IOException;
 

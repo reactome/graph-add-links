@@ -1,7 +1,7 @@
 package org.reactome.resource.ctdgene;
 
 import org.apache.commons.csv.CSVParser;
-import org.reactome.resource.UniProtFileProcessor;
+import org.reactome.fileprocessors.UniProtFileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -1,4 +1,4 @@
-package org.reactome.resource;
+package org.reactome.retrievers;
 
 import org.reactome.DownloadInfo;
 import org.reactome.otheridentifiers.retrievers.EnsEMBLBioMartUniProtRetriever;
@@ -6,8 +6,6 @@ import org.reactome.otheridentifiers.retrievers.EnsEMBLBioMartUniProtRetriever;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.reactome.otheridentifiers.EnsEMBLBioMartUtils.getBioMartSpeciesNames;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

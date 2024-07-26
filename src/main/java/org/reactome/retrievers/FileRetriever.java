@@ -1,12 +1,9 @@
-package org.reactome.resource;
+package org.reactome.retrievers;
 
 import org.reactome.DownloadInfo;
-import org.reactome.utils.ConfigParser;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
 
 /**
  * @author Joel Weiser

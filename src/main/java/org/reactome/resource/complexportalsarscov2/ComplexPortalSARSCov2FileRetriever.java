@@ -1,6 +1,6 @@
 package org.reactome.resource.complexportalsarscov2;
 
-import org.reactome.resource.SingleFileBasicFileRetriever;
+import org.reactome.retrievers.SingleFileBasicFileRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

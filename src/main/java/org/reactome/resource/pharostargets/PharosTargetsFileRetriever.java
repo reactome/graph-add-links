@@ -3,8 +3,8 @@ package org.reactome.resource.pharostargets;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.reactome.DownloadInfo;
-import org.reactome.resource.BasicFileRetriever;
-import org.reactome.resource.Retriever;
+import org.reactome.retrievers.BasicFileRetriever;
+import org.reactome.retrievers.Retriever;
 
 import java.io.*;
 import java.net.HttpURLConnection;

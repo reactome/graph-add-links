@@ -1,28 +1,22 @@
-package org.reactome.resource;
+package org.reactome.retrievers;
 
 import org.reactome.DownloadInfo;
 import org.reactome.utils.ConfigParser;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 4/5/2022
  */
-public class BasicFileRetriever extends FileRetriever {
-//    private DownloadInfo downloadInfo;
-    private DownloadInfo.Downloadable downloadable;
+public abstract class AuthenticationBasicFileRetriever extends BasicFileRetriever {
 
-    public BasicFileRetriever(DownloadInfo.Downloadable downloadable) {
+    public AuthenticationBasicFileRetriever(DownloadInfo.Downloadable downloadable) {
         super(downloadable);
     }
 
@@ -31,8 +25,9 @@ public class BasicFileRetriever extends FileRetriever {
         Files.createDirectories(ConfigParser.getDownloadDirectoryPath());
 
         HttpURLConnection httpURLConnection = (HttpURLConnection) getResourceFileRemoteURL().openConnection();
-        httpURLConnection.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8");
-        httpURLConnection.addRequestProperty("User-Agent", "Mozilla/5.0");
+        httpURLConnection.addRequestProperty("User-Agent", "Mozilla/4.0");
+
+        httpURLConnection.setRequestProperty("Authorization", getAuthorizationHeaderValue());
 
         httpURLConnection.setConnectTimeout(twoMinutes());
         httpURLConnection.setReadTimeout(twoMinutes());
@@ -40,18 +35,19 @@ public class BasicFileRetriever extends FileRetriever {
         ReadableByteChannel remoteFileByteChannel = Channels.newChannel(httpURLConnection.getInputStream());
         FileOutputStream localFileOutputStream = new FileOutputStream(getDownloadable().getLocalFilePath().toFile());
 
-
-
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
-    }
-//
-//    @Override
-//    public DownloadInfo getDownloadInfo() {
-//        return this.downloadInfo;
-//    }
 
-    protected int twoMinutes() {
-        final int twoMinutesInMilliSeconds = 1000 * 60 * 2;
-        return twoMinutesInMilliSeconds;
+        httpURLConnection.disconnect();
+    }
+
+    protected abstract String getUserName();
+
+    protected abstract String getPassword();
+
+    protected String getAuthorizationHeaderValue() {
+        String authString = getUserName() + ":" + getPassword();
+        String encodedAuthString = java.util.Base64.getEncoder().encodeToString(authString.getBytes());
+
+        return "Basic " + encodedAuthString;
     }
 }

@@ -1,6 +1,6 @@
 package org.reactome.resource.zincbiogenic;
 
-import org.reactome.resource.SingleFileBasicFileRetriever;
+import org.reactome.retrievers.SingleFileBasicFileRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

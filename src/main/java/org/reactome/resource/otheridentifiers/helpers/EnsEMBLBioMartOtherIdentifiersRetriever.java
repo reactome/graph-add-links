@@ -1,7 +1,7 @@
 package org.reactome.resource.otheridentifiers.helpers;
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.SingleRetriever;
+import org.reactome.retrievers.SingleRetriever;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

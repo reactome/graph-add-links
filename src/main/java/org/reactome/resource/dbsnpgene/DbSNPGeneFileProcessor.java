@@ -1,10 +1,9 @@
 package org.reactome.resource.dbsnpgene;
 
-import org.reactome.resource.UniProtFileProcessor;
+import org.reactome.fileprocessors.UniProtFileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 

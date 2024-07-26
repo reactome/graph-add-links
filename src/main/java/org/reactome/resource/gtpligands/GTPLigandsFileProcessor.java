@@ -1,7 +1,7 @@
 package org.reactome.resource.gtpligands;
 
 import org.apache.commons.csv.CSVParser;
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Path;

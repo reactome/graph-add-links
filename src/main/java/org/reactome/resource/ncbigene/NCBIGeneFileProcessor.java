@@ -1,6 +1,6 @@
 package org.reactome.resource.ncbigene;
 
-import org.reactome.resource.UniProtFileProcessor;
+import org.reactome.fileprocessors.UniProtFileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Path;

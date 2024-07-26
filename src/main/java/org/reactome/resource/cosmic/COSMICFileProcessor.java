@@ -1,7 +1,7 @@
 package org.reactome.resource.cosmic;
 
 import org.reactome.graphnodes.ReferenceGeneProduct;
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

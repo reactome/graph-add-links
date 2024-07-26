@@ -1,7 +1,7 @@
 package org.reactome.resource.dbsnpgene;
 
 
-import org.reactome.resource.SingleFileUniProtMapperRetriever;
+import org.reactome.retrievers.SingleFileUniProtMapperRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

@@ -1,13 +1,9 @@
 package org.reactome.resource.gtptargets;
 
 import org.apache.commons.csv.CSVParser;
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 

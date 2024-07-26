@@ -1,6 +1,6 @@
 package org.reactome.resource.ensemblgene;
 
-import org.reactome.resource.MultipleFileEnsEMBLBioMartUniProtRetriever;
+import org.reactome.retrievers.MultipleFileEnsEMBLBioMartUniProtRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

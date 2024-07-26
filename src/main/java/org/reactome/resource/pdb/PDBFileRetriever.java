@@ -1,6 +1,6 @@
 package org.reactome.resource.pdb;
 
-import org.reactome.resource.SingleFileUniProtMapperRetriever;
+import org.reactome.retrievers.SingleFileUniProtMapperRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

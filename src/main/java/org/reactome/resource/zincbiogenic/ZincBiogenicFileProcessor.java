@@ -1,6 +1,6 @@
 package org.reactome.resource.zincbiogenic;
 
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 import org.reactome.utils.zinc.ZincFileProcessorHelper;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.reactome.resource;
+package org.reactome.retrievers;
 
 import org.neo4j.driver.Record;
 import org.neo4j.driver.Result;

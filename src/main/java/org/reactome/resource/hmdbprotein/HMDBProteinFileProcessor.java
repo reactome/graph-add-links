@@ -1,6 +1,6 @@
 package org.reactome.resource.hmdbprotein;
 
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;

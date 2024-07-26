@@ -1,6 +1,6 @@
 package org.reactome.resource.pro;
 
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import java.io.IOException;
 import java.nio.file.Files;

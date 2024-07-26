@@ -1,6 +1,6 @@
 package org.reactome.resource.pro;
 
-import org.reactome.resource.SingleFileBasicFileRetriever;
+import org.reactome.retrievers.SingleFileBasicFileRetriever;
 
 
 /**

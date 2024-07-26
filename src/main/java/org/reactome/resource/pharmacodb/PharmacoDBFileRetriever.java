@@ -2,8 +2,8 @@ package org.reactome.resource.pharmacodb;
 
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.BasicFileRetriever;
-import org.reactome.resource.Retriever;
+import org.reactome.retrievers.BasicFileRetriever;
+import org.reactome.retrievers.Retriever;
 
 import java.io.IOException;
 import java.util.ArrayList;

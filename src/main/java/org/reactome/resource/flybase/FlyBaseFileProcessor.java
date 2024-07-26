@@ -1,6 +1,6 @@
 package org.reactome.resource.flybase;
 
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import java.io.*;
 import java.nio.file.Files;

@@ -1,9 +1,9 @@
 package org.reactome.resource.omim;
 
 import org.reactome.DownloadInfo;
-import org.reactome.resource.BasicFileRetriever;
-import org.reactome.resource.Retriever;
-import org.reactome.resource.UniProtMapperRetriever;
+import org.reactome.retrievers.BasicFileRetriever;
+import org.reactome.retrievers.Retriever;
+import org.reactome.retrievers.UniProtMapperRetriever;
 
 import java.io.IOException;
 

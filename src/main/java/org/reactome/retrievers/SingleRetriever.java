@@ -1,4 +1,4 @@
-package org.reactome.resource;
+package org.reactome.retrievers;
 
 import org.reactome.DownloadInfo;
 import org.reactome.utils.ConfigParser;

@@ -1,6 +1,6 @@
 package org.reactome.resource.mgi;
 
-import org.reactome.resource.FileProcessor;
+import org.reactome.fileprocessors.FileProcessor;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -8,8 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-
-import static org.reactome.utils.FileUtils.unzipFile;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)

@@ -2,8 +2,8 @@ package org.reactome.resource.otheridentifiers;
 
 import org.reactome.DownloadInfo;
 import org.reactome.resource.otheridentifiers.helpers.MultipleFileEnsEMBLBioMartOtherIdentifierRetriever;
-import org.reactome.resource.MultipleFileEnsEMBLBioMartUniProtRetriever;
-import org.reactome.resource.Retriever;
+import org.reactome.retrievers.MultipleFileEnsEMBLBioMartUniProtRetriever;
+import org.reactome.retrievers.Retriever;
 
 import java.io.IOException;
 

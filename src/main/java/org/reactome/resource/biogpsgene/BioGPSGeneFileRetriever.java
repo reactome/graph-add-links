@@ -1,7 +1,7 @@
 package org.reactome.resource.biogpsgene;
 
 
-import org.reactome.resource.SingleFileUniProtMapperRetriever;
+import org.reactome.retrievers.SingleFileUniProtMapperRetriever;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
