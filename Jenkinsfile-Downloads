@@ -65,7 +65,7 @@ pipeline{
 				script{
 				    def releaseVersion = utils.getReleaseVersion()
 					def downloadsArchive = "addlinks-downloads-v${releaseVersion}.tar"
-					def addlinksFolder = "/tmp/adds-links-downloads"
+					def addlinksFolder = "/tmp/add-links-downloads"
 
 					def dataFiles = ["$downloadsArchive"]
 					def logFiles = ["logs/*"]

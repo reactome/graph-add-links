@@ -92,7 +92,7 @@ pipeline{
 		stage('Post: Archive Outputs'){
 			steps{
 				script{
-					def addlinksFolder = "/tmp/adds-links-downloads/"
+					def addlinksFolder = "/tmp/add-links-downloads/"
 					def dataFiles = []
 					def logFiles = ["reports"]
 					def foldersToDelete = ["reports/", "$addlinksFolder"]
