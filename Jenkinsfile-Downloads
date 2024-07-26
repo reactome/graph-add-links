@@ -9,6 +9,7 @@ pipeline{
 	agent any
 
 	stages{
+
 		// This stage checks that an upstream project, ConfirmReleaseConfigs, was run successfully for its last build.
 		stage('Check ConfirmReleaseConfigs build succeeded'){
 			steps{
@@ -17,6 +18,7 @@ pipeline{
 				}
 			}
 		}
+
 		// This stage builds the jar file using maven.
 		stage('Setup: Build jar file'){
 			steps{
@@ -25,6 +27,7 @@ pipeline{
 				}
 			}
 		}
+
 		// This stage executes the AddLinks file download step. It will download all files needed to run the AddLinks insertion step,
 		// storing them in the directory specified by the "downloadDirectory" property of the configuration file.
 		stage('Main: Download AddLinks files'){
@@ -36,6 +39,7 @@ pipeline{
 				}
 			}
 		}
+
 		// Sends email notification to developers list regarding completion of AddLinks file downloads.
 		stage('Post: Email regarding completion of file downloads'){
 			steps{
@@ -47,6 +51,7 @@ pipeline{
 				}
 			}
 		}
+
 		// Program is stopped and waits for confirmation that the dry run was successful.
 		stage('User Input: Confirm successful AddLinks file downloads') {
 			steps {
@@ -59,6 +64,7 @@ pipeline{
 				}
 			}
 		}
+
 		// Archive everything on S3 and then delete on the server.
 		stage('Post: Archive Outputs'){
 			steps{
