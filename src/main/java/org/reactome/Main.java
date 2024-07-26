@@ -258,7 +258,7 @@ public class Main {
         throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
         InstantiationException, IllegalAccessException {
 
-        if (resourceIdentifierCreator.contains("OtherIdentifierCreator")) {
+        if (resourceIdentifierCreator.contains("OtherIdentifiersCreator")) {
             return new OtherIdentifiersCreator(fileProcessor.getSourceToResourceIdentifiers());
         }
 
