@@ -92,10 +92,10 @@ pipeline{
 		stage('Post: Archive Outputs'){
 			steps{
 				script{
-					def addlinksFolder = "addlinks-downloaded-files/"
+					def addlinksFolder = "/tmp/adds-links-downloads/"
 					def dataFiles = []
 					def logFiles = ["reports"]
-					def foldersToDelete = ["reports/", "/tmp/addlinks-downloaded-files/"]
+					def foldersToDelete = ["reports/", "$addlinksFolder"]
 
 					utils.cleanUpAndArchiveBuildFiles("add_links/insertions", dataFiles, logFiles, foldersToDelete)
 				}
