@@ -84,7 +84,7 @@ public class ReferenceDatabase extends GraphNode {
         attributeKeyValueStrings.addAll(
             Arrays.asList(
                 "accessUrl: " + quote(getAccessURL()),
-                "name: " + quote(String.join(",", getNames())),
+                "name: " + "[" + getListOfQuotedNames() + "]",
                 "url: " + quote(getUrl())
             )
         );
@@ -94,6 +94,13 @@ public class ReferenceDatabase extends GraphNode {
     @Override
     public String getDisplayName() {
         return this.names.get(0);
+    }
+
+    public String getLongestName() {
+        return getNames().stream()
+            .sorted((name1, name2) -> Integer.compare(name2.length(), name1.length()))
+            .findFirst()
+            .orElse("");
     }
 
     public List<String> getNames() {
@@ -127,6 +134,30 @@ public class ReferenceDatabase extends GraphNode {
 //
 //        return referenceDatabaseAsString.toString();
 //    }
+
+    public Long getDbIdInGraphDatabase() {
+        String referenceDatabasesQuery =
+            "MATCH (rd:ReferenceDatabase) RETURN rd.dbId as dbId, rd.name as names";
+
+        Result referenceDatabasesQueryResult = ReactomeGraphDatabase.getSession().run(referenceDatabasesQuery);
+        Map<String, Long> referenceDatabaseLongestNameToDbId = referenceDatabasesQueryResult
+            .stream()
+            .collect(
+                toMap(
+                    record -> getLongest(record.get("names").asList(Value::asString)),
+                    record -> record.get("dbId").asLong(),
+                    (first, second) -> first
+                )
+            );
+
+        return referenceDatabaseLongestNameToDbId.get(this.getLongestName());
+    }
+
+
+
+    private String getListOfQuotedNames() {
+        return getNames().stream().map(name -> quote(name)).collect(Collectors.joining(","));
+    }
 
     public static class ReferenceDatabaseBuilder {
         private List<String> names;
