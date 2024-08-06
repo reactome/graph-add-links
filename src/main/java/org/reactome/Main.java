@@ -88,14 +88,14 @@ public class Main {
     private void printUsageInstructions() throws URISyntaxException {
         StringBuilder stringBuilder = new StringBuilder();
         String jarPath = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-        stringBuilder.append(String.format("Usage: java -jar %s [-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1, name-of-resource2, ...>] [-l|--list_resources] [--help]%n", jarPath));
+        stringBuilder.append(String.format("Usage: java -jar %s [-c|--config] [-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]%n", jarPath));
         stringBuilder.append("Options:\n");
         stringBuilder.append("\t[-c|--config]: Used to specify the configuration file's path (default of config.properties in the resource directory) \n");
         stringBuilder.append("\t[-d|--downloads]: Used to download files for resources (specified with -r or all if -r omitted)\n");
         stringBuilder.append("\t[-i|--insertions]: Used to process downloaded files and insert resources (specified with -r or all if -r omitted) into the graph database\n");
         stringBuilder.append("\t[-r|--resources <name-of-resource1, name-of-resource2, ...>]: Comma-delimited list of names (NOTE: no spaces between name of resources)\n");
-        stringBuilder.append("\t[-l|--list_resources]: Lists names of supported resources to use with -r|--resources\n");
-        stringBuilder.append("\t[-h|--help]: Displays this help message");
+        stringBuilder.append("\t[-l|--list_resources]: Lists names of supported resources to use with -r|--resources, then exits\n");
+        stringBuilder.append("\t[-h|--help]: Displays this help message and exits");
 
         System.out.println(stringBuilder.toString());
     }
@@ -145,7 +145,7 @@ public class Main {
     private void retrieveResources(Collection<String> resourceNames, int attemptNumber) {
         final int maximumAttemptNumber = 3;
 
-        logger.info("Downloading resource information...");
+        logger.info("Downloading resource data files...");
         Set<String> resourcesToRetry = new LinkedHashSet<>();
         resourceNames.parallelStream().forEach(resourceName -> {
             try {
@@ -153,7 +153,6 @@ public class Main {
                 retrieveResource(resourceName);
             } catch (Exception e) {
                 logger.error("Unable to download files for " + resourceName + ": " + e);
-                e.printStackTrace();
                 resourcesToRetry.add(resourceName);
             }
         });
