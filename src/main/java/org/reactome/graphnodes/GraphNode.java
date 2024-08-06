@@ -67,7 +67,7 @@ public abstract class GraphNode {
         }
         setDbId();
         ReactomeGraphDatabase.getSession().run(
-            "CREATE " + this.toString()
+            "MERGE " + this.toString()
         );
 
         setIsNodeInDatabase(true);
