@@ -1,11 +1,17 @@
 package org.reactome.graphnodes;
 
 import org.json.JSONObject;
+import org.neo4j.driver.Result;
+import org.neo4j.driver.Value;
+import org.reactome.graphdb.ReactomeGraphDatabase;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toMap;
 import static org.reactome.utils.ResourceJSONParser.convertJSONArrayToStringList;
 import static org.reactome.utils.ResourceJSONParser.getResourceJSONObject;
+import static org.reactome.utils.StringUtils.getLongest;
 import static org.reactome.utils.StringUtils.quote;
 
 /**
@@ -18,11 +24,26 @@ public class ReferenceDatabase extends GraphNode {
     private String url;
     private String resourceIdentifier;
 
+    private ReferenceDatabase(long dbId) {
+        super(dbId);
+    }
+
     private ReferenceDatabase(List<String> names, String accessURL, String url, String resourceIdentifier) {
         this.names = names;
         this.accessURL = accessURL;
         this.url = url;
         this.resourceIdentifier = resourceIdentifier;
+    }
+
+    public static ReferenceDatabase createReferenceDatabaseFromGraphDb(
+        long dbId, ReferenceDatabase parsedReferenceDatabase) {
+
+        ReferenceDatabase referenceDatabase = new ReferenceDatabase(dbId);
+        referenceDatabase.names = parsedReferenceDatabase.getNames();
+        referenceDatabase.accessURL = parsedReferenceDatabase.getAccessURL();
+        referenceDatabase.url = parsedReferenceDatabase.getUrl();
+        referenceDatabase.resourceIdentifier = parsedReferenceDatabase.getResourceIdentifier();
+        return referenceDatabase;
     }
 
     public static ReferenceDatabase parseReferenceDatabase(String referenceName) throws IllegalArgumentException {
