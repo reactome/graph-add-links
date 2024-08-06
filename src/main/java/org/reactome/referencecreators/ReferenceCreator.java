@@ -34,7 +34,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         throws IllegalArgumentException {
 
         this.resourceName = resourceName;
-        this.referenceDatabase = ReferenceDatabase.parseReferenceDatabase(resourceName);
+        this.referenceDatabase = fetchReferenceDatabase();
         this.sourceIdentifierToReferenceIdentifiers = uniprotIdentifierToReferenceIdentifiers;
     }
 
@@ -117,6 +117,17 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         //Path resourceDirectory = Paths.get(ReferenceCreator.class.getClassLoader().getResource(".").toURI());
         //return resourceDirectory.resolve("reference_creator_csv");
 
+    }
+
+    private ReferenceDatabase fetchReferenceDatabase() {
+        ReferenceDatabase referenceDatabase = ReferenceDatabase.parseReferenceDatabase(resourceName);
+        Long dbId = referenceDatabase.getDbIdInGraphDatabase();
+        if (dbId != null) {
+            System.out.println("Reference database " + referenceDatabase.getDisplayName() + " exists in graph db " +
+                "with dbId " + dbId);
+            referenceDatabase = ReferenceDatabase.createReferenceDatabaseFromGraphDb(dbId, referenceDatabase);
+        }
+        return referenceDatabase;
     }
 
     private boolean existsInDatabase(IdentifierNode identifierNode) {
