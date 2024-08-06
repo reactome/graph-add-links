@@ -79,9 +79,9 @@ public abstract class ReferenceCreator implements IdentifierCreator {
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
-                //if (!existsInDatabase(externalIdentifier)) {
+                if (!existsInDatabase(externalIdentifier)) {
                     writeCSVForIdentifier(externalIdentifier, sourceIdentifierNode);
-                //}
+                }
             }
         }
         logger.info("CSV data complete");
