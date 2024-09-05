@@ -65,7 +65,12 @@ pipeline{
 			steps {
 				script {
 					withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
-						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :DatabaseObject(dbId); CREATE INDEX ON :ReferenceSequence(dbId); CREATE INDEX ON :DatabaseIdentifier(dbId); CREATE INDEX ON :ReferenceDatabase(dbId); CREATE INDEX ON :InstanceEdit(dbId); CREATE INDEX ON :ReferenceGeneProduct(dbId)\""
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :DatabaseObject(dbId);\""
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :ReferenceSequence(dbId);\""
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :DatabaseIdentifier(dbId);\""
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :ReferenceDatabase(dbId);\""
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :InstanceEdit(dbId);\""
+						sh "cypher-shell -u ${user} -p ${pass} \"CREATE INDEX ON :ReferenceGeneProduct(dbId)\""
 					}
 				}
 			}
