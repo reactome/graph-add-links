@@ -373,69 +373,6 @@
                 "resourceIdentifier": "MIR:00100024"
             }
         },
-        "ComplexPortalHuman": {
-            "identifierType": "DatabaseIdentifier",
-            "downloads": [
-                {
-                    "type": "file",
-                    "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
-                    "fileName": "9606.tsv",
-                    "fileNameIsRegex": false,
-                    "localName": "complexportal_9606_homo_sapiens.tsv"
-                }
-            ],
-            "referenceDatabase": {
-                "names": [
-                    "Complex Portal",
-                    "IntAct Complex Portal"
-                ],
-                "url": "https://www.ebi.ac.uk.intact/complex/",
-                "accessURL": "https://www.ebi.ac.uk/complexportal/complex/###ID###",
-                "resourceIdentifier": "MIR:00100875"
-            }
-        },
-        "ComplexPortalSARS": {
-            "identifierType": "DatabaseIdentifier",
-            "downloads": [
-                {
-                    "type": "file",
-                    "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
-                    "fileName": "694009.tsv",
-                    "fileNameIsRegex": false,
-                    "localName": "complexportal_694009_sars.tsv"
-                }
-            ],
-            "referenceDatabase": {
-                "names": [
-                    "Complex Portal",
-                    "IntAct Complex Portal"
-                ],
-                "url": "https://www.ebi.ac.uk.intact/complex/",
-                "accessURL": "https://www.ebi.ac.uk/complexportal/complex/###ID###",
-                "resourceIdentifier": "MIR:00100875"
-            }
-        },
-        "ComplexPortalSARSCov2": {
-            "identifierType": "DatabaseIdentifier",
-            "downloads": [
-                {
-                    "type": "file",
-                    "baseURL": "https://ftp.ebi.ac.uk/pub/databases/intact/complex/current/complextab/",
-                    "fileName": "2697049.tsv",
-                    "fileNameIsRegex": false,
-                    "localName": "complexportal_2697049_sars_cov_2.tsv"
-                }
-            ],
-            "referenceDatabase": {
-                "names": [
-                    "Complex Portal",
-                    "IntAct Complex Portal"
-                ],
-                "url": "https://www.ebi.ac.uk.intact/complex/",
-                "accessURL": "https://www.ebi.ac.uk/complexportal/complex/###ID###",
-                "resourceIdentifier": "MIR:00100875"
-            }
-        },
         "BioGPSGene": {
             "identifierType": "ReferenceDNASequence",
             "downloads": [
