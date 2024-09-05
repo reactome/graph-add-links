@@ -40,18 +40,6 @@ pipeline{
 			}
 		}
 
-		// Sends email notification to developers list regarding completion of AddLinks file downloads.
-		stage('Post: Email regarding completion of file downloads'){
-			steps{
-				script{
-					def releaseVersion = utils.getReleaseVersion()
-					def emailSubject = "AddLinks-Download has completed"
-					def emailBody = "Hello,\n\nThis is an automated message from Jenkins regarding an update for v${releaseVersion}. The file downloads for AddLinks has completed, and needs to be verified before it will be archived. \n\nThanks!"
-					utils.sendEmail("${emailSubject}", "${emailBody}")
-				}
-			}
-		}
-
 		// Program is stopped and waits for confirmation that the dry run was successful.
 		stage('User Input: Confirm successful AddLinks file downloads') {
 			steps {
@@ -61,6 +49,18 @@ pipeline{
 						parameters: [
 							[$class: 'BooleanParameterDefinition', defaultValue: true, name: 'response']
 						])
+				}
+			}
+		}
+
+		// Sends email notification to developers list regarding completion of AddLinks file downloads.
+		stage('Post: Email regarding completion of file downloads'){
+			steps{
+				script{
+					def releaseVersion = utils.getReleaseVersion()
+					def emailSubject = "AddLinks-Download has completed"
+					def emailBody = "Hello,\n\nThis is an automated message from Jenkins regarding an update for v${releaseVersion}. The file downloads for AddLinks has completed, and needs to be verified before it will be archived. \n\nThanks!"
+					utils.sendEmail("${emailSubject}", "${emailBody}")
 				}
 			}
 		}
