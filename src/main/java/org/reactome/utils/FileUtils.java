@@ -23,22 +23,10 @@ public class FileUtils {
             return;
         }
 
-        byte[] buffer = new byte[1024];
-        ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(filePath.toString()));
-        ZipEntry zipEntry = zipInputStream.getNextEntry();
-        while (zipEntry != null) {
-            File newFile = new File(filePath.getParent().toFile(), zipEntry.getName());
-            FileOutputStream fileOutputStream = new FileOutputStream(newFile);
-            int len;
-            while ((len = zipInputStream.read(buffer)) > 0) {
-                fileOutputStream.write(buffer, 0, len);
-            }
-            fileOutputStream.close();
-            zipEntry = zipInputStream.getNextEntry();
-        }
-        zipInputStream.closeEntry();
-        zipInputStream.close();
+        extractZip(filePath.toFile());
     }
+
+
 
     public static void gunzipFile(Path filePath) throws IOException {
         if (filePath.toString().endsWith(".gz")) {
@@ -79,6 +67,41 @@ public class FileUtils {
             return Paths.get(filePath.toString().replace(".zip", ""));
         }
         return filePath;
+    }
+
+    private static void extractZip(File zipFile) throws IOException {
+        byte[] buffer = new byte[1024];
+
+        // Use try-with-resources to ensure streams are properly closed
+        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFile))) {
+            ZipEntry zipEntry = zipInputStream.getNextEntry();
+
+            while (zipEntry != null) {
+                // Handle directories
+                if (zipEntry.isDirectory()) {
+                    File dir = new File(zipFile.getParent(), zipEntry.getName());
+                    if (!dir.exists()) {
+                        dir.mkdirs();  // Create directory if it doesn't exist
+                    }
+                } else {
+                    // Create new file and parent directories
+                    File newFile = new File(zipFile.getParent(), zipEntry.getName());
+                    new File(newFile.getParent()).mkdirs();  // Ensure parent directories exist
+
+                    // Write file content
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zipInputStream.read(buffer)) > 0) {
+                            fileOutputStream.write(buffer, 0, len);
+                        }
+                    }
+                }
+
+                // Move to the next entry
+                zipInputStream.closeEntry();
+                zipEntry = zipInputStream.getNextEntry();
+            }
+        }
     }
 
     private static Reader getReaderAfterVersionHeader(BufferedReader reader) throws IOException {
