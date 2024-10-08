@@ -19,7 +19,6 @@ import static org.reactome.utils.FileUtils.gunzipFile;
  */
 public class COSMICFileProcessor implements FileProcessor {
     private static final int GENE_NAME_INDEX = 0;
-    private static final int HGNC_IDENTIFIER_INDEX = 3;
 
     private Path filePath;
     private Map<String, Set<String>> uniProtIdentifierToCosmicGeneName;
