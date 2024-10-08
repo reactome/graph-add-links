@@ -129,9 +129,9 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
 //    }
 
     @Override
-    protected List<? extends IdentifierNode> createExternalIdentifiersForIdentifierNode(IdentifierNode identifierNode) {
+    protected List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
         List<DatabaseIdentifier> databaseIdentifiers = new ArrayList<>();
-        for (String databaseIdentifierValue : getIdentifierValues(identifierNode)) {
+        for (String databaseIdentifierValue : getIdentifierValues(sourceNode)) {
             databaseIdentifiers.add(new DatabaseIdentifier(databaseIdentifierValue, getReferenceDatabase()));
         }
         return databaseIdentifiers;

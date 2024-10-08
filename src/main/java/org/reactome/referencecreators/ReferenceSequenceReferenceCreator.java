@@ -120,7 +120,7 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         String nodeCreationQuery = "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Identifiers.csv' AS row\n" +
             "CREATE (:ReferenceEntity:ReferenceSequence:Reference" + getReferenceSequenceType().name() + "Sequence:DatabaseObject " +
             "{dbId: toInteger(row.DbId), displayName: row.DisplayName, schemaClass: row.SchemaClass, " +
-            "identifier: row.Identifier, databaseName: row.ReferenceDbName, url: row.URL})";
+            "identifier: row.Identifier, geneNames: row.GeneName, databaseName: row.ReferenceDbName, url: row.URL})";
         ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
             tx.run(nodeCreationQuery);
             return null;
@@ -143,23 +143,45 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
     }
 
     @Override
-    protected List<IdentifierNode> getIdentifierNodes() {
+    protected List<ReferenceGeneProduct> getIdentifierNodes() {
         return ReferenceGeneProduct.fetchReferenceGeneProductsForUniProtIdentifiers(getUniProtIdentifiers())
             .values().stream().flatMap(Collection::stream).collect(Collectors.toList());
     }
 
     @Override
-    protected List<? extends IdentifierNode> createExternalIdentifiersForIdentifierNode(IdentifierNode identifierNode) {
+    protected List<ReferenceSequence> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
 
 //        DatabaseIdentifier.DatabaseIdentifierBuilder databaseIdentifierBuilder =
 //            new DatabaseIdentifier.DatabaseIdentifierBuilder(getReferenceDatabase());
 
-        logger.info("Creating reference sequence for " + identifierNode.getIdentifier());
+        List<String> geneNames = getGeneNames(sourceNode);
+
+        logger.info("Creating reference sequence for " + sourceNode.getIdentifier());
         List<ReferenceSequence> referenceSequences = new ArrayList<>();
-        for (String referenceSequenceValue : getIdentifierValues(identifierNode)) {
-            referenceSequences.add(createReferenceSequence(referenceSequenceValue));
+        for (String referenceSequenceValue : getIdentifierValues(sourceNode)) {
+            referenceSequences.add(createReferenceSequence(referenceSequenceValue, geneNames));
         }
         return referenceSequences;
+    }
+
+    @Override
+    protected String getReferenceCSVHeader() {
+        return String.join(",",
+            "DbId", "DisplayName", "SchemaClass", "Identifier", "GeneNames", "ReferenceDbName", "URL"
+        ).concat(System.lineSeparator());
+    }
+
+    @Override
+    protected String getExternalIdentifierLine(IdentifierNode externalIdentifier) {
+        return String.join(",",
+            String.valueOf(externalIdentifier.getDbId()),
+            externalIdentifier.getDisplayName(),
+            externalIdentifier.getSchemaClass(),
+            externalIdentifier.getIdentifier(),
+            ((ReferenceSequence) externalIdentifier).getGeneNames().toString(),
+            externalIdentifier.getReferenceDatabaseDisplayName(),
+            externalIdentifier.getUrl()
+        ).concat(System.lineSeparator());
     }
 
 //    private Map<IdentifierNode, List<ReferenceSequence>> createReferenceSequences() {
@@ -180,8 +202,7 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         return getSourceIdentifierToReferenceIdentifiers().keySet();
     }
 
-    private ReferenceSequence createReferenceSequence(String identifier) {
-        List<String> geneNames = new ArrayList<>();
+    private ReferenceSequence createReferenceSequence(String identifier, List<String> geneNames) {
         if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
             return new ReferenceDNASequence(identifier, getReferenceDatabase(), geneNames);
         } else if (getReferenceSequenceType().equals(ReferenceSequenceType.RNA)) {
@@ -189,6 +210,13 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         } else {
             throw new IllegalStateException("Unknown reference sequence type: " + getReferenceSequenceType());
         }
+    }
+
+    private List<String> getGeneNames(IdentifierNode sourceNode) {
+        if (!(sourceNode instanceof ReferenceSequence)) {
+            return new ArrayList<>();
+        }
+        return ((ReferenceSequence) sourceNode).getGeneNames();
     }
 
 //    private Path getReferenceSequenceCSVFilePath() throws URISyntaxException {

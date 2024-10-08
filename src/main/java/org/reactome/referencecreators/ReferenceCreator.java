@@ -107,10 +107,21 @@ public abstract class ReferenceCreator implements IdentifierCreator {
             .computeIfAbsent(sourceIdentifier, k -> new HashSet<>());
     }
 
-    protected abstract List<? extends IdentifierNode> createExternalIdentifiersForIdentifierNode(
-        IdentifierNode identifierNode);
+    protected String getExternalIdentifierLine(IdentifierNode externalIdentifier) {
+        return String.join(",",
+            String.valueOf(externalIdentifier.getDbId()),
+            externalIdentifier.getDisplayName(),
+            externalIdentifier.getSchemaClass(),
+            externalIdentifier.getIdentifier(),
+            externalIdentifier.getReferenceDatabaseDisplayName(),
+            externalIdentifier.getUrl()
+        ).concat(System.lineSeparator());
+    }
 
-    protected abstract List<IdentifierNode> getIdentifierNodes();
+    protected abstract List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(
+        IdentifierNode sourceNode);
+
+    protected abstract List<? extends IdentifierNode> getIdentifierNodes();
 
     Path getReferenceCreatorCSVDirectory() throws URISyntaxException {
         return Paths.get(new File("src/main/resources/reference_creator_csv").getAbsolutePath());
@@ -150,10 +161,10 @@ public abstract class ReferenceCreator implements IdentifierCreator {
     private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {
         Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
-        for (IdentifierNode identifierNode : getIdentifierNodes()) {
+        for (IdentifierNode sourceNode : getIdentifierNodes()) {
             sourceToExternalIdentifiers.put(
-                identifierNode,
-                createExternalIdentifiersForIdentifierNode(identifierNode)
+                sourceNode,
+                createExternalIdentifiersForSourceIdentifierNode(sourceNode)
             );
         }
 
@@ -183,15 +194,17 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
 
     private void writeReferenceCSVHeader(Path referenceCSVFilePath) throws IOException {
-        final String header = String.join(",",
-            "DbId", "DisplayName", "SchemaClass", "Identifier", "ReferenceDbName", "URL"
-        ).concat(System.lineSeparator());
-
         Files.write(
             referenceCSVFilePath,
-            header.getBytes(),
+            getReferenceCSVHeader().getBytes(),
             StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
         );
+    }
+
+    protected String getReferenceCSVHeader() {
+        return String.join(",",
+            "DbId", "DisplayName", "SchemaClass", "Identifier", "ReferenceDbName", "URL"
+        ).concat(System.lineSeparator());
     }
 
     private void writeRelationshipCSVHeader(Path sourceToDatabaseIdentifierCSVFilePath) throws IOException {
@@ -220,18 +233,9 @@ public abstract class ReferenceCreator implements IdentifierCreator {
     private void writeExternalIdentifierLine(IdentifierNode externalIdentifier)
         throws IOException, URISyntaxException {
 
-        final String line = String.join(",",
-            String.valueOf(externalIdentifier.getDbId()),
-            externalIdentifier.getDisplayName(),
-            externalIdentifier.getSchemaClass(),
-            externalIdentifier.getIdentifier(),
-            externalIdentifier.getReferenceDatabaseDisplayName(),
-            externalIdentifier.getUrl()
-        ).concat(System.lineSeparator());
-
         Files.write(
             getIdentifierCSVFilePath(),
-            line.getBytes(),
+            getExternalIdentifierLine(externalIdentifier).getBytes(),
             StandardOpenOption.APPEND
         );
     }
