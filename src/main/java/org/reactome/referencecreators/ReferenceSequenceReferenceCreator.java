@@ -120,7 +120,7 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         String nodeCreationQuery = "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Identifiers.csv' AS row\n" +
             "CREATE (:ReferenceEntity:ReferenceSequence:Reference" + getReferenceSequenceType().name() + "Sequence:DatabaseObject " +
             "{dbId: toInteger(row.DbId), displayName: row.DisplayName, schemaClass: row.SchemaClass, " +
-            "identifier: row.Identifier, geneName: row.GeneNames, databaseName: row.ReferenceDbName, url: row.URL})";
+            "identifier: row.Identifier, geneName: split(row.GeneNames, ';'), databaseName: row.ReferenceDbName, url: row.URL})";
         ReactomeGraphDatabase.getSession().writeTransaction(tx -> {
             tx.run(nodeCreationQuery);
             return null;
@@ -178,7 +178,7 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
             externalIdentifier.getDisplayName(),
             externalIdentifier.getSchemaClass(),
             externalIdentifier.getIdentifier(),
-            ((ReferenceSequence) externalIdentifier).getGeneNames().toString(),
+            String.join(";", ((ReferenceSequence) externalIdentifier).getGeneNames()),
             externalIdentifier.getReferenceDatabaseDisplayName(),
             externalIdentifier.getUrl()
         ).concat(System.lineSeparator());
