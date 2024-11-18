@@ -1300,7 +1300,7 @@
             "downloads": [
                 {
                     "type": "file",
-                    "baseURL": "https://ftp.ebi.ac.uk/pub/databases/genenames/new/tsv/",
+                    "baseURL": "http://storage.googleapis.com/public-download-files/hgnc/tsv/tsv/",
                     "fileName": "hgnc_complete_set.txt",
                     "fileNameIsRegex": false,
                     "localName": "hgnc_complete_set.txt"
