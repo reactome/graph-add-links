@@ -69,7 +69,7 @@ public class Verifier {
         for (String expectedFileName : getExpectedFileNames()) {
             Path currentFileNamePath = Paths.get(this.downloadDirectory, expectedFileName);
 
-            if (currentFileIsSmaller(currentFileNamePath)) {
+            if (Files.exists(currentFileNamePath) && currentFileIsSmaller(currentFileNamePath)) {
                 tooSmallFiles.add(new TooSmallFile(currentFileNamePath));
             }
         }
