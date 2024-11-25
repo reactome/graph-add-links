@@ -103,6 +103,8 @@ public class Verifier {
             }
         }
 
+        expectedFileNames.sort(String::compareTo);
+
         return expectedFileNames;
     }
 
