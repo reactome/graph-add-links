@@ -1,9 +1,10 @@
-package org.reactome;
+package org.reactome.verifier;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import org.reactome.utils.ResourceJSONParser;
 
 import java.io.IOException;
@@ -13,9 +14,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import static org.reactome.release.verifier.FileUtils.downloadFileFromS3;
+import static org.reactome.verifier.TooSmallFile.currentFileIsSmaller;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -39,7 +39,7 @@ public class Verifier {
 
     private void run() throws IOException {
         List<String> missingFiles = getMissingFiles();
-        List<String> tooSmallFiles = getTooSmallFiles();
+        List<TooSmallFile> tooSmallFiles = getTooSmallFiles();
 
         if (missingFiles.isEmpty() && tooSmallFiles.isEmpty()) {
             System.out.println("All graph-add-links files downloaded successfully!");
@@ -62,29 +62,18 @@ public class Verifier {
         }
     }
 
-    private List<String> getTooSmallFiles() throws IOException {
-        if (Files.notExists(Paths.get(getAddLinksFilesAndSizesListName()))) {
-            downloadFileFromS3("reactome", getAddLinksFilesAndSizesListPathInS3());
-        }
-        List<String> tooSmallFiles = new ArrayList<>();
+    private List<TooSmallFile> getTooSmallFiles() throws IOException {
+        Utils.downloadAddLinksFilesAndSizesListFromS3(getPreviousReleaseNumber());
+
+        List<TooSmallFile> tooSmallFiles = new ArrayList<>();
         for (String expectedFileName : getExpectedFileNames()) {
             Path currentFileNamePath = Paths.get(this.downloadDirectory, expectedFileName);
 
             if (currentFileIsSmaller(currentFileNamePath)) {
-                tooSmallFiles.add(currentFileNamePath.toString());
+                tooSmallFiles.add(new TooSmallFile(currentFileNamePath));
             }
         }
         return tooSmallFiles;
-    }
-
-    private String getAddLinksFilesAndSizesListPathInS3() {
-        return String.format("private/releases/%d/add_links/downloads/data/%s",
-            getPreviousReleaseNumber(), getAddLinksFilesAndSizesListName()
-        );
-    }
-
-    private String getAddLinksFilesAndSizesListName() {
-        return "files_and_sizes.txt";
     }
 
     private int getPreviousReleaseNumber() {
@@ -100,46 +89,6 @@ public class Verifier {
             }
         }
         return missingFiles;
-    }
-
-    private boolean currentFileIsSmaller(Path currentFileNamePath) throws IOException {
-        long actualFileSizeInBytes = getCurrentFileSize(currentFileNamePath);
-        long expectedFileSizeInBytes = getExpectedFileSize(currentFileNamePath);
-
-        return actualFileSizeInBytes < expectedFileSizeInBytes;
-    }
-
-    private long getCurrentFileSize(Path currentFileNamePath) {
-        try {
-            return Files.size(currentFileNamePath);
-        } catch (IOException e) {
-            // TODO: Add logger statement for unsizable file
-            return 0L;
-        }
-    }
-
-    private long getExpectedFileSize(Path currentFileNamePath) throws IOException {
-        long expectedFileSize = getExpectedFileNameToSizeMap().computeIfAbsent(
-            currentFileNamePath.getFileName().toString(), k -> 0L);
-        //System.out.println(currentFileNamePath + "\t" + expectedFileSize);
-        return expectedFileSize;
-    }
-
-    private Map<String, Long> getExpectedFileNameToSizeMap() throws IOException {
-        return Files.lines(Paths.get(getAddLinksFilesAndSizesListName()))
-            .map(line -> line.split(" "))
-            .collect(Collectors.toMap(
-                this::getFileName,
-                this::getFileSizeInBytes
-            ));
-    }
-
-    private String getFileName(String[] columns) {
-        return columns[1].replace("./","");
-    }
-
-    private long getFileSizeInBytes(String[] columns) {
-        return Long.parseLong(columns[0]);
     }
 
     private List<String> getExpectedFileNames() {
@@ -168,4 +117,5 @@ public class Verifier {
 
         return downloadJSONObjects;
     }
+
 }

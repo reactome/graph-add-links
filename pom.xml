@@ -52,7 +52,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifestEntries>
-                                    <Main-Class>org.reactome.Verifier</Main-Class>
+                                    <Main-Class>org.reactome.verifier.Verifier</Main-Class>
                                     <Multi-Release>true</Multi-Release>
                                 </manifestEntries>
                             </archive>
