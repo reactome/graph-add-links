@@ -19,8 +19,8 @@ pipeline{
 			}
 		}
 
-		// This stage builds the jar file using maven.
-		stage('Setup: Build jar file'){
+		// This stage builds the jar files (main program and verifier) using maven.
+		stage('Setup: Build jar files'){
 			steps{
 				script{
 					sh "mvn clean package -DskipTests"
@@ -34,8 +34,36 @@ pipeline{
 			steps{
 				script{
 					withCredentials([file(credentialsId: 'Config', variable: 'ConfigFile')]){
-						sh """java -Xmx${env.JAVA_MEM_MAX}m -jar target/graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar --downloads --config $ConfigFile"""
+						sh """java -Xmx${env.JAVA_MEM_MAX}m -jar target/graph-add-links.jar --downloads --config $ConfigFile"""
 					}
+				}
+			}
+		}
+
+		// Creates a list of downloaded files and sizes for verification of next release
+		stage('Post: Create file listing downloaded files and their sizes for next release baseline') {
+			steps {
+				script {
+					def fileListing = "files_and_sizes.txt"
+					def releaseVersion = utils.getReleaseVersion()
+
+					// Creates list of files and their sizes in the "downloads" directory and uploads it to S3
+					sh "find downloads/ -type f -exec stat --printf="%s %n\n" {} + | sed 's|^\./||' > $fileListing"
+					sh "aws s3 cp $fileListing s3://reactome/private/releases/$releaseVersion/add_links/downloads/data/"
+				}
+			}
+		}
+
+		// Verifies downloads and present and of correct size
+		stage('Post: Verify downloaded files') {
+			steps {
+				script {
+					def previousReleaseVersion = utils.getPreviousReleaseVersion()
+					def releaseVersion = utils.getReleaseVersion()
+					def fileListing = "files_and_sizes.txt"
+
+					sh "aws s3 cp s3://reactome/private/releases/$previousReleaseVersion/add_links/downloads/data/$fileListing ."
+					sh "java -jar graph-add-links-verifier.jar --download_directory downloads -r $releaseVersion"
 				}
 			}
 		}
