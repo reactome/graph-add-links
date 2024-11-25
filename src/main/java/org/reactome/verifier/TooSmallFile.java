@@ -33,11 +33,12 @@ public class TooSmallFile {
 
     @Override
     public String toString() {
-        return String.format("%s (%d bytes vs %d bytes - decrease of %d bytes)",
+        return String.format("%s (expected %d bytes but got %d bytes - decrease of %d bytes (%.2f%%))",
             getCurrentFileNamePath(),
             getExpectedFileSizeInBytes(),
             getActualFileSizeInBytes(),
-            getDifferenceInFileSize()
+            getDifferenceInFileSize(),
+            getPercentDifferenceInFileSize()
         );
     }
 
@@ -55,6 +56,10 @@ public class TooSmallFile {
 
     private long getDifferenceInFileSize() {
         return getExpectedFileSizeInBytes() - getActualFileSizeInBytes();
+    }
+
+    private double getPercentDifferenceInFileSize() {
+        return getDifferenceInFileSize() * 100d / getExpectedFileSizeInBytes();
     }
 
     private static long getCurrentFileSize(Path currentFileNamePath) {
