@@ -2,16 +2,10 @@ package org.reactome;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.io.FilenameUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.reactome.utils.ResourceJSONParser;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,9 +13,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.reactome.release.verifier.FileUtils.downloadFileFromS3;
-import static org.reactome.release.verifier.FileUtils.gunzipFile;
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -33,8 +27,6 @@ public class Verifier {
 
     @Parameter(names = {"--release", "-r"})
     private int releaseNumber;
-
-    private String previousDownloadDirectory;
 
     public static void main(String[] args) throws IOException {
         Verifier verifier = new Verifier();
@@ -71,64 +63,28 @@ public class Verifier {
     }
 
     private List<String> getTooSmallFiles() throws IOException {
-        preparePreviousReleaseDownloadDirectory();
-
+        if (Files.notExists(Paths.get(getAddLinksFilesAndSizesListName()))) {
+            downloadFileFromS3("reactome", getAddLinksFilesAndSizesListPathInS3());
+        }
         List<String> tooSmallFiles = new ArrayList<>();
         for (String expectedFileName : getExpectedFileNames()) {
             Path currentFileNamePath = Paths.get(this.downloadDirectory, expectedFileName);
-            Path previousFileNamePath = Paths.get(this.previousDownloadDirectory, expectedFileName);
 
-            if (currentFileIsSmaller(currentFileNamePath, previousFileNamePath)) {
+            if (currentFileIsSmaller(currentFileNamePath)) {
                 tooSmallFiles.add(currentFileNamePath.toString());
             }
         }
         return tooSmallFiles;
     }
 
-    private void preparePreviousReleaseDownloadDirectory() throws IOException {
-        downloadFileFromS3("reactome", getAddLinksDownloadTarFilePathInS3());
-        gunzipFile(Paths.get(getAddLinksDownloadTarFileName() + ".gz"));
-        unTarFile(getAddLinksDownloadTarFileName());
-        this.previousDownloadDirectory = getAddLinksDownloadTarBaseName();
-    }
-
-    private String getAddLinksDownloadTarFilePathInS3() {
+    private String getAddLinksFilesAndSizesListPathInS3() {
         return String.format("private/releases/%d/add_links/downloads/data/%s",
-            getPreviousReleaseNumber(), getAddLinksDownloadTarFileName()
+            getPreviousReleaseNumber(), getAddLinksFilesAndSizesListName()
         );
     }
 
-    private String getAddLinksDownloadTarFileName() {
-        return String.format("addlinks-downloads-v%d.tar", getPreviousReleaseNumber());
-    }
-
-    private String getAddLinksDownloadTarBaseName() {
-        return FilenameUtils.getBaseName(getAddLinksDownloadTarFileName());
-    }
-
-    private void unTarFile(String fileName) throws IOException {
-        try (FileInputStream fis = new FileInputStream(fileName);
-             TarArchiveInputStream tis = new TarArchiveInputStream(fis)) {
-
-            TarArchiveEntry entry;
-            while ((entry = tis.getNextTarEntry()) != null) {
-                File outputFile = new File(FilenameUtils.getBaseName(fileName), entry.getName());
-
-                if (entry.isDirectory()) {
-                    outputFile.mkdirs();
-                } else {
-                    // Ensure parent directories are created
-                    outputFile.getParentFile().mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(outputFile)) {
-                        byte[] buffer = new byte[1024];
-                        int length;
-                        while ((length = tis.read(buffer)) > 0) {
-                            fos.write(buffer, 0, length);
-                        }
-                    }
-                }
-            }
-        }
+    private String getAddLinksFilesAndSizesListName() {
+        return "files_and_sizes.txt";
     }
 
     private int getPreviousReleaseNumber() {
@@ -146,11 +102,44 @@ public class Verifier {
         return missingFiles;
     }
 
-    private boolean currentFileIsSmaller(Path currentFileNamePath, Path previousFileNamePath) throws IOException {
-        long actualFileSizeInBytes = Files.size(currentFileNamePath);
-        long expectedFileSizeInBytes = Files.size(previousFileNamePath);
+    private boolean currentFileIsSmaller(Path currentFileNamePath) throws IOException {
+        long actualFileSizeInBytes = getCurrentFileSize(currentFileNamePath);
+        long expectedFileSizeInBytes = getExpectedFileSize(currentFileNamePath);
 
         return actualFileSizeInBytes < expectedFileSizeInBytes;
+    }
+
+    private long getCurrentFileSize(Path currentFileNamePath) {
+        try {
+            return Files.size(currentFileNamePath);
+        } catch (IOException e) {
+            // TODO: Add logger statement for unsizable file
+            return 0L;
+        }
+    }
+
+    private long getExpectedFileSize(Path currentFileNamePath) throws IOException {
+        long expectedFileSize = getExpectedFileNameToSizeMap().computeIfAbsent(
+            currentFileNamePath.getFileName().toString(), k -> 0L);
+        //System.out.println(currentFileNamePath + "\t" + expectedFileSize);
+        return expectedFileSize;
+    }
+
+    private Map<String, Long> getExpectedFileNameToSizeMap() throws IOException {
+        return Files.lines(Paths.get(getAddLinksFilesAndSizesListName()))
+            .map(line -> line.split(" "))
+            .collect(Collectors.toMap(
+                this::getFileName,
+                this::getFileSizeInBytes
+            ));
+    }
+
+    private String getFileName(String[] columns) {
+        return columns[1].replace("./","");
+    }
+
+    private long getFileSizeInBytes(String[] columns) {
+        return Long.parseLong(columns[0]);
     }
 
     private List<String> getExpectedFileNames() {
