@@ -25,16 +25,4 @@ public class DatabaseIdentifier extends IdentifierNode {
     public String getSchemaClass() {
         return "DatabaseIdentifier";
     }
-
-//    public static class DatabaseIdentifierBuilder {
-//        private ReferenceDatabase referenceDatabase;
-//
-//        public DatabaseIdentifierBuilder(ReferenceDatabase referenceDatabase) {
-//            this.referenceDatabase = referenceDatabase;
-//        }
-//
-//        public DatabaseIdentifier build(String identifier) {
-//            return new DatabaseIdentifier(identifier, this.referenceDatabase);
-//        }
-//    }
 }

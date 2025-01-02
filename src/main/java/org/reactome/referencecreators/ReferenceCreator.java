@@ -125,9 +125,6 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
     Path getReferenceCreatorCSVDirectory() throws URISyntaxException {
         return Paths.get(new File("src/main/resources/reference_creator_csv").getAbsolutePath());
-        //Path resourceDirectory = Paths.get(ReferenceCreator.class.getClassLoader().getResource(".").toURI());
-        //return resourceDirectory.resolve("reference_creator_csv");
-
     }
 
     private ReferenceDatabase fetchReferenceDatabase() {
@@ -170,19 +167,6 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
         return sourceToExternalIdentifiers;
     }
-
-//    protected static void createNodesWithRelationship(
-//        GraphNode fromNode, GraphNode toNode, GraphNode.Relationship relationship) {
-//
-//        fromNode.insertNode();
-//        toNode.insertNode();
-//
-//        String createQuery = "MATCH (fn:" + fromNode.getSchemaClass() + "{dbId: " + fromNode.getDbId() + "})" +
-//            " MATCH (tn: " + toNode.getSchemaClass() + "{dbId: " + toNode.getDbId() + "})" +
-//            " CREATE (fn)-"+ relationship + "->(tn)";
-//        logger.info("Create node query\n" + createQuery);
-//        ReactomeGraphDatabase.getSession().run(createQuery);
-//    }
 
     private void writeCSVForIdentifier(IdentifierNode externalIdentifier, IdentifierNode sourceNodeIdentifier)
         throws IOException, URISyntaxException {

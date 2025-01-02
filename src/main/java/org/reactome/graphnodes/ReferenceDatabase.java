@@ -119,22 +119,6 @@ public class ReferenceDatabase extends GraphNode {
         return this.resourceIdentifier;
     }
 
-//    @Override
-//    public String toString() {
-//        StringBuilder referenceDatabaseAsString = new StringBuilder();
-//        referenceDatabaseAsString.append(getDisplayName());
-//
-//        if (!getResourceIdentifier().isEmpty()) {
-//            referenceDatabaseAsString.append(" ");
-//            referenceDatabaseAsString.append("(" + getResourceIdentifier() + ")");
-//        }
-//        referenceDatabaseAsString.append(":");
-//        referenceDatabaseAsString.append(" ");
-//        referenceDatabaseAsString.append(getAccessURL());
-//
-//        return referenceDatabaseAsString.toString();
-//    }
-
     public Long getDbIdInGraphDatabase() {
         String referenceDatabasesQuery =
             "MATCH (rd:ReferenceDatabase) RETURN rd.dbId as dbId, rd.name as names";

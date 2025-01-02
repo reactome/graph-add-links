@@ -14,7 +14,6 @@ import java.nio.file.Files;
  *         Created 4/5/2022
  */
 public class BasicFileRetriever extends FileRetriever {
-//    private DownloadInfo downloadInfo;
     private DownloadInfo.Downloadable downloadable;
 
     public BasicFileRetriever(DownloadInfo.Downloadable downloadable) {
@@ -39,11 +38,6 @@ public class BasicFileRetriever extends FileRetriever {
 
         localFileOutputStream.getChannel().transferFrom(remoteFileByteChannel, 0, Long.MAX_VALUE);
     }
-//
-//    @Override
-//    public DownloadInfo getDownloadInfo() {
-//        return this.downloadInfo;
-//    }
 
     protected int twoMinutes() {
         final int twoMinutesInMilliSeconds = 1000 * 60 * 2;

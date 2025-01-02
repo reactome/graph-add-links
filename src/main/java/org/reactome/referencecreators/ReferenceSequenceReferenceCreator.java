@@ -28,16 +28,6 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         this.referenceSequenceType = referenceSequenceType;
     }
 
-//    public List<ReferenceSequence> createReferenceSequenceForReferenceGeneProduct(
-//        ReferenceGeneProduct referenceGeneProduct) {
-//
-//        List<ReferenceSequence> referenceSequences = new ArrayList<>();
-//        for (String referenceSequenceValue : getReferenceSequenceValues(referenceGeneProduct)) {
-//            referenceSequences.add(createReferenceSequence(referenceSequenceValue));
-//        }
-//        return referenceSequences;
-//    }
-
     private GraphNode.Relationship getReferenceSequenceRelationship() {
         if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
             return new GraphNode.Relationship("referenceGene");
@@ -52,69 +42,9 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         return this.referenceSequenceType;
     }
 
-//    @Override
-//    public void insertIdentifiers() {
-//        System.out.println("Creating reference sequence map");
-//
-//        Map<IdentifierNode, List<ReferenceSequence>> identifierNodeToReferenceSequencesMap =
-//            this.createReferenceSequences();
-//
-//        getReferenceDatabase().insertNode();
-//
-//        for (IdentifierNode identifierNode : identifierNodeToReferenceSequencesMap.keySet()) {
-//            List<ReferenceSequence> referenceSequences = identifierNodeToReferenceSequencesMap.get(identifierNode);
-//
-//            System.out.println(identifierNode);
-//            System.out.println(referenceSequences);
-//            for (ReferenceSequence referenceSequence : referenceSequences) {
-//                createNodesWithRelationship(identifierNode, referenceSequence, getReferenceSequenceRelationship());
-//                createNodesWithRelationship(referenceSequence, getReferenceDatabase(), new GraphNode.Relationship("referenceDatabase"));
-//                createNodesWithRelationship(referenceSequence, InstanceEdit.get(), new GraphNode.Relationship("created"));
-//
-//            }
-//        }
-//    }
-
-//    @Override
-//    public void writeCSV() throws IOException, URISyntaxException {
-//        Path resourceDirectory = getReferenceCreatorCSVDirectory();
-//
-//        Files.createDirectories(resourceDirectory);
-//
-//        writeReferenceCSVHeader(getIdentifierCSVFilePath());
-//        writeRelationshipCSVHeader(getRelationshipCSVFilePath());
-//
-//        logger.info("Creating source to reference sequences map...");
-//
-//        Map<IdentifierNode, List<? extends IdentifierNode>> identifierNodeToReferenceSequencesMap =
-//            this.createIdentifiers();
-//
-//        logger.info("Source to reference sequences map created");
-//
-//        logger.info("Writing CSV data for identifier nodes");
-//        for (IdentifierNode identifierNode : identifierNodeToReferenceSequencesMap.keySet()) {
-//            List<? extends IdentifierNode> referenceSequences = identifierNodeToReferenceSequencesMap.get(identifierNode);
-//            logger.debug("Identifier Node: " + identifierNode);
-//            logger.debug("Reference Sequences: " + referenceSequences);
-//
-//            for (ReferenceSequence referenceSequence : referenceSequences) {
-//                writeExternalIdentifierLine(referenceSequence);
-//                writeRelationshipLine(identifierNode.getDbId(), referenceSequence.getDbId(),
-//                    getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
-//            }
-//        }
-//        logger.info("CSV data complete");
-//    }
-
     @Override
     public void readCSV() throws URISyntaxException {
         final String csvDirectory = getReferenceCreatorCSVDirectory().toString().replace("\\","/");
-
-//        System.out.println("Creating indexes...");
-//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :ReferenceSequence(dbId) IF NOT EXISTS");
-//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :DatabaseObject(dbId) IF NOT EXISTS");
-//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :ReferenceDatabase(dbId) IF NOT EXISTS");
-//        ReactomeGraphDatabase.getSession().run("CREATE INDEX ON :InstanceEdit(dbId) IF NOT EXISTS");
 
         logger.info("Creating reference sequences...");
         String nodeCreationQuery = "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Identifiers.csv' AS row\n" +
@@ -150,10 +80,6 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
     @Override
     protected List<ReferenceSequence> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
-
-//        DatabaseIdentifier.DatabaseIdentifierBuilder databaseIdentifierBuilder =
-//            new DatabaseIdentifier.DatabaseIdentifierBuilder(getReferenceDatabase());
-
         List<String> geneNames = getGeneNames(sourceNode);
 
         logger.info("Creating reference sequence for " + sourceNode.getIdentifier());
@@ -184,20 +110,6 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         ).concat(System.lineSeparator());
     }
 
-//    private Map<IdentifierNode, List<ReferenceSequence>> createReferenceSequences() {
-//        Map<IdentifierNode, List<ReferenceSequence>> identifierNodeToReferenceSequences =
-//            new LinkedHashMap<>();
-//
-//        for (IdentifierNode identifierNode : getIdentifierNodes()) {
-//            identifierNodeToReferenceSequences.put(
-//                identifierNode,
-//                createReferenceSequencesForReferenceGeneProduct(identifierNode)
-//            );
-//        }
-//
-//        return identifierNodeToReferenceSequences;
-//    }
-
     private Set<String> getUniProtIdentifiers() {
         return getSourceIdentifierToReferenceIdentifiers().keySet();
     }
@@ -218,8 +130,4 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         }
         return ((ReferenceSequence) sourceNode).getGeneNames();
     }
-
-//    private Path getReferenceSequenceCSVFilePath() throws URISyntaxException {
-//        return getReferenceCreatorCSVDirectory().resolve(getResourceName() + "_ReferenceSequences.csv");
-//    }
 }

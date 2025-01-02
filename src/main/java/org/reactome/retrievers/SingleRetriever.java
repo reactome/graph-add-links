@@ -46,11 +46,6 @@ public abstract class SingleRetriever {
         return !fileExists() || isFileZeroSize() || isFileOld();
     }
 
-
-//    protected Path getLocalFilePath() {
-//        return ConfigParser.getDownloadDirectoryPath().resolve(getDownloadable().getLocalFileName());
-//    }
-
     protected DownloadInfo.Downloadable getDownloadable() {
         return this.downloadable;
     }

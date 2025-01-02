@@ -68,11 +68,6 @@ public class UniProtMapperRetriever extends SingleRetriever {
 
         return file.length() <= HEADER_SIZE_IN_BYTES;
     }
-//
-//    @Override
-//    public DownloadInfo getDownloadInfo() {
-//        return this.downloadInfo;
-//    }
 
     Collection<String> getUniProtIdsFromGraphDatabase() {
         Result result = ReactomeGraphDatabase.getSession().run(
@@ -128,15 +123,6 @@ public class UniProtMapperRetriever extends SingleRetriever {
 
         return getJobResults(jobId);
     }
-
-//    private DownloadInfo.Downloadable getDownloadable() {
-//        List<DownloadInfo.Downloadable> downloadables = getDownloadInfo().getDownloadables();
-//        if (downloadables == null || downloadables.size() != 1) {
-//            throw new IllegalStateException("BasicFileRetriever only handles a single downloadable file");
-//        }
-//
-//        return getDownloadInfo().getDownloadables().get(0);
-//    }
 
     private String getTargetDatabase(DownloadInfo.Downloadable downloadable) {
         return downloadable.getTargetDatabaseName();
