@@ -26,9 +26,6 @@ public class UniProtMapperRetriever extends SingleRetriever {
     private final static String UNIPROT_REST_URL = "https://rest.uniprot.org";
     private final static String FILE_HEADER = "From\tTo\n";
 
-//    private DownloadInfo downloadInfo;
-
-
     public UniProtMapperRetriever(DownloadInfo.Downloadable downloadable) {
         super(downloadable);
     }
