@@ -67,21 +67,21 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
         logger.info("Creating source database object to external identifiers map...");
 
-        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
             this.createIdentifiers();
 
         logger.info("Source to database identifiers map created");
 
         logger.info("Writing CSV");
-        for (IdentifierNode sourceIdentifierNode : sourceToExternalIdentifiersMap.keySet()) {
-            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNode);
-            logger.debug("Identifier Node: " + sourceIdentifierNode);
+        for (long sourceIdentifierNodeDbId : sourceToExternalIdentifiersMap.keySet()) {
+            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNodeDbId);
+            logger.debug("Source Node: " + sourceIdentifierNodeDbId);
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
-                if (!existsInDatabase(externalIdentifier)) {
-                    writeCSVForIdentifier(externalIdentifier, sourceIdentifierNode);
-                }
+                writeExternalIdentifierLine(externalIdentifier);
+                writeRelationshipLine(sourceIdentifierNodeDbId, externalIdentifier.getDbId(),
+                    getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
         }
         logger.info("CSV data complete");
@@ -158,12 +158,12 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         return this.existingIdentifiers.contains(identifierNode.getIdentifier());
     }
 
-    private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {
-        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
+    private Map<Long, List<? extends IdentifierNode>> createIdentifiers() {
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
         for (IdentifierNode sourceNode : getIdentifierNodes()) {
             sourceToExternalIdentifiers.put(
-                sourceNode,
+                sourceNode.getDbId(),
                 createExternalIdentifiersForSourceIdentifierNode(sourceNode)
             );
         }
@@ -183,15 +183,6 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 //        logger.info("Create node query\n" + createQuery);
 //        ReactomeGraphDatabase.getSession().run(createQuery);
 //    }
-
-    private void writeCSVForIdentifier(IdentifierNode externalIdentifier, IdentifierNode sourceNodeIdentifier)
-        throws IOException, URISyntaxException {
-
-        writeExternalIdentifierLine(externalIdentifier);
-        writeRelationshipLine(sourceNodeIdentifier.getDbId(), externalIdentifier.getDbId(),
-            getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
-    }
-
 
     private void writeReferenceCSVHeader(Path referenceCSVFilePath) throws IOException {
         Files.write(
