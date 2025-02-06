@@ -74,27 +74,11 @@ public abstract class GraphNode {
         return true;
     }
 
-//    public void connectTo(GraphNode graphNode, Relationship relationship) {
-//        if (!this.isNodeInDatabase()) {
-//            this.insertNode();
-//        }
-//
-//        if (!graphNode.isNodeInDatabase()) {
-//            graphNode.insertNode();
-//        }
-//
-//
-//    }
-
     protected abstract String getDisplayName();
 
     protected void setIsNodeInDatabase(boolean isNodeInDatabase) {
         this.isNodeInDatabase = isNodeInDatabase;
     }
-
-//    private void addCreatedNode() {
-//
-//    }
 
     private void setDbId() {
         this.dbId = DbIdGenerator.getNextDbId();

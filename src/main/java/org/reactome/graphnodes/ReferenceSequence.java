@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.reactome.utils.StringUtils.quote;
-
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  *         Created 3/29/2022

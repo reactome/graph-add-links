@@ -107,22 +107,9 @@ public class Main {
 
     private void insertResources() throws Exception {
         for (String resourceName : this.resourceNames) {
-            String resourcePackage = "org.reactome.resource." + resourceName.toLowerCase();
-            String resourceFileRetriever = resourcePackage + "." + resourceName + "FileRetriever";
+            IdentifierCreator identifierCreator = getIdentifierCreator(resourceName);
 
-            Retriever retriever = (Retriever) Class.forName(resourceFileRetriever)
-                .getDeclaredConstructor().newInstance();
-
-            String resourceFileProcessor = resourcePackage + "." + resourceName + "FileProcessor";
-            logger.info("Running " + resourceFileProcessor + "...");
-            logger.info("Parsing local file(s): " + retriever.getDownloadInfo().getLocalFilePaths());
-            FileProcessor fileProcessor = getFileProcessor(resourceFileProcessor, retriever);
-            logger.info("Map size: " + fileProcessor.getSourceToResourceIdentifiers().size());
-            logger.debug("Mapping: " + fileProcessor.getSourceToResourceIdentifiers());
-
-            String resourceIdentifierCreator = getResourceIdentifierCreatorName(resourcePackage, resourceName);
-            logger.info("Running " + resourceIdentifierCreator + "...");
-            IdentifierCreator identifierCreator = getIdentifierCreator(resourceIdentifierCreator, fileProcessor);
+            logger.info("Running identifier creator for " + resourceName + "...");
             identifierCreator.insertIdentifiers();
             logger.info("Finished inserting identifiers for " + resourceName);
         }
@@ -167,8 +154,7 @@ public class Main {
     }
 
     private void retrieveResource(String resourceName) throws Exception {
-        String resourcePackage = "org.reactome.resource." + resourceName.toLowerCase();
-        String resourceFileRetriever = resourcePackage + "." + resourceName + "FileRetriever";
+        String resourceFileRetriever = getResourcePackage(resourceName) + "." + resourceName + "FileRetriever";
         logger.info("Running " + resourceFileRetriever + "...");
 
         Retriever retriever = (Retriever) Class.forName(resourceFileRetriever).getDeclaredConstructor().newInstance();
@@ -176,6 +162,21 @@ public class Main {
         retriever.downloadFiles();
 
         logger.info("Completed " + resourceFileRetriever);
+    }
+
+    private FileProcessor getFileProcessor(String resourceName)
+        throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException,
+            IllegalAccessException, InstantiationException {
+
+        String resourcePackage = "org.reactome.resource." + resourceName.toLowerCase();
+        String resourceFileRetriever = resourcePackage + "." + resourceName + "FileRetriever";
+
+        Retriever retriever = (Retriever) Class.forName(resourceFileRetriever)
+            .getDeclaredConstructor().newInstance();
+
+        String resourceFileProcessor = resourcePackage + "." + resourceName + "FileProcessor";
+
+        return getFileProcessor(resourceFileProcessor, retriever);
     }
 
     private void createDirectoriesIfNotExists(Path... filePaths) throws IOException {
@@ -196,7 +197,7 @@ public class Main {
         return Arrays.stream(filePaths).allMatch(filePath -> filePath.toString().isEmpty());
     }
 
-    private static FileProcessor getFileProcessor(String resourceFileProcessor, Retriever retriever)
+    private FileProcessor getFileProcessor(String resourceFileProcessor, Retriever retriever)
         throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException, IOException {
 
@@ -244,17 +245,13 @@ public class Main {
             .newInstance(retriever.getDownloadInfo().getLocalFilePaths().get(0));
     }
 
-    private String getResourceIdentifierCreatorName(String resourcePackage, String resourceName) {
-        if (resourceName.equals("OtherIdentifiers")) {
-            return resourcePackage + "." + resourceName + "Creator";
-        }
-
-        return resourcePackage + "." + resourceName + "ReferenceCreator";
-    }
-
-    private IdentifierCreator getIdentifierCreator(String resourceIdentifierCreator, FileProcessor fileProcessor)
+    private IdentifierCreator getIdentifierCreator(String resourceName)
         throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException,
         InstantiationException, IllegalAccessException {
+
+
+        String resourceIdentifierCreator = getResourceIdentifierCreatorName(resourceName);
+        FileProcessor fileProcessor = getFileProcessor(resourceName);
 
         if (resourceIdentifierCreator.contains("OtherIdentifiersCreator")) {
             return new OtherIdentifiersCreator(fileProcessor.getSourceToResourceIdentifiers());
@@ -262,5 +259,15 @@ public class Main {
 
         return (IdentifierCreator) Class.forName(resourceIdentifierCreator)
             .getDeclaredConstructor(Map.class).newInstance(fileProcessor.getSourceToResourceIdentifiers());
+    }
+
+    private String getResourceIdentifierCreatorName(String resourceName) {
+        String nameSuffix = resourceName.equals("OtherIdentifiers") ? "Creator" : "ReferenceCreator";
+
+        return getResourcePackage(resourceName) + "." + resourceName + nameSuffix;
+    }
+
+    private String getResourcePackage(String resourceName) {
+        return "org.reactome.resource." + resourceName.toLowerCase();
     }
 }

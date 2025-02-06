@@ -1,13 +1,9 @@
 package org.reactome.graphdb;
 
-
 import org.neo4j.driver.*;
 import org.reactome.utils.ConfigParser;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-
 
 /**
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
@@ -16,12 +12,6 @@ import java.util.*;
 public class ReactomeGraphDatabase {
     private static Driver driver;
     private static Session session;
-
-    //private static final int MAX_TRANSACTION_QUERIES = 3000;
-    //private static int transactionQueryCount = 0;
-    //private static Transaction currentTransaction;
-
-    //private static List<Transaction> activeTransactions = new ArrayList<>();
 
     // Make class non-instantiable
     private ReactomeGraphDatabase() {}
@@ -33,73 +23,6 @@ public class ReactomeGraphDatabase {
 
         return session;
     }
-
-//    public static Transaction getCurrentTransaction() {
-//        //if (currentTransaction == null) {
-//        //    currentTransaction = getSession().beginTransaction();
-//        //}
-//        //return currentTransaction;
-//
-//        if (currentTransaction == null) {
-//            Transaction transaction = getSession().beginTransaction();
-//            currentTransaction = transaction;
-//            activeTransactions.add(transaction);
-//            return transaction;
-//        }
-//
-//        return currentTransaction;
-//    }
-
-//    public static void queue(String query) {
-//
-//        if (transactionQueryCount > MAX_TRANSACTION_QUERIES) {
-//            commit();
-////            while(transactionCommitting) {
-////                try {
-////                    // Wait until currentTransaction committed
-////                    Thread.sleep(1000);
-////                } catch (InterruptedException e) {
-////                    throw new RuntimeException("Sleep while currentTransaction committing interrupted", e);
-////                }
-////            }
-//        }
-//        //Transaction transaction = getCurrentTransaction();
-//        transaction.run(query);
-//        transactionQueryCount += 1;
-//    }
-
-//    public static boolean commit() {
-//        if (currentTransaction == null) {
-//            return false;
-//        }
-//
-//        System.out.println("Committing transaction...");
-//        int currentTransactionIndex = activeTransactions.indexOf(currentTransaction);
-//        currentTransaction.commitAsync().thenRun(() -> {
-//            activeTransactions.get(currentTransactionIndex).close();
-//            activeTransactions.remove(currentTransactionIndex);
-//            System.out.println("Transaction committed");
-//        });//.toCompletableFuture().join();
-////        while (activeTransactions.size() > 30) {
-////            try {
-////                Thread.sleep(1000);
-////            } catch (InterruptedException e) {
-////                throw new RuntimeException("Sleep while waiting for transactions to complete interrupted",e);
-////            }
-////        }
-//        currentTransaction = getDriver().session().beginTransaction();
-//        activeTransactions.add(currentTransaction);
-//        transactionQueryCount = 0;
-//
-//        return true;
-//    }
-
-//    public static void closeConnection() {
-//        driver.close();
-//        session.close();
-//        driver = null;
-//        session = null;
-//    }
 
     private static Driver getDriver() {
         if (driver == null) {
