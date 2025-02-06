@@ -36,7 +36,7 @@
                                     <Multi-Release>true</Multi-Release>
                                 </manifestEntries>
                             </archive>
-                            <finalName>graph-add-links.jar</finalName>
+                            <finalName>graph-add-links</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>
@@ -56,7 +56,7 @@
                                     <Multi-Release>true</Multi-Release>
                                 </manifestEntries>
                             </archive>
-                            <finalName>graph-add-links-verifier.jar</finalName>
+                            <finalName>graph-add-links-verifier</finalName>
                         </configuration>
                         <phase>package</phase>
                         <goals>
