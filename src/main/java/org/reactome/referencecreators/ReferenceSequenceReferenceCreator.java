@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
  */
 public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
     private static final Logger logger = LogManager.getLogger();
+    private static Map<ReferenceDatabase, Map<String, ReferenceSequence>>
+        referenceDatabaseToIdentifierToReferenceSequence = new HashMap<>();
 
     private ReferenceSequence.ReferenceSequenceType referenceSequenceType;
 
@@ -79,13 +81,13 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
     }
 
     @Override
-    protected List<ReferenceSequence> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
+    protected List<ReferenceSequence> fetchExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
         List<String> geneNames = getGeneNames(sourceNode);
 
         logger.info("Creating reference sequence for " + sourceNode.getIdentifier());
         List<ReferenceSequence> referenceSequences = new ArrayList<>();
         for (String referenceSequenceValue : getIdentifierValues(sourceNode)) {
-            referenceSequences.add(createReferenceSequence(referenceSequenceValue, geneNames));
+            referenceSequences.add(fetchReferenceSequence(referenceSequenceValue, geneNames));
         }
         return referenceSequences;
     }
@@ -114,14 +116,30 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
         return getSourceIdentifierToReferenceIdentifiers().keySet();
     }
 
-    private ReferenceSequence createReferenceSequence(String identifier, List<String> geneNames) {
-        if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
-            return new ReferenceDNASequence(identifier, getReferenceDatabase(), geneNames);
-        } else if (getReferenceSequenceType().equals(ReferenceSequenceType.RNA)) {
-            return new ReferenceRNASequence(identifier, getReferenceDatabase(), geneNames);
-        } else {
-            throw new IllegalStateException("Unknown reference sequence type: " + getReferenceSequenceType());
+    private ReferenceSequence fetchReferenceSequence(String identifier, List<String> geneNames) {
+        if (!referenceSequenceExistsForIdentifier(identifier)) {
+            ReferenceSequence referenceSequence;
+            if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
+                referenceSequence = new ReferenceDNASequence(identifier, getReferenceDatabase(), geneNames);
+            } else if (getReferenceSequenceType().equals(ReferenceSequenceType.RNA)) {
+                referenceSequence = new ReferenceRNASequence(identifier, getReferenceDatabase(), geneNames);
+            } else {
+                throw new IllegalStateException("Unknown reference sequence type: " + getReferenceSequenceType());
+            }
+            referenceDatabaseToIdentifierToReferenceSequence
+                .computeIfAbsent(getReferenceDatabase(), k -> new HashMap<>())
+                .put(identifier, referenceSequence);
         }
+
+        return referenceDatabaseToIdentifierToReferenceSequence
+            .get(getReferenceDatabase())
+            .get(identifier);
+    }
+
+    private boolean referenceSequenceExistsForIdentifier(String identifier) {
+        return referenceDatabaseToIdentifierToReferenceSequence
+            .computeIfAbsent(getReferenceDatabase(), k -> new HashMap<>())
+            .containsKey(identifier);
     }
 
     private List<String> getGeneNames(IdentifierNode sourceNode) {

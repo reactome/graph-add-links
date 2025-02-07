@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
  */
 public abstract class ReferenceCreator implements IdentifierCreator {
     private static final Logger logger = LogManager.getLogger();
+    private static Set<String> externalIdentifierFileLines = new HashSet<>();
 
     private String resourceName;
     private ReferenceDatabase referenceDatabase;
@@ -79,7 +80,10 @@ public abstract class ReferenceCreator implements IdentifierCreator {
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
-                writeExternalIdentifierLine(externalIdentifier);
+                if (!externalIdentifierLineAlreadyWritten(externalIdentifier)) {
+                    writeExternalIdentifierLine(externalIdentifier);
+                }
+
                 writeRelationshipLine(sourceIdentifierNodeDbId, externalIdentifier.getDbId(),
                     getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
@@ -118,7 +122,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         ).concat(System.lineSeparator());
     }
 
-    protected abstract List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(
+    protected abstract List<? extends IdentifierNode> fetchExternalIdentifiersForSourceIdentifierNode(
         IdentifierNode sourceNode);
 
     protected abstract List<? extends IdentifierNode> getIdentifierNodes();
@@ -161,7 +165,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         for (IdentifierNode sourceNode : getIdentifierNodes()) {
             sourceToExternalIdentifiers.put(
                 sourceNode.getDbId(),
-                createExternalIdentifiersForSourceIdentifierNode(sourceNode)
+                fetchExternalIdentifiersForSourceIdentifierNode(sourceNode)
             );
         }
 
@@ -208,11 +212,18 @@ public abstract class ReferenceCreator implements IdentifierCreator {
     private void writeExternalIdentifierLine(IdentifierNode externalIdentifier)
         throws IOException, URISyntaxException {
 
+        String externalIdentifierLine = getExternalIdentifierLine(externalIdentifier);
+
+        externalIdentifierFileLines.add(externalIdentifierLine);
         Files.write(
             getIdentifierCSVFilePath(),
-            getExternalIdentifierLine(externalIdentifier).getBytes(),
+            externalIdentifierLine.getBytes(),
             StandardOpenOption.APPEND
         );
+    }
+
+    private boolean externalIdentifierLineAlreadyWritten(IdentifierNode externalIdentifier) {
+        return externalIdentifierFileLines.contains(getExternalIdentifierLine(externalIdentifier));
     }
 
     private Path getIdentifierCSVFilePath() throws URISyntaxException {
