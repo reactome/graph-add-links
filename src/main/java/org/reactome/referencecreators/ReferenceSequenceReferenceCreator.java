@@ -32,9 +32,9 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
     private GraphNode.Relationship getReferenceSequenceRelationship() {
         if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
-            return new GraphNode.Relationship("referenceGene");
+            return new GraphNode.Relationship("rg", "referenceGene");
         } else if (getReferenceSequenceType().equals(ReferenceSequenceType.RNA)) {
-            return new GraphNode.Relationship("referenceTranscript");
+            return new GraphNode.Relationship("rt", "referenceTranscript");
         } else {
             throw new IllegalStateException("Unknown reference relationship for type: " + getReferenceSequenceType());
         }
@@ -60,6 +60,8 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
         logger.info("Creating relationships...");
 
+        GraphNode.Relationship refSeqRelationship = getReferenceSequenceRelationship();
+
         String relationshipCreationQuery =
             "USING PERIODIC COMMIT 100\n" +
             "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row\n" +
@@ -67,9 +69,13 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
             "\tMATCH (rs:ReferenceSequence {dbId: toInteger(row.ExternalIdentifierDbId)})\n" +
             "\tMATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)})\n" +
             "\tMATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)})\n" +
-            "\tCREATE (do)-" + getReferenceSequenceRelationship() + "->(rs)\n" +
-            "\tCREATE (rs)-[:referenceDatabase]->(rd)\n" +
-            "\tCREATE (rs)-[:created]->(ie)";
+            "\tMERGE (do)-" + refSeqRelationship + "->(rs)\n" +
+            String.format("ON CREATE SET %s.order = 0, %s.stoichiometry = 1\n",
+                refSeqRelationship.getVariable(), refSeqRelationship.getVariable()) +
+            "\tMERGE (rs)-[rdr:referenceDatabase]->(rd)\n" +
+            "ON CREATE SET rdr.order = 0, rdr.stoichiometry = 1\n" +
+            "\tMERGE (rs)-[cr:created]->(ie)\n" +
+            "ON CREATE SET cr.order = 0, cr.stoichiometry = 1\n";
         logger.info("Running query\n" + relationshipCreationQuery);
         ReactomeGraphDatabase.getSession().run(relationshipCreationQuery);
     }

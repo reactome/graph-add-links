@@ -85,17 +85,23 @@ public abstract class GraphNode {
     }
 
     public static class Relationship {
+        private String variable;
         private String name;
         private Map<String, String> attributes;
 
-        public Relationship(String name) {
+        public Relationship(String variable, String name) {
+            this.variable = variable;
             this.name = name;
             this.attributes = new HashMap<>();
         }
 
-        public Relationship(String name, Map<String, String> attributes) {
-            this(name);
+        public Relationship(String variable, String name, Map<String, String> attributes) {
+            this(variable, name);
             this.attributes = attributes;
+        }
+
+        public String getVariable() {
+            return this.variable;
         }
 
         public String getName() {
@@ -108,7 +114,8 @@ public abstract class GraphNode {
 
         @Override
         public String toString() {
-            return String.format("[:%s%s]",
+            return String.format("[%s:%s%s]",
+                getVariable(),
                 getName(),
                 getAttributes() != null && !getAttributes().isEmpty()  ?
                     " {" + String.join(",", getAttributeKeyValueStrings()) + "}" : ""
