@@ -512,7 +512,7 @@
                     "Monarch"
                 ],
                 "url": "https://monarchinitiative.org/gene/",
-                "accessURL": "https://monarchinitiative.org/gene/NCBIGene:###ID###"
+                "accessURL": "https://monarchinitiative.org/results?search=NCBIGene:###ID###"
             }
         },
         "UCSC": {
