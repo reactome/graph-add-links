@@ -14,7 +14,7 @@ public class PhysicalEntity extends IdentifierNode {
 
 	@Override
 	public String getSchemaClass() {
-		return "Complex";
+		return "PhysicalEntity";
 	}
 
 	@Override
