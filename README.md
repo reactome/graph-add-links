@@ -11,7 +11,7 @@ represent UniProt protein entries and are used as references for Reactome protei
 ReferenceMolecules (representing ChEBI entries of small molecules), and ReferenceTherapeutics (representing
 GuideToPharmacology entries of drugs) are also cross-referenced.
 
-The following are the resources linked to by Reactome (as of February 2024):
+The following are the resources linked to by Reactome (as of July 2025):
 
 - BioGPSGene
 - COSMIC
@@ -36,6 +36,7 @@ The following are the resources linked to by Reactome (as of February 2024):
 - KEGG
 - MGI
 - Monarch
+- Mondo
 - NCBIGene
 - OMIM
 - OpenTargets
