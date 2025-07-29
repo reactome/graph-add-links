@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.*;
 import org.reactome.graphnodes.ReferenceSequence.ReferenceSequenceType;
+import org.reactome.graphnodes.factory.ReferenceSequenceFactory;
 
 import java.net.URISyntaxException;
 import java.util.*;
@@ -116,9 +117,13 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
     private ReferenceSequence createReferenceSequence(String identifier, List<String> geneNames) {
         if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
-            return new ReferenceDNASequence(identifier, getReferenceDatabase(), geneNames);
+            return ReferenceSequenceFactory.createOrFetchReferenceDNASequence(
+                identifier, getReferenceDatabase(), geneNames
+            );
         } else if (getReferenceSequenceType().equals(ReferenceSequenceType.RNA)) {
-            return new ReferenceRNASequence(identifier, getReferenceDatabase(), geneNames);
+            return ReferenceSequenceFactory.createOrFetchReferenceRNASequence(
+                identifier, getReferenceDatabase(), geneNames
+            );
         } else {
             throw new IllegalStateException("Unknown reference sequence type: " + getReferenceSequenceType());
         }
