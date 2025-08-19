@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -36,19 +39,7 @@ public class MondoOBOFileParser {
 					}
 					currentTerm = new MondoTerm();
 				} else if (currentTerm != null) {
-					if (line.startsWith("id:")) {
-						String id = line.substring(3).replaceFirst("MONDO:","").trim();
-						currentTerm.setId(id);
-					} else if (line.startsWith("name:")) {
-						String name = line.substring(5).trim();
-						currentTerm.setName(name);
-					} else if (line.startsWith("def:")) {
-						String def = line.substring(4).trim();
-						currentTerm.setDef(def);
-					} else if (line.startsWith("xref:")) {
-						String xref = line.substring(5).replaceFirst("\\{.*}","").trim();
-						currentTerm.addXRef(xref);
-					}
+					handleMondoTermAttributeParsing(currentTerm, line);
 				}
 			}
 
@@ -58,6 +49,23 @@ public class MondoOBOFileParser {
 			}
 		}
 		return terms;
+	}
+
+	private void handleMondoTermAttributeParsing(MondoTerm currentTerm, String line) {
+		Map<String, BiConsumer<String, MondoTerm>> handlers = new HashMap<>();
+		handlers.put("id:",    (value, term) -> term.setId(value.replaceFirst("MONDO:", "").trim()));
+		handlers.put("name:",  (value, term) -> term.setName(value.trim()));
+		handlers.put("def:",   (value, term) -> term.setDef(value.trim()));
+		handlers.put("xref:",  (value, term) -> term.addXRef(value.replaceFirst("\\{.*}", "").trim()));
+
+		for (Map.Entry<String, BiConsumer<String, MondoTerm>> entry : handlers.entrySet()) {
+			String prefix = entry.getKey();
+			if (line.startsWith(prefix)) {
+				String value = line.substring(prefix.length());
+				entry.getValue().accept(value, currentTerm);
+				break; // stop after first match
+			}
+		}
 	}
 
 	private Path getFilePath() {
