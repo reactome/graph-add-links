@@ -79,7 +79,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
-                if (!existsInDatabase(externalIdentifier)) {
+                if (!existsInDatabase(externalIdentifier) && !existsInCSVFile(externalIdentifier)) {
                     writeCSVForIdentifier(externalIdentifier, sourceIdentifierNode);
                 }
             }
@@ -153,6 +153,17 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         }
 
         return this.existingIdentifiers.contains(identifierNode.getIdentifier());
+    }
+
+    private boolean existsInCSVFile(IdentifierNode identifierNode) throws URISyntaxException, IOException {
+		return lineExistsInFile(
+            getExternalIdentifierLine(identifierNode).replace(System.lineSeparator(),""),
+            getIdentifierCSVFilePath()
+        );
+    }
+
+    private boolean lineExistsInFile(String line, Path filePath) throws IOException {
+        return Files.lines(filePath).anyMatch(fileLine -> fileLine.equals(line));
     }
 
     private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {

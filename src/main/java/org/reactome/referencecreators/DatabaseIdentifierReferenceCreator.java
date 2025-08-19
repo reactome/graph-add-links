@@ -60,7 +60,7 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
     protected List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
         List<DatabaseIdentifier> databaseIdentifiers = new ArrayList<>();
         for (String databaseIdentifierValue : getIdentifierValues(sourceNode)) {
-            databaseIdentifiers.add(new DatabaseIdentifier(databaseIdentifierValue, getReferenceDatabase()));
+            databaseIdentifiers.add(DatabaseIdentifier.fetchOrCreate(databaseIdentifierValue, getReferenceDatabase()));
         }
         return databaseIdentifiers;
     }
