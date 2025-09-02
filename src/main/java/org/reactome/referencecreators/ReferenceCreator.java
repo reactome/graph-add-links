@@ -2,9 +2,7 @@ package org.reactome.referencecreators;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.neo4j.driver.Result;
 import org.reactome.IdentifierCreator;
-import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.*;
 
 import java.io.File;
@@ -68,15 +66,15 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
         logger.info("Creating source database object to external identifiers map...");
 
-        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
+        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
             this.createIdentifiers();
 
         logger.info("Source to database identifiers map created");
 
         logger.info("Writing CSV");
-        for (long sourceIdentifierNodeDbId : sourceToExternalIdentifiersMap.keySet()) {
-            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNodeDbId);
-            logger.debug("Source Node: " + sourceIdentifierNodeDbId);
+        for (IdentifierNode sourceIdentifierNode : sourceToExternalIdentifiersMap.keySet()) {
+            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNode);
+            logger.debug("Source Node: " + sourceIdentifierNode);
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
@@ -84,7 +82,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
                     writeExternalIdentifierLine(externalIdentifier);
                 }
 
-                writeRelationshipLine(sourceIdentifierNodeDbId, externalIdentifier.getDbId(),
+                writeRelationshipLine(sourceIdentifierNode.getDbId(), externalIdentifier.getDbId(),
                     getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
         }
@@ -142,29 +140,12 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         return referenceDatabase;
     }
 
-    private boolean existsInDatabase(IdentifierNode identifierNode) {
-        if (this.existingIdentifiers == null) {
-            String identifiersQuery =
-                "MATCH (i)-[:referenceDatabase]->(rd:ReferenceDatabase)" +
-                    " WHERE rd.displayName = \"" + getReferenceDatabase().getDisplayName() + "\"" +
-                    " RETURN i.identifier";
-
-            Result identifiersQueryResult = ReactomeGraphDatabase.getSession().run(identifiersQuery);
-            this.existingIdentifiers = identifiersQueryResult
-                .stream()
-                .map(record -> record.get(0).asString())
-                .collect(Collectors.toSet());
-        }
-
-        return this.existingIdentifiers.contains(identifierNode.getIdentifier());
-    }
-
-    private Map<Long, List<? extends IdentifierNode>> createIdentifiers() {
-        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
+    private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {
+        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
         for (IdentifierNode sourceNode : getIdentifierNodes()) {
             sourceToExternalIdentifiers.put(
-                sourceNode.getDbId(),
+                sourceNode,
                 fetchExternalIdentifiersForSourceIdentifierNode(sourceNode)
             );
         }

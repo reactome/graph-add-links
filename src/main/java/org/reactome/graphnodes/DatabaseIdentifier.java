@@ -1,6 +1,8 @@
 package org.reactome.graphnodes;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -8,9 +10,22 @@ import java.util.Set;
  *         Created 3/29/2022
  */
 public class DatabaseIdentifier extends IdentifierNode {
+    private static Map<ReferenceDatabase, Map<String, DatabaseIdentifier>> refDbToIdentifierToDatabaseIdentifier;
+
     public DatabaseIdentifier(String identifier, ReferenceDatabase referenceDatabase) {
         super(identifier);
         setReferenceDatabase(referenceDatabase);
+    }
+
+    public static DatabaseIdentifier fetchOrCreate(String databaseIdentifierValue, ReferenceDatabase referenceDatabase) {
+        if (refDbToIdentifierToDatabaseIdentifier == null) {
+            refDbToIdentifierToDatabaseIdentifier = new HashMap<>();
+        }
+
+        return refDbToIdentifierToDatabaseIdentifier
+            .computeIfAbsent(referenceDatabase, k -> new HashMap<>())
+            .computeIfAbsent(databaseIdentifierValue,
+                k -> new DatabaseIdentifier(databaseIdentifierValue, referenceDatabase));
     }
 
     @Override

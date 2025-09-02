@@ -15,8 +15,6 @@ import java.util.*;
  */
 public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreator {
     private static final Logger logger = LogManager.getLogger();
-    private static Map<ReferenceDatabase, Map<String, DatabaseIdentifier>>
-        referenceDatabaseToIdentifierToDatabaseIdentifier = new HashMap<>();
 
     public DatabaseIdentifierReferenceCreator(
         String referenceName, Map<String, Set<String>> sourceIdentifierToReferenceIdentifiers)
@@ -65,25 +63,8 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
     protected List<? extends IdentifierNode> fetchExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
         List<DatabaseIdentifier> databaseIdentifiers = new ArrayList<>();
         for (String databaseIdentifierValue : getIdentifierValues(sourceNode)) {
-            databaseIdentifiers.add(fetchDatabaseIdentifier(databaseIdentifierValue));
+            databaseIdentifiers.add(DatabaseIdentifier.fetchOrCreate(databaseIdentifierValue, getReferenceDatabase()));
         }
         return databaseIdentifiers;
-    }
-
-    private DatabaseIdentifier fetchDatabaseIdentifier(String databaseIdentifierValue) {
-        if (!databaseIdentifierExistsForIdentifier(databaseIdentifierValue)) {
-            referenceDatabaseToIdentifierToDatabaseIdentifier
-                .computeIfAbsent(getReferenceDatabase(), k -> new HashMap<>())
-                .put(databaseIdentifierValue, new DatabaseIdentifier(databaseIdentifierValue, getReferenceDatabase()));
-        }
-        return referenceDatabaseToIdentifierToDatabaseIdentifier
-            .get(getReferenceDatabase())
-            .get(databaseIdentifierValue);
-    }
-
-    private boolean databaseIdentifierExistsForIdentifier(String identifier) {
-        return referenceDatabaseToIdentifierToDatabaseIdentifier
-            .computeIfAbsent(getReferenceDatabase(), k -> new HashMap<>())
-            .containsKey(identifier);
     }
 }

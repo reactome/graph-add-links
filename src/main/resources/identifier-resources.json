@@ -36,7 +36,7 @@
                     "PRO"
                 ],
                 "url": "https://proconsortium.org",
-                "accessURL": "https://proconsortium.org/app/entry/PR:###ID###",
+                "accessURL": "https://proconsortium.org/cgi-bin/entry_pro?id=###ID###",
                 "resourceIdentifier": "MIR:"
             }
         },
@@ -512,7 +512,7 @@
                     "Monarch"
                 ],
                 "url": "https://monarchinitiative.org/gene/",
-                "accessURL": "https://monarchinitiative.org/gene/NCBIGene:###ID###"
+                "accessURL": "https://monarchinitiative.org/results?search=NCBIGene:###ID###"
             }
         },
         "UCSC": {
@@ -1336,6 +1336,24 @@
                 "url": "https://cancer.sanger.ac.uk/cosmic",
                 "accessURL": "https://cancer.sanger.ac.uk/cosmic/gene/overview?ln=###ID###",
                 "resourceIdentifier": "MIR:00100802"
+            }
+        },
+        "Mondo" : {
+            "downloads": [
+                {
+                    "type": "file",
+                    "baseURL": "https://purl.obolibrary.org/obo/",
+                    "fileName": "mondo.obo",
+                    "fileNameIsRegex": false,
+                    "localName": "mondo.obo"
+                }
+            ],
+            "referenceDatabase": {
+                "names": [
+                    "Mondo"
+                ],
+                "url": "https://mondo.monarchinitiative.org/",
+                "accessURL": "https://monarchinitiative.org/MONDO:###ID###"
             }
         }
     }
