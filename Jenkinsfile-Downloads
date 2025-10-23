@@ -40,20 +40,6 @@ pipeline{
 			}
 		}
 
-		// Creates a list of downloaded files and sizes for verification of next release
-		stage('Post: Create file listing downloaded files and their sizes for next release baseline') {
-			steps {
-				script {
-					def fileListing = "files_and_sizes.txt"
-					def releaseVersion = utils.getReleaseVersion()
-
-					// Creates list of files and their sizes in the "downloads" directory and uploads it to S3
-					sh "find downloads/ -type f -exec stat --printf=\"%s %n\n\" {} + | sed 's|^\\./||' > $fileListing"
-					sh "aws s3 cp $fileListing s3://reactome/private/releases/$releaseVersion/add_links/downloads/data/"
-				}
-			}
-		}
-
 		// Verifies downloads and present and of correct size
 		stage('Post: Verify downloaded files') {
 			steps {
@@ -64,6 +50,20 @@ pipeline{
 
 					sh "aws s3 cp s3://reactome/private/releases/$previousReleaseVersion/add_links/downloads/data/$fileListing ."
 					sh "java -jar graph-add-links-verifier-jar-with-dependencies.jar --download_directory downloads -r $releaseVersion"
+				}
+			}
+		}
+
+		// Creates a list of downloaded files and sizes for verification of next release
+		stage('Post: Create file listing downloaded files and their sizes for next release baseline') {
+			steps {
+				script {
+					def fileListing = "files_and_sizes.txt"
+					def releaseVersion = utils.getReleaseVersion()
+
+					// Creates list of files and their sizes in the "downloads" directory and uploads it to S3
+					sh "find downloads/ -type f -exec stat --printf=\"%s %n\n\" {} + | sed 's|^\\./||' > $fileListing"
+					sh "aws s3 cp $fileListing s3://reactome/private/releases/$releaseVersion/add_links/downloads/data/"
 				}
 			}
 		}
