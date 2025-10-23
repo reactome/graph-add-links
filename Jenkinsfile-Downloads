@@ -49,7 +49,7 @@ pipeline{
 					def fileListing = "files_and_sizes.txt"
 
 					sh "aws s3 cp s3://reactome/private/releases/$previousReleaseVersion/add_links/downloads/data/$fileListing ."
-					sh "java -jar graph-add-links-verifier-jar-with-dependencies.jar --download_directory downloads -r $releaseVersion"
+					sh "java -jar target/graph-add-links-verifier-jar-with-dependencies.jar --download_directory downloads -r $releaseVersion"
 				}
 			}
 		}
