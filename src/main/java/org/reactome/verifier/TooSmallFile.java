@@ -80,7 +80,7 @@ public class TooSmallFile {
 
     private static Map<String, Long> getExpectedFileNameToSizeMap() throws IOException {
         return Files.lines(Paths.get(getAddLinksFilesAndSizesListName()))
-            .map(line -> line.split(" "))
+            .map(line -> line.split(\\s+))
             .collect(Collectors.toMap(
                 org.reactome.verifier.TooSmallFile::getFileName,
                 org.reactome.verifier.TooSmallFile::getFileSizeInBytes
