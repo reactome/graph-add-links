@@ -6,7 +6,7 @@
                 {
                     "type": "file",
                     "baseURL": "https://s3ftp.flybase.org/releases/current/precomputed_files/genes/",
-                    "fileName": "fbgn_NAseq_Uniprot_current.tsv.gz",
+                    "fileName": "fbgn_NAseq_Uniprot_fb_\\d{4}_\\d{2}.tsv.gz",
                     "fileNameIsRegex": true,
                     "localName": "FlyBase.tsv.gz"
                 }
