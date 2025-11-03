@@ -66,15 +66,15 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
         logger.info("Creating source database object to external identifiers map...");
 
-        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
             this.createIdentifiers();
 
         logger.info("Source to database identifiers map created");
 
         logger.info("Writing CSV");
-        for (IdentifierNode sourceIdentifierNode : sourceToExternalIdentifiersMap.keySet()) {
-            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNode);
-            logger.debug("Source Node: " + sourceIdentifierNode);
+        for (long sourceIdentifierNodeDbId : sourceToExternalIdentifiersMap.keySet()) {
+            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNodeDbId);
+            logger.debug("Source Node DbId: " + sourceIdentifierNodeDbId);
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
@@ -82,7 +82,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
                     writeExternalIdentifierLine(externalIdentifier);
                 }
 
-                writeRelationshipLine(sourceIdentifierNode.getDbId(), externalIdentifier.getDbId(),
+                writeRelationshipLine(sourceIdentifierNodeDbId, externalIdentifier.getDbId(),
                     getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
         }
@@ -140,12 +140,12 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         return referenceDatabase;
     }
 
-    private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {
-        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
+    private Map<Long, List<? extends IdentifierNode>> createIdentifiers() {
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
         for (IdentifierNode sourceNode : getIdentifierNodes()) {
             sourceToExternalIdentifiers.put(
-                sourceNode,
+                sourceNode.getDbId(),
                 fetchExternalIdentifiersForSourceIdentifierNode(sourceNode)
             );
         }
