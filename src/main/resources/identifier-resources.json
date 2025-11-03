@@ -1244,7 +1244,7 @@
             "downloads": [
                 {
                     "type": "file",
-                    "baseURL": "https://ncatsidg-dev.appspot.com/graphql",
+                    "baseURL": "https://pharos-api.ncats.io/graphql",
                     "fileName": "",
                     "fileNameIsRegex": false,
                     "localName": "pharos-ligands.tsv"
@@ -1263,7 +1263,7 @@
             "downloads": [
                 {
                     "type": "file",
-                    "baseURL": "https://ncatsidg-dev.appspot.com/graphql",
+                    "baseURL": "https://pharos-api.ncats.io/graphql",
                     "fileName": "",
                     "fileNameIsRegex": false,
                     "localName": "pharos-targets.tsv"
