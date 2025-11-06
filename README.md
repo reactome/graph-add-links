@@ -166,7 +166,7 @@ The Graph-Add-Links project is a typical maven structure project which can be bu
 "mvn clean package" at the root directory.  The "jar-with-dependencies" file output in the target directory can then
 be run with various options.
 
-**Usage: java -jar graph-add-links-1.0-SNAPSHOT-jar-with-dependencies.jar
+**Usage: java -jar graph-add-links-jar-with-dependencies.jar
 	[-d|--downloads] [-i|--insertions] [-r|--resources <name-of-resource1,name-of-resource2,...>] [-l|--list_resources] [--help]**
 
 Options:
