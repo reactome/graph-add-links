@@ -98,14 +98,13 @@ pipeline{
 			steps{
 				script{
 				    def releaseVersion = utils.getReleaseVersion()
-					def downloadsArchive = "addlinks-downloads-v${releaseVersion}.tar"
-					def addlinksFolder = "/tmp/add-links-downloads"
+					def addlinksFolder = "downloads"
 
-					def dataFiles = ["$downloadsArchive"]
+					def dataFiles = []
 					def logFiles = ["logs/*"]
 					def foldersToDelete = ["logs", "$addlinksFolder"]
 
-					sh "tar -zcvf $downloadsArchive $addlinksFolder"
+					sh "aws s3 cp --recursive ${addlinksFolder} s3://reactome/private/releases/${releaseVersion}/add_links/downloads/data/"
 					utils.cleanUpAndArchiveBuildFiles("add_links/downloads", dataFiles, logFiles, foldersToDelete)
 				}
 			}
