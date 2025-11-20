@@ -70,7 +70,8 @@ public class ReferenceTherapeutic extends IdentifierNode {
     }
 
     private static String getReferenceTherapeuticDataQuery(Set<String> guideToPharmacologyIdentifiers) {
-        return "MATCH (rt:ReferenceTherapeutic) " +
+        return "MATCH (rt:ReferenceTherapeutic)-[:referenceDatabase]-(rd:ReferenceDatabase) " +
+            "WHERE rd.displayName = 'Guide to Pharmacology - Ligands' " +
             getFilterStatementForGuideToPharmacologyIdentifiers(guideToPharmacologyIdentifiers) +
             " RETURN rt.dbId as dbId, rt.identifier as identifier";
     }
@@ -81,7 +82,7 @@ public class ReferenceTherapeutic extends IdentifierNode {
         final String noFilter = "";
 
         return guideToPharmacologyIdentifiers != null && !guideToPharmacologyIdentifiers.isEmpty() ?
-            String.format("WHERE rt.identifier IN %s", formatAsCypherList(guideToPharmacologyIdentifiers)) :
+            String.format("AND rt.identifier IN %s", formatAsCypherList(guideToPharmacologyIdentifiers)) :
             noFilter;
     }
 
