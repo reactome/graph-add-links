@@ -6,12 +6,17 @@ import org.reactome.DownloadInfo;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.utils.ConfigParser;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,6 +30,8 @@ import static org.reactome.utils.CollectionUtils.split;
 public class UniProtMapperRetriever extends SingleRetriever {
     private final static String UNIPROT_REST_URL = "https://rest.uniprot.org";
     private final static String FILE_HEADER = "From\tTo\n";
+
+    private final static HttpClient HTTP_CLIENT = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(30)).build();
 
     public UniProtMapperRetriever(DownloadInfo.Downloadable downloadable) {
         super(downloadable);
@@ -125,100 +132,120 @@ public class UniProtMapperRetriever extends SingleRetriever {
         return downloadable.getTargetDatabaseName();
     }
 
-    private static boolean jobFinished(String jobID) throws IOException {
-        StringBuilder curlQueryBuilder = new StringBuilder();
-        curlQueryBuilder.append("curl -s ");
-        curlQueryBuilder.append(getUniProtMappingRestUrl() + "status/" + jobID);
+    private boolean jobFinished(String jobID) throws IOException {
+        String response = sendGetRequest(getUniProtMappingRestUrl() + "status/" + jobID);
 
-        Process process = Runtime.getRuntime().exec(curlQueryBuilder.toString());
-        BufferedReader jobStatusWebSource = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-
-        return jobStatusWebSource
-            .lines()
-            .anyMatch(
-                line -> line.contains("{\"jobStatus\":\"FINISHED\"}")
-            );
+        return response.contains("\"jobStatus\":\"FINISHED\"");
     }
 
     private Map<String, List<String>> getJobResults(String jobID) throws IOException {
         String jobResultsURL = getUniProtMappingRestUrl() + "stream/" + jobID;
-
-        BufferedReader jobResultsWebSource = getCurlReader("curl -s", jobResultsURL);
-
-        Map<String, List<String>> uniProtIdToTargetIds = new HashMap<>();
+        String response = sendGetRequest(jobResultsURL);
 
         final Pattern mappingPairPattern = Pattern.compile("\"from\":\"(\\w+)\",\"to\":\"(.*?)\"");
+        Matcher mappingPairMatcher = mappingPairPattern.matcher(response);
 
-        String resultsLine;
-        while ((resultsLine = jobResultsWebSource.readLine()) != null) {
-            Matcher mappingPairMatcher = mappingPairPattern.matcher(resultsLine);
-            while (mappingPairMatcher.find()) {
-                String uniprotId = mappingPairMatcher.group(1);
-                String targetId = mappingPairMatcher.group(2);
+        Map<String, List<String>> uniProtIdToTargetIds = new HashMap<>();
+        while (mappingPairMatcher.find()) {
+            String uniprotId = mappingPairMatcher.group(1);
+            String targetId = mappingPairMatcher.group(2);
 
-                uniProtIdToTargetIds.computeIfAbsent(uniprotId, k -> new ArrayList<>()).add(targetId);
-            }
-
+            uniProtIdToTargetIds.computeIfAbsent(uniprotId, k -> new ArrayList<>()).add(targetId);
         }
-
         return uniProtIdToTargetIds;
     }
 
-    private String submitQuery(Collection<String> ids, String targetDatabase) throws IOException  {
-        StringBuilder curlQueryBuilder = new StringBuilder();
-        curlQueryBuilder.append("curl --request POST ");
-        curlQueryBuilder.append(getUniProtMappingRestUrl() + "run ");
-        curlQueryBuilder.append(getIdsInfoAsString(ids));
-        curlQueryBuilder.append(getUniProtDatabaseInfoAsString());
-        curlQueryBuilder.append(getTargetDatabaseInfoAsString(targetDatabase));
+    private String submitQuery(Collection<String> ids, String targetDatabase) throws IOException {
+        String formData =
+            "ids=" +
+                URLEncoder.encode(
+                    String.join(",", ids),
+                    StandardCharsets.UTF_8
+                ) +
+                "&from=UniProtKB_AC-ID" +
+                "&to=" +
+                URLEncoder.encode(
+                    targetDatabase,
+                    StandardCharsets.UTF_8
+                );
 
-        Process process = Runtime.getRuntime().exec(curlQueryBuilder.toString());
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String response = sendPostRequest(getUniProtMappingRestUrl() + "run", formData);
 
-        return bufferedReader
-            .lines()
-            .filter(line -> line.contains("jobId"))
-            .map(line -> {
-                Matcher jobIdMatcher = Pattern.compile("\"jobId\":\"(.*)\"").matcher(line);
-                if (jobIdMatcher.find()) {
-                    return jobIdMatcher.group(1);
-                } else {
-                    throw new RuntimeException("Could not get job id from " + line);
-                }
-            })
-            .findFirst()
-            .orElseThrow(() -> new RuntimeException("Curl could not get job id from query: " +
-                curlQueryBuilder.toString()));
+        Matcher matcher = Pattern.compile("\"jobId\":\"(.*?)\"").matcher(response);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        throw new RuntimeException("Could not retrieve job ID from: " + response);
+    }
+
+    private String sendGetRequest(String url) throws IOException {
+        try {
+            HttpRequest request =
+                HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response =
+                HTTP_CLIENT.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+                );
+
+            return response.body();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            throw new IOException(
+                "Interrupted while calling " + url,
+                e
+            );
+        }
+    }
+
+    private String sendPostRequest(
+        String url,
+        String formData
+    ) throws IOException {
+
+        try {
+            HttpRequest request =
+                HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .header(
+                        "Content-Type",
+                        "application/x-www-form-urlencoded"
+                    )
+                    .POST(
+                        HttpRequest.BodyPublishers.ofString(
+                            formData
+                        )
+                    )
+                    .build();
+
+            HttpResponse<String> response =
+                HTTP_CLIENT.send(
+                    request,
+                    HttpResponse.BodyHandlers.ofString()
+                );
+
+            return response.body();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+
+            throw new IOException("Interrupted while submitting request", e);
+        }
     }
 
     private static String getUniProtMappingRestUrl() {
         return getUniProtRestUrl() + "/idmapping/";
     }
 
-    private String getIdsInfoAsString(Collection<String> ids) {
-        return getInfoStringTaggerArguval() + "ids=" + "\"" + String.join( ",",ids) + "\"" + " ";
-    }
-
-    private String getUniProtDatabaseInfoAsString() {
-        return getInfoStringTaggerArguval() + "from=" + "\"" + "UniProtKB_AC-ID" + "\"" + " ";
-    }
-
-    private String getTargetDatabaseInfoAsString(String targetDatabase) {
-        return getInfoStringTaggerArguval() + "to=" + "\"" + targetDatabase + "\"" + " ";
-    }
-
-    private String getInfoStringTaggerArguval() {
-        return "--form ";
-    }
-
     private static String getUniProtRestUrl() {
         return UNIPROT_REST_URL;
-    }
-
-    private BufferedReader getCurlReader(String curlCommand, String url) throws IOException {
-        Process process = Runtime.getRuntime().exec(curlCommand + " " + url);
-        return new BufferedReader(new InputStreamReader(process.getInputStream()));
     }
 
     private long getMinutesToMilliseconds(long minutes) {
