@@ -6,6 +6,7 @@ import org.reactome.DownloadInfo;
 import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.utils.ConfigParser;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -41,22 +42,24 @@ public class UniProtMapperRetriever extends SingleRetriever {
     public void downloadFile() throws IOException {
         List<Collection<String>> uniProtIdentifiersCollections = split(getUniProtIdsFromGraphDatabase(),100);
 
-        Files.write(
-            getDownloadable().getLocalFilePath(),
-            FILE_HEADER.getBytes(),
-            StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
-        );
-        for (Collection<String> uniProtIdentifiers : uniProtIdentifiersCollections) {
-            Map<String, List<String>> uniProtIdentifierToResourceIdentifiers =
-                getMapping(uniProtIdentifiers, getTargetDatabase(getDownloadable()));
+        try (BufferedWriter writer =
+            Files.newBufferedWriter(
+                getDownloadable().getLocalFilePath(),
+                StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING
+            )) {
+            writer.write(FILE_HEADER);
 
-            for (String uniProtIdentifier : uniProtIdentifierToResourceIdentifiers.keySet()) {
-                for (String resourceIdentifier : uniProtIdentifierToResourceIdentifiers.get(uniProtIdentifier)) {
-                    Files.write(
-                        getDownloadable().getLocalFilePath(),
-                        (uniProtIdentifier + "\t" + resourceIdentifier + "\n").getBytes(),
-                        StandardOpenOption.APPEND
-                    );
+            for (Collection<String> uniProtIdentifiers : uniProtIdentifiersCollections) {
+                Map<String, List<String>> uniProtIdentifierToResourceIdentifiers =
+                    getMapping(uniProtIdentifiers, getTargetDatabase(getDownloadable()));
+
+                for (String uniProtIdentifier : uniProtIdentifierToResourceIdentifiers.keySet()) {
+                    for (String resourceIdentifier : uniProtIdentifierToResourceIdentifiers.get(uniProtIdentifier)) {
+                        writer.write(uniProtIdentifier);
+                        writer.write("\t");
+                        writer.write(resourceIdentifier);
+                        writer.newLine();
+                    }
                 }
             }
         }
