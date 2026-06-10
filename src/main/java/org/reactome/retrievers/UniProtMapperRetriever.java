@@ -184,6 +184,7 @@ public class UniProtMapperRetriever extends SingleRetriever {
             HttpRequest request =
                 HttpRequest.newBuilder()
                     .uri(URI.create(url))
+                    .version(HttpClient.Version.HTTP_1_1)
                     .GET()
                     .build();
 
@@ -214,6 +215,7 @@ public class UniProtMapperRetriever extends SingleRetriever {
             HttpRequest request =
                 HttpRequest.newBuilder()
                     .uri(URI.create(url))
+                    .version(HttpClient.Version.HTTP_1_1)
                     .header(
                         "Content-Type",
                         "application/x-www-form-urlencoded"
