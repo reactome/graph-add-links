@@ -325,8 +325,8 @@
                 "names": [
                     "OpenTargets"
                 ],
-                "url": "https://www.targetvalidation.org/",
-                "accessURL": "https://www.targetvalidation.org/target/###ID###"
+                "url": "https://platform.opentargets.org/",
+                "accessURL": "https://platform.opentargets.org/target/###ID###"
             }
         },
         "GlyGen": {
