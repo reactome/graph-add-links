@@ -563,7 +563,7 @@
                     "GeneCards"
                 ],
                 "url": "https://www.genecards.org/",
-                "accessURL": "https://www.genecards.org/cgi-bin/carddisp.pl?gene=###ID###",
+                "accessURL": "https://www.genecards.org/card/###ID###",
                 "resourceIdentifier": "MIR:00100407"
             }
         },
