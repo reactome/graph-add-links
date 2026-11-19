@@ -51,8 +51,7 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
             "ON CREATE SET crr.order = 0, crr.stoichiometry = 1\n" +
             "MERGE (di)-[rdr:referenceDatabase]->(rd)\n" +
             "ON CREATE SET rdr.order = 0, rdr.stoichiometry = 1\n" +
-            "MERGE (di)-[cr:created]->(ie)\n" +
-            "ON CREATE SET cr.order = 0, cr.stoichiometry = 1\n";
+            createdByRunEdit("di");
 
         logger.info("Running query \n" + relationshipCreationQuery);
 
