@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
  */
 public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
     private static final Logger logger = LogManager.getLogger();
+    private static Map<ReferenceDatabase, Map<String, ReferenceSequence>>
+        referenceDatabaseToIdentifierToReferenceSequence = new HashMap<>();
 
     private ReferenceSequence.ReferenceSequenceType referenceSequenceType;
 
@@ -31,9 +33,9 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
     private GraphNode.Relationship getReferenceSequenceRelationship() {
         if (getReferenceSequenceType().equals(ReferenceSequenceType.DNA)) {
-            return new GraphNode.Relationship("referenceGene");
+            return new GraphNode.Relationship("rg", "referenceGene");
         } else if (getReferenceSequenceType().equals(ReferenceSequenceType.RNA)) {
-            return new GraphNode.Relationship("referenceTranscript");
+            return new GraphNode.Relationship("rt", "referenceTranscript");
         } else {
             throw new IllegalStateException("Unknown reference relationship for type: " + getReferenceSequenceType());
         }
@@ -59,6 +61,8 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
         logger.info("Creating relationships...");
 
+        GraphNode.Relationship refSeqRelationship = getReferenceSequenceRelationship();
+
         String relationshipCreationQuery =
             "USING PERIODIC COMMIT 100\n" +
             "LOAD CSV WITH HEADERS FROM 'file:///" + csvDirectory + "/" + getResourceName() + "_Relationships.csv' AS row\n" +
@@ -66,9 +70,13 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
             "\tMATCH (rs:ReferenceSequence {dbId: toInteger(row.ExternalIdentifierDbId)})\n" +
             "\tMATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)})\n" +
             "\tMATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)})\n" +
-            "\tCREATE (do)-" + getReferenceSequenceRelationship() + "->(rs)\n" +
-            "\tCREATE (rs)-[:referenceDatabase]->(rd)\n" +
-            "\tCREATE (rs)-[:created]->(ie)";
+            "\tMERGE (do)-" + refSeqRelationship + "->(rs)\n" +
+            String.format("ON CREATE SET %s.order = 0, %s.stoichiometry = 1\n",
+                refSeqRelationship.getVariable(), refSeqRelationship.getVariable()) +
+            "\tMERGE (rs)-[rdr:referenceDatabase]->(rd)\n" +
+            "ON CREATE SET rdr.order = 0, rdr.stoichiometry = 1\n" +
+            "\tMERGE (rs)-[cr:created]->(ie)\n" +
+            "ON CREATE SET cr.order = 0, cr.stoichiometry = 1\n";
         logger.info("Running query\n" + relationshipCreationQuery);
         ReactomeGraphDatabase.getSession().run(relationshipCreationQuery);
     }
@@ -80,13 +88,13 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
     }
 
     @Override
-    protected List<ReferenceSequence> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
+    protected List<ReferenceSequence> fetchExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
         List<String> geneNames = getGeneNames(sourceNode);
 
         logger.info("Creating reference sequence for " + sourceNode.getIdentifier());
         List<ReferenceSequence> referenceSequences = new ArrayList<>();
         for (String referenceSequenceValue : getIdentifierValues(sourceNode)) {
-            referenceSequences.add(createReferenceSequence(referenceSequenceValue, geneNames));
+            referenceSequences.add(fetchReferenceSequence(referenceSequenceValue, geneNames));
         }
         return referenceSequences;
     }
@@ -113,6 +121,24 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
 
     private Set<String> getUniProtIdentifiers() {
         return getSourceIdentifierToReferenceIdentifiers().keySet();
+    }
+
+    private ReferenceSequence fetchReferenceSequence(String identifier, List<String> geneNames) {
+        if (!referenceSequenceExistsForIdentifier(identifier)) {
+            referenceDatabaseToIdentifierToReferenceSequence
+                .computeIfAbsent(getReferenceDatabase(), k -> new HashMap<>())
+                .put(identifier, createReferenceSequence(identifier, geneNames));
+        }
+
+        return referenceDatabaseToIdentifierToReferenceSequence
+            .get(getReferenceDatabase())
+            .get(identifier);
+    }
+
+    private boolean referenceSequenceExistsForIdentifier(String identifier) {
+        return referenceDatabaseToIdentifierToReferenceSequence
+            .computeIfAbsent(getReferenceDatabase(), k -> new HashMap<>())
+            .containsKey(identifier);
     }
 
     private ReferenceSequence createReferenceSequence(String identifier, List<String> geneNames) {

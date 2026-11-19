@@ -2,9 +2,7 @@ package org.reactome.referencecreators;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.neo4j.driver.Result;
 import org.reactome.IdentifierCreator;
-import org.reactome.graphdb.ReactomeGraphDatabase;
 import org.reactome.graphnodes.*;
 
 import java.io.File;
@@ -23,6 +21,7 @@ import java.util.stream.Collectors;
  */
 public abstract class ReferenceCreator implements IdentifierCreator {
     private static final Logger logger = LogManager.getLogger();
+    private static Set<String> externalIdentifierFileLines = new HashSet<>();
 
     private String resourceName;
     private ReferenceDatabase referenceDatabase;
@@ -67,21 +66,24 @@ public abstract class ReferenceCreator implements IdentifierCreator {
 
         logger.info("Creating source database object to external identifiers map...");
 
-        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiersMap =
             this.createIdentifiers();
 
         logger.info("Source to database identifiers map created");
 
         logger.info("Writing CSV");
-        for (IdentifierNode sourceIdentifierNode : sourceToExternalIdentifiersMap.keySet()) {
-            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNode);
-            logger.debug("Identifier Node: " + sourceIdentifierNode);
+        for (long sourceIdentifierNodeDbId : sourceToExternalIdentifiersMap.keySet()) {
+            List<? extends IdentifierNode> externalIdentifiers = sourceToExternalIdentifiersMap.get(sourceIdentifierNodeDbId);
+            logger.debug("Source Node DbId: " + sourceIdentifierNodeDbId);
             logger.debug("External Identifiers: " + externalIdentifiers);
 
             for (IdentifierNode externalIdentifier : externalIdentifiers) {
-                if (!existsInDatabase(externalIdentifier) && !existsInCSVFile(externalIdentifier)) {
-                    writeCSVForIdentifier(externalIdentifier, sourceIdentifierNode);
+                if (!externalIdentifierLineAlreadyWritten(externalIdentifier)) {
+                    writeExternalIdentifierLine(externalIdentifier);
                 }
+
+                writeRelationshipLine(sourceIdentifierNodeDbId, externalIdentifier.getDbId(),
+                    getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
             }
         }
         logger.info("CSV data complete");
@@ -118,7 +120,7 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         ).concat(System.lineSeparator());
     }
 
-    protected abstract List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(
+    protected abstract List<? extends IdentifierNode> fetchExternalIdentifiersForSourceIdentifierNode(
         IdentifierNode sourceNode);
 
     protected abstract List<? extends IdentifierNode> getIdentifierNodes();
@@ -138,55 +140,18 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         return referenceDatabase;
     }
 
-    private boolean existsInDatabase(IdentifierNode identifierNode) {
-        if (this.existingIdentifiers == null) {
-            String identifiersQuery =
-                "MATCH (i)-[:referenceDatabase]->(rd:ReferenceDatabase)" +
-                    " WHERE rd.displayName = \"" + getReferenceDatabase().getDisplayName() + "\"" +
-                    " RETURN i.identifier";
-
-            Result identifiersQueryResult = ReactomeGraphDatabase.getSession().run(identifiersQuery);
-            this.existingIdentifiers = identifiersQueryResult
-                .stream()
-                .map(record -> record.get(0).asString())
-                .collect(Collectors.toSet());
-        }
-
-        return this.existingIdentifiers.contains(identifierNode.getIdentifier());
-    }
-
-    private boolean existsInCSVFile(IdentifierNode identifierNode) throws URISyntaxException, IOException {
-		return lineExistsInFile(
-            getExternalIdentifierLine(identifierNode).replace(System.lineSeparator(),""),
-            getIdentifierCSVFilePath()
-        );
-    }
-
-    private boolean lineExistsInFile(String line, Path filePath) throws IOException {
-        return Files.lines(filePath).anyMatch(fileLine -> fileLine.equals(line));
-    }
-
-    private Map<IdentifierNode, List<? extends IdentifierNode>> createIdentifiers() {
-        Map<IdentifierNode, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
+    private Map<Long, List<? extends IdentifierNode>> createIdentifiers() {
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
 
         for (IdentifierNode sourceNode : getIdentifierNodes()) {
             sourceToExternalIdentifiers.put(
-                sourceNode,
-                createExternalIdentifiersForSourceIdentifierNode(sourceNode)
+                sourceNode.getDbId(),
+                fetchExternalIdentifiersForSourceIdentifierNode(sourceNode)
             );
         }
 
         return sourceToExternalIdentifiers;
     }
-
-    private void writeCSVForIdentifier(IdentifierNode externalIdentifier, IdentifierNode sourceNodeIdentifier)
-        throws IOException, URISyntaxException {
-
-        writeExternalIdentifierLine(externalIdentifier);
-        writeRelationshipLine(sourceNodeIdentifier.getDbId(), externalIdentifier.getDbId(),
-            getReferenceDatabase().getDbId(), InstanceEdit.get().getDbId());
-    }
-
 
     private void writeReferenceCSVHeader(Path referenceCSVFilePath) throws IOException {
         Files.write(
@@ -228,11 +193,18 @@ public abstract class ReferenceCreator implements IdentifierCreator {
     private void writeExternalIdentifierLine(IdentifierNode externalIdentifier)
         throws IOException, URISyntaxException {
 
+        String externalIdentifierLine = getExternalIdentifierLine(externalIdentifier);
+
+        externalIdentifierFileLines.add(externalIdentifierLine);
         Files.write(
             getIdentifierCSVFilePath(),
-            getExternalIdentifierLine(externalIdentifier).getBytes(),
+            externalIdentifierLine.getBytes(),
             StandardOpenOption.APPEND
         );
+    }
+
+    private boolean externalIdentifierLineAlreadyWritten(IdentifierNode externalIdentifier) {
+        return externalIdentifierFileLines.contains(getExternalIdentifierLine(externalIdentifier));
     }
 
     private Path getIdentifierCSVFilePath() throws URISyntaxException {

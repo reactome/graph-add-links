@@ -47,9 +47,12 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
             "MATCH (di:DatabaseIdentifier {dbId: toInteger(row.ExternalIdentifierDbId)})\n" +
             "MATCH (rd:ReferenceDatabase {dbId: toInteger(row.ReferenceDatabaseDbId)})\n" +
             "MATCH (ie:InstanceEdit {dbId: toInteger(row.InstanceEditDbId)})\n" +
-            "CREATE (do)-[:crossReference]->(di)\n" +
-            "CREATE (di)-[:referenceDatabase]->(rd)\n" +
-            "CREATE (di)-[:created]->(ie) ";
+            "MERGE (do)-[crr:crossReference]->(di)\n" +
+            "ON CREATE SET crr.order = 0, crr.stoichiometry = 1\n" +
+            "MERGE (di)-[rdr:referenceDatabase]->(rd)\n" +
+            "ON CREATE SET rdr.order = 0, rdr.stoichiometry = 1\n" +
+            "MERGE (di)-[cr:created]->(ie)\n" +
+            "ON CREATE SET cr.order = 0, cr.stoichiometry = 1\n";
 
         logger.info("Running query \n" + relationshipCreationQuery);
 
@@ -57,7 +60,7 @@ public abstract class DatabaseIdentifierReferenceCreator extends ReferenceCreato
     }
 
     @Override
-    protected List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
+    protected List<? extends IdentifierNode> fetchExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
         List<DatabaseIdentifier> databaseIdentifiers = new ArrayList<>();
         for (String databaseIdentifierValue : getIdentifierValues(sourceNode)) {
             databaseIdentifiers.add(DatabaseIdentifier.fetchOrCreate(databaseIdentifierValue, getReferenceDatabase()));

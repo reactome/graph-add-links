@@ -6,7 +6,7 @@
                 {
                     "type": "file",
                     "baseURL": "https://s3ftp.flybase.org/releases/current/precomputed_files/genes/",
-                    "fileName": "fbgn_NAseq_Uniprot_current.tsv.gz",
+                    "fileName": "fbgn_NAseq_Uniprot_fb_\\d{4}_\\d{2}.tsv.gz",
                     "fileNameIsRegex": true,
                     "localName": "FlyBase.tsv.gz"
                 }
@@ -325,8 +325,8 @@
                 "names": [
                     "OpenTargets"
                 ],
-                "url": "https://www.targetvalidation.org/",
-                "accessURL": "https://www.targetvalidation.org/target/###ID###"
+                "url": "https://platform.opentargets.org/",
+                "accessURL": "https://platform.opentargets.org/target/###ID###"
             }
         },
         "GlyGen": {
@@ -563,7 +563,7 @@
                     "GeneCards"
                 ],
                 "url": "https://www.genecards.org/",
-                "accessURL": "https://www.genecards.org/cgi-bin/carddisp.pl?gene=###ID###",
+                "accessURL": "https://www.genecards.org/card/###ID###",
                 "resourceIdentifier": "MIR:00100407"
             }
         },
@@ -1244,7 +1244,7 @@
             "downloads": [
                 {
                     "type": "file",
-                    "baseURL": "https://ncatsidg-dev.appspot.com/graphql",
+                    "baseURL": "https://pharos-api.ncats.io/graphql",
                     "fileName": "",
                     "fileNameIsRegex": false,
                     "localName": "pharos-ligands.tsv"
@@ -1263,7 +1263,7 @@
             "downloads": [
                 {
                     "type": "file",
-                    "baseURL": "https://ncatsidg-dev.appspot.com/graphql",
+                    "baseURL": "https://pharos-api.ncats.io/graphql",
                     "fileName": "",
                     "fileNameIsRegex": false,
                     "localName": "pharos-targets.tsv"
