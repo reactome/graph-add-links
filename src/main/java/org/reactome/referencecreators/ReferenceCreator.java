@@ -37,6 +37,17 @@ public abstract class ReferenceCreator implements IdentifierCreator {
         this.sourceIdentifierToReferenceIdentifiers = uniprotIdentifierToReferenceIdentifiers;
     }
 
+    /**
+     * Cypher that links this run's InstanceEdit, bound as {@code ie}, to a node it created, bound as
+     * {@code node}. The relationship goes from the edit to what it created, as everywhere else in the
+     * graph; pointed from the node to the edit, a reader that follows {@code created} the usual way
+     * finds no creator for the node (#7).
+     */
+    static String createdByRunEdit(String node) {
+        return "MERGE (ie)-[cr:created]->(" + node + ")\n" +
+            "ON CREATE SET cr.order = 0, cr.stoichiometry = 1\n";
+    }
+
     public String getResourceName() {
         return this.resourceName;
     }

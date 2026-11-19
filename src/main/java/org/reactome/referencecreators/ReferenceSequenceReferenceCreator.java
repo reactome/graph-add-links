@@ -75,8 +75,7 @@ public class ReferenceSequenceReferenceCreator extends ReferenceCreator {
                 refSeqRelationship.getVariable(), refSeqRelationship.getVariable()) +
             "\tMERGE (rs)-[rdr:referenceDatabase]->(rd)\n" +
             "ON CREATE SET rdr.order = 0, rdr.stoichiometry = 1\n" +
-            "\tMERGE (rs)-[cr:created]->(ie)\n" +
-            "ON CREATE SET cr.order = 0, cr.stoichiometry = 1\n";
+            "\t" + createdByRunEdit("rs");
         logger.info("Running query\n" + relationshipCreationQuery);
         ReactomeGraphDatabase.getSession().run(relationshipCreationQuery);
     }
