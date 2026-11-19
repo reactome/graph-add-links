@@ -152,13 +152,35 @@ public abstract class ReferenceCreator implements IdentifierCreator {
     }
 
     private Map<Long, List<? extends IdentifierNode>> createIdentifiers() {
-        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
+        return externalIdentifiersBySource(getIdentifierNodes(), this::fetchExternalIdentifiersForSourceIdentifierNode);
+    }
 
-        for (IdentifierNode sourceNode : getIdentifierNodes()) {
-            sourceToExternalIdentifiers.put(
-                sourceNode.getDbId(),
-                fetchExternalIdentifiersForSourceIdentifierNode(sourceNode)
-            );
+    /**
+     * The external identifiers of each source node, by the node's dbId.
+     *
+     * A source node can appear more than once: MONDO's are one row per (Event or PhysicalEntity, Disease
+     * Ontology term), so an object with five DO terms is five rows with the same dbId. Each row's identifiers
+     * are added to that dbId's list, once each by identifier; putting each row's list replaced the one before,
+     * and an object kept only its last DO term's MONDO.
+     */
+    static Map<Long, List<? extends IdentifierNode>> externalIdentifiersBySource(
+        List<? extends IdentifierNode> sourceNodes,
+        java.util.function.Function<IdentifierNode, List<? extends IdentifierNode>> fetchExternalIdentifiers) {
+
+        Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
+        Map<Long, Set<String>> identifiersSeen = new HashMap<>();
+
+        for (IdentifierNode sourceNode : sourceNodes) {
+            @SuppressWarnings("unchecked")
+            List<IdentifierNode> externalIdentifiers = (List<IdentifierNode>) sourceToExternalIdentifiers
+                .computeIfAbsent(sourceNode.getDbId(), dbId -> new ArrayList<IdentifierNode>());
+            Set<String> seen = identifiersSeen.computeIfAbsent(sourceNode.getDbId(), dbId -> new HashSet<>());
+
+            for (IdentifierNode externalIdentifier : fetchExternalIdentifiers.apply(sourceNode)) {
+                if (seen.add(externalIdentifier.getIdentifier())) {
+                    externalIdentifiers.add(externalIdentifier);
+                }
+            }
         }
 
         return sourceToExternalIdentifiers;
