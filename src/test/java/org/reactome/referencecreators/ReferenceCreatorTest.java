@@ -2,6 +2,7 @@ package org.reactome.referencecreators;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,13 +21,24 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 
 /**
- * Tests for ReferenceCreator to ensure duplicate identifier prevention.
- * These tests verify the fix for the bug where duplicate identifiers were being created.
+ * Tests for ReferenceCreator to ensure duplicate identifier prevention, and that a source node appearing in
+ * several rows (as MondoReferenceCreator's one row per (Event or PhysicalEntity, Disease Ontology term) does)
+ * keeps the external identifiers of every row.
  *
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  * Created 11/03/2025
  */
+@ExtendWith(MockReferenceDatabaseParsing.class)
 public class ReferenceCreatorTest {
+
+    /** Disease Ontology id to MONDO ids, as MondoFileProcessor builds it. */
+    private static final Map<String, List<String>> DO_TO_MONDO = new HashMap<>();
+    static {
+        DO_TO_MONDO.put("DOID:162", Collections.singletonList("0004992"));
+        DO_TO_MONDO.put("DOID:3068", Collections.singletonList("0018177"));
+        DO_TO_MONDO.put("DOID:3187", Collections.singletonList("0002544"));
+        DO_TO_MONDO.put("DOID:9999", Collections.singletonList("0004992"));
+    }
 
     @TempDir
     Path tempDir;
@@ -45,7 +57,8 @@ public class ReferenceCreatorTest {
 
     /**
      * Tests that when multiple IdentifierNode objects have the same dbId,
-     * they are mapped correctly by dbId rather than object identity.
+     * they are mapped correctly by dbId rather than object identity,
+     * and that their external identifiers are listed once each.
      * This is the core fix for the duplicate identifiers bug.
      */
     @Test
@@ -59,15 +72,37 @@ public class ReferenceCreatorTest {
 
         List<IdentifierNode> sourceNodes = Arrays.asList(sourceNode1, sourceNode2);
 
-        referenceCreator = new TestReferenceCreator("TestResource", sourceToRefMap, sourceNodes, mockReferenceDatabase);
-
         // The bug would create duplicate entries because it mapped by object identity
         // The fix maps by dbId, so both objects should map to the same key
-        Map<Long, List<? extends IdentifierNode>> result = referenceCreator.testCreateIdentifiers();
+        Map<Long, List<? extends IdentifierNode>> result =
+            ReferenceCreator.externalIdentifiersBySource(sourceNodes, externalIdentifiersFrom(sourceToRefMap));
 
         // Should have only one entry (keyed by dbId=1)
         assertThat(result.size(), is(1));
         assertThat(result.containsKey(1L), is(true));
+
+        // Both rows have the same identifiers, so each should be listed only once
+        assertThat(identifiers(result.get(1L)), containsInAnyOrder("EXT_ID_1", "EXT_ID_2"));
+    }
+
+    /**
+     * Tests that when the same source node appears in several rows with different identifiers,
+     * the external identifiers of every row are kept rather than only those of the last row.
+     */
+    @Test
+    public void testSourceNodeInSeveralRowsKeepsEveryRowsExternalIdentifiers() {
+        IdentifierNode row1 = new TestIdentifierNode(1L, "TERM_1");
+        IdentifierNode row2 = new TestIdentifierNode(1L, "TERM_2");
+
+        Map<String, Set<String>> sourceToRefMap = new HashMap<>();
+        sourceToRefMap.put("TERM_1", new HashSet<>(Collections.singletonList("EXT_ID_1")));
+        sourceToRefMap.put("TERM_2", new HashSet<>(Collections.singletonList("EXT_ID_2")));
+
+        Map<Long, List<? extends IdentifierNode>> result = ReferenceCreator.externalIdentifiersBySource(
+            Arrays.asList(row1, row2), externalIdentifiersFrom(sourceToRefMap));
+
+        assertThat(result.size(), is(1));
+        assertThat(identifiers(result.get(1L)), containsInAnyOrder("EXT_ID_1", "EXT_ID_2"));
     }
 
     /**
@@ -131,9 +166,9 @@ public class ReferenceCreatorTest {
 
         // Simulate writing relationship lines
         List<String> relationshipLines = new ArrayList<>();
-        relationshipLines.add("1,200,100,999\n");
-        relationshipLines.add("2,200,100,999\n");
-        relationshipLines.add("3,200,100,999\n");
+        relationshipLines.add("1,200,100,999");
+        relationshipLines.add("2,200,100,999");
+        relationshipLines.add("3,200,100,999");
 
         Files.write(relationshipFile, relationshipLines, java.nio.file.StandardOpenOption.APPEND);
 
@@ -177,6 +212,67 @@ public class ReferenceCreatorTest {
         assertThat(referenceCreator.testExternalIdentifierLineAlreadyWritten(externalId2), is(false));
     }
 
+    @Test
+    public void anObjectWithSeveralDiseaseTermsGetsEachTermsMondo() {
+        // One row per (object, DO term), as MondoReferenceCreator queries them.
+        List<IdentifierNode> rows = Arrays.asList(
+            new Event(1996341L, "DOID:162"),
+            new Event(1996341L, "DOID:3068"),
+            new Event(1996341L, "DOID:3187")
+        );
+
+        Map<Long, List<? extends IdentifierNode>> bySource =
+            ReferenceCreator.externalIdentifiersBySource(rows, ReferenceCreatorTest::mondoFor);
+
+        assertThat(identifiers(bySource.get(1996341L)), containsInAnyOrder("0004992", "0018177", "0002544"));
+    }
+
+    @Test
+    public void aMondoReachedThroughTwoTermsIsListedOnce() {
+        List<IdentifierNode> rows = Arrays.asList(
+            new Event(42L, "DOID:162"),
+            new Event(42L, "DOID:9999")
+        );
+
+        Map<Long, List<? extends IdentifierNode>> bySource =
+            ReferenceCreator.externalIdentifiersBySource(rows, ReferenceCreatorTest::mondoFor);
+
+        assertThat(identifiers(bySource.get(42L)), contains("0004992"));
+    }
+
+    @Test
+    public void objectsAreKeptApart() {
+        List<IdentifierNode> rows = Arrays.asList(
+            new Event(1L, "DOID:162"),
+            new Event(2L, "DOID:3187")
+        );
+
+        Map<Long, List<? extends IdentifierNode>> bySource =
+            ReferenceCreator.externalIdentifiersBySource(rows, ReferenceCreatorTest::mondoFor);
+
+        assertThat(identifiers(bySource.get(1L)), contains("0004992"));
+        assertThat(identifiers(bySource.get(2L)), contains("0002544"));
+    }
+
+    private static List<? extends IdentifierNode> mondoFor(IdentifierNode source) {
+        return DO_TO_MONDO.getOrDefault(source.getIdentifier(), Collections.emptyList()).stream()
+            .map(mondo -> new Event(0L, mondo))
+            .collect(Collectors.toList());
+    }
+
+    /** External identifiers for a source node from a source identifier to external identifiers map. */
+    private static java.util.function.Function<IdentifierNode, List<? extends IdentifierNode>> externalIdentifiersFrom(
+        Map<String, Set<String>> sourceToRefMap) {
+
+        return sourceNode -> sourceToRefMap.getOrDefault(sourceNode.getIdentifier(), Collections.emptySet()).stream()
+            .map(id -> new TestIdentifierNode(200L + id.hashCode() % 1000, id))
+            .collect(Collectors.toList());
+    }
+
+    private static List<String> identifiers(List<? extends IdentifierNode> nodes) {
+        return nodes.stream().map(IdentifierNode::getIdentifier).collect(Collectors.toList());
+    }
+
     // Test implementation of ReferenceCreator for testing purposes
     private static class TestReferenceCreator extends ReferenceCreator {
         private List<IdentifierNode> testSourceNodes;
@@ -193,7 +289,7 @@ public class ReferenceCreatorTest {
         }
 
         @Override
-        protected List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
+        protected List<? extends IdentifierNode> fetchExternalIdentifiersForSourceIdentifierNode(IdentifierNode sourceNode) {
             Set<String> identifierValues = getIdentifierValues(sourceNode);
             return identifierValues.stream()
                 .map(id -> new TestIdentifierNode(200L + id.hashCode() % 1000, id))
@@ -216,17 +312,6 @@ public class ReferenceCreatorTest {
         }
 
         // Expose protected/private methods for testing
-        public Map<Long, List<? extends IdentifierNode>> testCreateIdentifiers() {
-            Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
-            for (IdentifierNode sourceNode : getIdentifierNodes()) {
-                sourceToExternalIdentifiers.put(
-                    sourceNode.getDbId(),
-                    createExternalIdentifiersForSourceIdentifierNode(sourceNode)
-                );
-            }
-            return sourceToExternalIdentifiers;
-        }
-
         public String testGetExternalIdentifierLine(IdentifierNode externalIdentifier) {
             return getExternalIdentifierLine(externalIdentifier);
         }

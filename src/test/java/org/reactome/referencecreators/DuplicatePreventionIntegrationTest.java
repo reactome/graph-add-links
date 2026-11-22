@@ -2,6 +2,8 @@ package org.reactome.referencecreators;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.reactome.graphdb.MockGraphDatabaseSession;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.when;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  * Created 11/03/2025
  */
+@ExtendWith({MockReferenceDatabaseParsing.class, MockGraphDatabaseSession.class})
 public class DuplicatePreventionIntegrationTest {
 
     @TempDir
@@ -294,13 +297,8 @@ public class DuplicatePreventionIntegrationTest {
                 "SourceDbId,ExternalIdentifierDbId,ReferenceDatabaseDbId,InstanceEditDbId\n".getBytes());
 
             // Create the identifier map (by dbId, not object identity - this is the fix!)
-            Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers = new LinkedHashMap<>();
-            for (IdentifierNode sourceNode : getIdentifierNodes()) {
-                sourceToExternalIdentifiers.put(
-                    sourceNode.getDbId(),  // Key by dbId, not by object
-                    createExternalIdentifiersForSourceIdentifierNode(sourceNode)
-                );
-            }
+            Map<Long, List<? extends IdentifierNode>> sourceToExternalIdentifiers =
+                externalIdentifiersBySource(getIdentifierNodes(), this::fetchExternalIdentifiersForSourceIdentifierNode);
 
             // Write CSV data
             for (Long sourceNodeDbId : sourceToExternalIdentifiers.keySet()) {
@@ -330,7 +328,7 @@ public class DuplicatePreventionIntegrationTest {
         }
 
         @Override
-        protected List<? extends IdentifierNode> createExternalIdentifiersForSourceIdentifierNode(
+        protected List<? extends IdentifierNode> fetchExternalIdentifiersForSourceIdentifierNode(
             IdentifierNode sourceNode) {
 
             Set<String> identifierValues = getIdentifierValues(sourceNode);

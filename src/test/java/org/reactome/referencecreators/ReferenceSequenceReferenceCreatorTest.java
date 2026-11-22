@@ -2,6 +2,8 @@ package org.reactome.referencecreators;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.reactome.graphdb.MockGraphDatabaseSession;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.reactome.graphnodes.ReferenceDatabase;
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.when;
  * @author Joel Weiser (joel.weiser@oicr.on.ca)
  * Created 11/03/2025
  */
+@ExtendWith({MockReferenceDatabaseParsing.class, MockGraphDatabaseSession.class})
 public class ReferenceSequenceReferenceCreatorTest {
 
     @Mock
